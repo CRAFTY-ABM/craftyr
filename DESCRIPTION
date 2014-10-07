@@ -1,0 +1,31 @@
+Package: craftyr
+Type: Package
+Title: Processing CRAFTY model output
+Version: 0.1.0
+Date: 2014-10-07
+Authors@R: c(person("Sascha", "Holzhauer", role = c("aut", "cre"), email =
+    "Sascha.Holzhauer@ed.ac.uk"), person("Calum", "Brown", email =
+    "Calum.BRown@ed.ac.uk", role = "aut"))
+Maintainer: Sascha Holzhauer <Sascha.Holzhauer@ed.ac.uk>
+Description: Routines to input, convert, analyse, visualise and output CRAFTY
+    generated model data.
+Depends:
+    R (>= 3.1.0)
+Imports:
+    R.oo,
+    ggplot2,
+    sp,
+    rgdal,
+    raster,
+    grid,
+    knitr,
+    rmarkdown,
+    shbasic,
+    sqldf,
+    RColorBrewer,
+    fBasics,
+    graphics
+License: GPL 3.0
+VignetteBuilder: knitr
+Suggests:
+    knitr

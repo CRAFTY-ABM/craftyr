@@ -1,0 +1,50 @@
+---
+title: "Introduction to craftyr"
+author: "Sascha Holzhauer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to craftyr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+# Concept
+
+The package provides Separate functions for basic tasks and 2nd order tasks that are combined to load data from
+model output, convert, and finally visualise it.
+
+## Parameters
+
+There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and 
+parameters. The basic idea is to define the (machine) simp list for each project and execute the definition R
+code every time you start a script with the according project. In the script, "local" properties can overwrite 
+the project level settings, e.g. runID, image resolutions etc. The machine-specific simp part contains the
+(machine-specific) path to the machine-independent simp part which should be loaded at the beginning of each
+script anew.
+
+The simp lists consists of a number of sublists:
+
+* dirs
+
+* output
+
+	* fig
+	* csv
+    
+
+# Visualise Input Data
+
+## Capital Data
+
+```{r, eval=TRUE}
+source("./demo/simp-machine.R")
+source(paste(simp$dirs$simp, "simp.R", sep=""))
+
+# read capital data from CSV into raster
+data <- input_csv_param_capitals(simp)
+rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
+names(rasters) <- "RegionA"
+visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
+		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
+```
