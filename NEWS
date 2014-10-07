@@ -1,0 +1,18 @@
+craftyr 0.1
+===========
+
+* convert2raster
+
+* input_csv_param_capitals
+
+* input_csv_param_initialAllocation
+
+* input_tools_getModelInputDir
+
+* input_tools_getModelOutputDir
+
+* output_visualise_initFigure
+
+* visualise_raster_printPlots
+
+* visualise_raster_printRawPlots

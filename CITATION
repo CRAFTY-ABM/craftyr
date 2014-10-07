@@ -1,0 +1,16 @@
+bibentry("Manual",
+   title = "R-CRAFTY: A toolbox for post-processing CRAFTY simulation results",
+   author = person("Sascha Holzhauer"),
+   organization = "School of GeoScience, University of Edinburgh",
+   address      = "Edinburgh, United Kingdom",
+   year   = 0.1$2014,
+   url    = "https://www.wiki.ed.ac.uk/display/CRAFTY/Post-Processing",
+
+   mheader = "To cite R in publications use:",
+
+   mfooter = 
+     paste("We have invested a lot of time and effort in creating R,",
+      "Please cite crafty when using it for data analysis.",
+      "See also", sQuote("citation(\"base\")"),
+      "for citing R packages.", sep = " ")
+)
