@@ -11,7 +11,7 @@ vignette: >
 
 # Concept
 
-The package provides Separate functions for basic tasks and 2nd order tasks that are combined to load data from
+The package provides separate functions for basic tasks and 2nd order tasks that are combined to load data from
 model output, convert, and finally visualise it.
 
 ## Parameters
@@ -21,29 +21,35 @@ parameters. The basic idea is to define a simp list for each project and execute
 every time you start a script with the according project. Within the script, "local" properties 
 can overwrite the project level settings, e.g. runID, image resolutions etc.
 
-Since some paths vary according to the machine that executes the R code, the simp list consists of two parts:
+Since some paths vary according to the machine that executes the R code, the simp list is created from two parts:
 A machine-specific part and a general, machine-independent part.
 
 ```{r, eval=FALSE}
 ###############################################################################
 # Machine=specific SIMP definition
+# NOTE: Changes in super-level parameters that are used to derive further
+# parameters need to trigger a re-evaluation of the derived parameters!
 ### Environment ###############################################################
 # craftyr demo
 ### Remove existing definition ################################################
 rm(list=ls(all=TRUE))
 rm(list=ls(all=TRUE, envir=globalenv()), envir=globalenv())
+library(craftyr)
 #### Set path to itself #######################################################
 simp <- list()
 simp$simpDefinition <- "../demo/simp-machine.R"
-#### Load gneral SIMP #########################################################
-source("./simp.R")
+#### Load project default SIMP ################################################
+source("../demo/simp.R")
+#### Merge crafty default SIMP ################################################
+simp <- param_mergeDefaultSimp(simp)
 
 ### Directories ###############################################################
+
 simp$dirs <- list()
-simp$dirs$project			<- "./"
+simp$dirs$project			<- "C:/Data/LURG/workspace/CRAFTY_ConsVis-ToyWorld/"
 simp$dirs$data 				<- paste(simp$dirs$project, "data/", sep="")
-simp$dirs$outputdir			<- "./"
-dimp$dirs$simp				<- paste(simp$dirs$project, "./demo", sep="")
+simp$dirs$outputdir			<- "C:/Data/LURG/Projects/Volante/Output/"
+simp$dirs$simp				<- paste(simp$dirs$project, "./config/R/", sep="")
 [...]
 ```
 
@@ -51,7 +57,7 @@ dimp$dirs$simp				<- paste(simp$dirs$project, "./demo", sep="")
 ################################################################
 # General SIMulation Properties:
 ################################################################
-if (is.null(simp)) simp <- list()
+if (!exists("simp")) simp <- list()
 simp$sim <- list()
 simp$sim$worldname 				<- "ToyWorld"
 simp$sim$version				<- "V001"
@@ -62,20 +68,24 @@ simp$sim$scenario				<- "Scenario"
 
 The machine-specific simp part in an according script (simp-\<machine\>.R) contains the (machine-specific) path 
 to itself and to the machine-independent simp part script (simp.R), loads that general part and may overwrite 
-certain parameters.
+certain parameters. It also merges the defined parameters in the general crafyr default parameter list to
+apply craftyr defaults when no other specification is given.
 
 Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script
-using craftyr should loud the simp code anew. During that process, the entire simp list including all possible
+using craftyr should load the simp code anew. During that process, the entire simp list including all possible
 changes are removed from memory and loaded anew.
 
 The simp list consists of a number of sublists:
 
+* sim
+
 * dirs
 
-* output
+* csv
 
-	* fig
-	* csv
+* mdata
+
+* fig
     
 
 # Visualise Input Data
@@ -83,11 +93,8 @@ The simp list consists of a number of sublists:
 ## Capital Data
 
 ```{r, eval=TRUE}
-print(getwd())
 #source("../demo/simp-machine.R")
-#source(paste(simp$dirs$simp, "simp.R", sep=""))
-
-# read capital data from CSV into raster
+## read capital data from CSV into raster
 #data <- input_csv_param_capitals(simp)
 #rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
 #names(rasters) <- "RegionA"

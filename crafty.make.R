@@ -22,5 +22,5 @@ devtools::build_vignettes(pkgsName)
 devtools::build(pkgsName)
 
 install(pkgsName)
-# devtools::install_bitbucket("geoslurg/craftyr")
+# devtools::install_bitbucket("geoslurg/craftyr@default")
 browseVignettes("craftyr")
