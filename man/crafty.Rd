@@ -21,6 +21,7 @@ Changes	\tab	refactoring, comment \cr
 }
 }
 \examples{
+source(simp$simpDefinition)
 input_csv_param_capitals()
 }
 \author{

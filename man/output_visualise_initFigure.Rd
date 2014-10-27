@@ -6,13 +6,13 @@
 output_visualise_initFigure(simp, outdir, filename, ensurePath = TRUE)
 }
 \arguments{
-\item{simp}{}
+\item{simp}{SIMulation Properties}
 
 \item{outdir}{}
 
 \item{filename}{}
 
-\item{ensurePath}{}
+\item{ensurePath}{switch}
 }
 \value{
 plot

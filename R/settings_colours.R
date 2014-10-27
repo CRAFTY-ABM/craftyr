@@ -21,10 +21,10 @@ settings_colours_getAftColours <- function() {
 #' @export
 settings_colours_getColors <- function(number, dim=1) {
 	if (dim == 1) {
-		colors = rev(brewer.pal(number, "Set1"))
+		colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
 	}
 	if (dim == 2) {
-		colors = rev(brewer.pal(number, "Accent"))
+		colors = rev(RColorBrewer::brewer.pal(number, "Accent"))
 	}
 	colors
 }
@@ -39,14 +39,14 @@ settings_colours_getColorSet <- function(number, set="Set1") {
 	if (set=="AFT") {
 		colors = settings_colours_getAftColours()
 	} else if (set=="Topo") {
-		colors = topoPalette(number)
+		colors = fBasics::topoPalette(number)
 	} else if (set=="RedGreen") {
-		colors = rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
+		colors = grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
 	} else if (set=="GreenRed") {
-		colors = rev(rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
+		colors = rev(grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
 	}
 	else {
-		colors = rev(brewer.pal(number, set))
+		colors = rev(RColorBrewer::brewer.pal(number, set))
 	}
 	colors
 }

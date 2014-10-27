@@ -8,6 +8,8 @@ visualise_raster_printPlots(simp, rasterdata, dataname = NULL,
   coloursetname = "None", legenditemnames = NULL)
 }
 \arguments{
+\item{simp}{SIMulation Properties}
+
 \item{rasterdata}{if a list, elements must be named differently}
 
 \item{dataname}{vector of names of the same length as rasterData}
@@ -21,6 +23,8 @@ visualise_raster_printPlots(simp, rasterdata, dataname = NULL,
 \item{ncol}{number of columns of facet wrap}
 
 \item{coloursetname}{id for colour set (if factorial)}
+
+\item{legenditemnames}{names for legend items}
 }
 \value{
 raster visualisation
@@ -35,7 +39,7 @@ Prints a list of raster data as ggplot2 facet plot
 # Author: 		Sascha Holzhauer
 # TODO adapt from rawPlot
 #######################################################################
-source("demo/example_config.R")   # read simp
+source(simp$simpDefinition)   # read simp
 data <- input_csv_param_capitals()
 raster <- convert_2raster(simp, data)
 visualisation_raster_printRawPlots(raster, legendTitle = "Capitals Example", 

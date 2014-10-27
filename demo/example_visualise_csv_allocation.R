@@ -1,6 +1,6 @@
 #######################################################################
-# crafty demo for raster visualisation
-# Last update: 	23.06.2014
+# crafty demo for csv data visualisation of AFT allocation
+# Last update: 	27.10.2014
 # Author: 		Sascha Holzhauer
 # TODO adapt from rawPlot
 #######################################################################

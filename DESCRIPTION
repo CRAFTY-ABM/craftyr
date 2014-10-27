@@ -12,20 +12,21 @@ Description: Routines to input, convert, analyse, visualise and output CRAFTY
 Depends:
     R (>= 3.1.0)
 Imports:
-    R.oo,
+    fBasics,
     ggplot2,
-    sp,
-    rgdal,
-    raster,
+    graphics,
     grid,
     knitr,
-    rmarkdown,
-    shbasic,
-    sqldf,
+    R.oo,
+    raster,
     RColorBrewer,
-    fBasics,
-    graphics
-License: GPL 3.0
+    rgdal,
+    rmarkdown,
+    rgdal,
+    shbasic,
+    sp,
+    sqldf
+License: GPL-3
 VignetteBuilder: knitr
 Suggests:
     knitr
