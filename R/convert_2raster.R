@@ -11,10 +11,11 @@ convert_2raster <- function(simp, data, targetCRS = "+init=EPSG:32632", layers=c
 						sep="")); d})
 	data <- lapply(data, function(x) {sp::proj4string(x)=targetCRS; x})
 
-	data <- lapply(data, function(x) {sp::spTransform(x, CRS(targetCRS)); x})
+	data <- lapply(data, function(x) {sp::spTransform(x, sp::CRS(targetCRS)); x})
 	data <- lapply(data, function(x) {sp::gridded(x) = TRUE; x})
 	
 	rasters <- lapply(data, function(x) lapply(layers, function(y) raster::raster(x, layer=y)))
+	# seems to work rather without setting projection...:
 	#rasters <- lapply(rasters, function(x) {raster::projection(x)=targetCRS; x})
 	rasters
 }

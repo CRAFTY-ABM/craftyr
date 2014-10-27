@@ -11,8 +11,8 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 			simp$sim$scenario, "_",
 			simp$sim$regions, "_",
 			"Capitals.csv", sep="")
-	lapply(filenames, sh.checkFilename)
-	capitalData <- lapply(filenames, read.csv)
+	lapply(filenames, shbasic::sh.checkFilename)
+	capitalData <- lapply(filenames, utils::read.csv)
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, capitals)])
 }
 #' Reads aft allocation from CSV data for potentially multiple regions
@@ -29,7 +29,7 @@ input_csv_param_initialAllocation <- function(simp, aftColumn = "LandUseIndex") 
 			if(!is.null(simp$sim$regionalisation)) paste(simp$sim$regionalisation, "/", sep=""),
 			simp$sim$regions, "-Cell.csv",
 			sep="")
-	lapply(filenames, sh.checkFilename)
-	capitalData <- lapply(filenames, read.csv)
+	lapply(filenames, shbasic::sh.checkFilename)
+	capitalData <- lapply(filenames, utils::read.csv)
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, aftColumn)])
 }

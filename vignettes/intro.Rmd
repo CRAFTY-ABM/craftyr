@@ -17,13 +17,58 @@ model output, convert, and finally visualise it.
 ## Parameters
 
 There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and 
-parameters. The basic idea is to define the (machine) simp list for each project and execute the definition R
-code every time you start a script with the according project. In the script, "local" properties can overwrite 
-the project level settings, e.g. runID, image resolutions etc. The machine-specific simp part contains the
-(machine-specific) path to the machine-independent simp part which should be loaded at the beginning of each
-script anew.
+parameters. The basic idea is to define a simp list for each project and execute the simp defining R code
+every time you start a script with the according project. Within the script, "local" properties 
+can overwrite the project level settings, e.g. runID, image resolutions etc.
 
-The simp lists consists of a number of sublists:
+Since some paths vary according to the machine that executes the R code, the simp list consists of two parts:
+A machine-specific part and a general, machine-independent part.
+
+```{r, eval=FALSE}
+###############################################################################
+# Machine=specific SIMP definition
+### Environment ###############################################################
+# craftyr demo
+### Remove existing definition ################################################
+rm(list=ls(all=TRUE))
+rm(list=ls(all=TRUE, envir=globalenv()), envir=globalenv())
+#### Set path to itself #######################################################
+simp <- list()
+simp$simpDefinition <- "../demo/simp-machine.R"
+#### Load gneral SIMP #########################################################
+source("./simp.R")
+
+### Directories ###############################################################
+simp$dirs <- list()
+simp$dirs$project			<- "./"
+simp$dirs$data 				<- paste(simp$dirs$project, "data/", sep="")
+simp$dirs$outputdir			<- "./"
+dimp$dirs$simp				<- paste(simp$dirs$project, "./demo", sep="")
+[...]
+```
+
+```{r, eval=FALSE}
+################################################################
+# General SIMulation Properties:
+################################################################
+if (is.null(simp)) simp <- list()
+simp$sim <- list()
+simp$sim$worldname 				<- "ToyWorld"
+simp$sim$version				<- "V001"
+simp$sim$allocversion			<- "V001AllocGen"
+simp$sim$scenario				<- "Scenario"
+[...]
+```
+
+The machine-specific simp part in an according script (simp-\<machine\>.R) contains the (machine-specific) path 
+to itself and to the machine-independent simp part script (simp.R), loads that general part and may overwrite 
+certain parameters.
+
+Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script
+using craftyr should loud the simp code anew. During that process, the entire simp list including all possible
+changes are removed from memory and loaded anew.
+
+The simp list consists of a number of sublists:
 
 * dirs
 
@@ -38,13 +83,14 @@ The simp lists consists of a number of sublists:
 ## Capital Data
 
 ```{r, eval=TRUE}
-source("./demo/simp-machine.R")
-source(paste(simp$dirs$simp, "simp.R", sep=""))
+print(getwd())
+#source("../demo/simp-machine.R")
+#source(paste(simp$dirs$simp, "simp.R", sep=""))
 
 # read capital data from CSV into raster
-data <- input_csv_param_capitals(simp)
-rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
-names(rasters) <- "RegionA"
-visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
-		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
+#data <- input_csv_param_capitals(simp)
+#rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
+#names(rasters) <- "RegionA"
+#visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
+#		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
 ```

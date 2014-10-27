@@ -1,0 +1,18 @@
+---
+title: "Using raster data with craftyr"
+author: "Sascha Holzhauer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using raster data with craftyr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+
+## Input Raster Data
+
+### Features
+
+	* Limit considered ticks by starttick, endtick, and interval
+	* Read raster files of multiple regions at once

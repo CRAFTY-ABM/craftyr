@@ -8,6 +8,8 @@ visualise_raster_printRawPlots(simp, rasterdata, datanames = NULL,
   coloursetname = "None", legenditemnames = NULL)
 }
 \arguments{
+\item{simp}{SIMulation Properties}
+
 \item{rasterdata}{if a list, elements must be named differently}
 
 \item{datanames}{vector of names of the same length as rasterData}
@@ -34,7 +36,7 @@ Writes a list of raster data as single raw (only the raster data) ggplot2 plot f
 # Last update: 	23.06.2014
 # Author: 		Sascha Holzhauer
 #######################################################################
-source("demo/example_config.R")   # read simp
+source(simp$simpDefinition)  # read simp
 data <- input_csv_param_capitals()
 raster <- convert_2raster(simp, data)
 visualisation_raster_printRawPlots(raster, legendTitle = "Capitals Example", 

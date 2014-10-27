@@ -1,8 +1,8 @@
 #' Init figure output
-#' @param simp
+#' @param simp SIMulation Properties
 #' @param outdir
 #' @param filename 
-#' @param ensurePath 
+#' @param ensurePath switch
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
@@ -10,19 +10,19 @@
 output_visualise_initFigure <- function(simp, outdir, filename, ensurePath = TRUE) {
 
 	if (is.null(filename)) {
-		throw("Filename may not be NULL!")
+		R.oo::throw("Filename may not be NULL!")
 	}
 	if (is.null(simp$fig$resfactor)) {
-		throw("Set simp$fig$resFactor!")
+		R.oo::throw("Set simp$fig$resFactor!")
 	}
 	if (is.null(simp$fig$width)) {
-		throw("Set simp$fig$width!")
+		R.oo::throw("Set simp$fig$width!")
 	}
 	if (is.null(simp$fig$height)) {
-		throw("Set simp$fig$height!")
+		R.oo::throw("Set simp$fig$height!")
 	}
 	if (is.null(simp$fig$numfigs) || length(simp$fig$numfigs) == 0) {
-		throw("Set simp$fig$numFigs (correctly)!")
+		R.oo::throw("Set simp$fig$numFigs (correctly)!")
 	}
 	
 	if (is.null(simp$fig$outputformat)) {
@@ -34,7 +34,7 @@ output_visualise_initFigure <- function(simp, outdir, filename, ensurePath = TRU
 	print(paste("Output figure file: ", outdir, '/', filename , ".", outputformat, sep=""))
 	
 	if (ensurePath) {
-		sh.ensurePath(outdir)
+		shbasic::sh.ensurePath(outdir)
 	}
 	
 	if (!is.null(simp$fig$splitfigs) && simp$fig$splitfigs > 0) {
@@ -61,14 +61,14 @@ output_visualise_initFigure <- function(simp, outdir, filename, ensurePath = TRU
 	
 		
 	if (outputformat == "png") {
-		png(file=paste(outdir, '/', filename,".png",sep=""),
+		grDevices::png(file=paste(outdir, '/', filename,".png",sep=""),
 				height = simp$fig$height * simp$fig$resfactor * numLines,
 				width = simp$fig$width * simp$fig$resfactor * numCols,
 				res=150 * simp$fig$resfactor,
 				pointsize=12)
 		
 	} else if (outputformat == "jpeg") {
-		jpeg(file = paste(outdir, '/', filename, ".jpeg", sep=""),
+		grDevices::jpeg(file = paste(outdir, '/', filename, ".jpeg", sep=""),
 			height = simp$fig$height * simp$fig$resfactor * numLines,
 			width = simp$fig$width * simp$fig$resfactor * numCols,
 			quality = 90,
