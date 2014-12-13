@@ -1,30 +1,36 @@
 ## ----, eval=FALSE--------------------------------------------------------
 #  ###############################################################################
 #  # Machine=specific SIMP definition
+#  # NOTE: Changes in super-level parameters that are used to derive further
+#  # parameters need to trigger a re-evaluation of the derived parameters!
 #  ### Environment ###############################################################
 #  # craftyr demo
 #  ### Remove existing definition ################################################
 #  rm(list=ls(all=TRUE))
 #  rm(list=ls(all=TRUE, envir=globalenv()), envir=globalenv())
+#  library(craftyr)
 #  #### Set path to itself #######################################################
 #  simp <- list()
 #  simp$simpDefinition <- "../demo/simp-machine.R"
-#  #### Load gneral SIMP #########################################################
-#  source("./simp.R")
+#  #### Load project default SIMP ################################################
+#  source("../demo/simp.R")
+#  #### Merge crafty default SIMP ################################################
+#  simp <- param_mergeDefaultSimp(simp)
 #  
 #  ### Directories ###############################################################
+#  
 #  simp$dirs <- list()
-#  simp$dirs$project			<- "./"
+#  simp$dirs$project			<- "C:/Data/LURG/workspace/CRAFTY_ConsVis-ToyWorld/"
 #  simp$dirs$data 				<- paste(simp$dirs$project, "data/", sep="")
-#  simp$dirs$outputdir			<- "./"
-#  dimp$dirs$simp				<- paste(simp$dirs$project, "./demo", sep="")
+#  simp$dirs$outputdir			<- "C:/Data/LURG/Projects/Volante/Output/"
+#  simp$dirs$simp				<- paste(simp$dirs$project, "./config/R/", sep="")
 #  [...]
 
 ## ----, eval=FALSE--------------------------------------------------------
 #  ################################################################
 #  # General SIMulation Properties:
 #  ################################################################
-#  if (is.null(simp)) simp <- list()
+#  if (!exists("simp")) simp <- list()
 #  simp$sim <- list()
 #  simp$sim$worldname 				<- "ToyWorld"
 #  simp$sim$version				<- "V001"
@@ -33,11 +39,8 @@
 #  [...]
 
 ## ----, eval=TRUE---------------------------------------------------------
-print(getwd())
 #source("../demo/simp-machine.R")
-#source(paste(simp$dirs$simp, "simp.R", sep=""))
-
-# read capital data from CSV into raster
+## read capital data from CSV into raster
 #data <- input_csv_param_capitals(simp)
 #rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
 #names(rasters) <- "RegionA"

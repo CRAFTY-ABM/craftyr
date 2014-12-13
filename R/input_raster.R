@@ -1,26 +1,30 @@
-#' Concenate the filename from basedir, scenario, world, run_id, year as well as dataType and dataName.
-#' Region, dataType, and dataName are only considered if given as parameters.
+#' Concenate the filename from basedir, scenario, world, run_id, year as well as datatype and dataname.
+#' Region, datatype, and dataname are only considered if given as parameters.
+#' 
 #' @param scenario
 #' @param world
 #' @param run_id
 #' @param year
 #' @param basedir
-#' @param dataType (e.g. "Capital")
-#' @param dataName (e.g. "Cap1")
-#' @param useRegionDir (output data may or may not be stored in region specific folders)
+#' @param datatype (e.g. "Capital")
+#' @param dataname (e.g. "Cap1")
+#' @param useregiondir (output data may or may not be stored in region specific folders)
 #' @return String of filename
 #'
 #' @author Calum Brown
 #' @author Sascha Holzhauer
 #' @export
 read_raster_getMainFilename <- function(basedir, scenario, world, run_id, region = NULL,
-		dataType = NULL, dataName = NULL, year, useRegionDir = FALSE) {
-	return(paste(read_getOutputDir(scenario, world, run_id, basedir, region = if(useRegionDir) region else NULL),
+		dataType = NULL, dataName = NULL, year, useregiondir = FALSE) {
+	return(paste(read_getOutputDir(scenario, world, run_id, basedir, region = if(useregiondir) region else NULL),
 					"/", scenario,"-",run_id,"-", region, if(!is.null(region)) "-", dataType, if(!is.null(dataType)) "-",
 					dataName, if(!is.null(dataName)) "-", year,".asc",sep=""))
 }
 #' Read a single raster file for the given scenario/world/run_id/year combination in the given base dir.
 #' Data type and data name a required to construct the filename properly.
+#' 
+#' DEPRECATED!
+#' 
 #' @param scenario
 #' @param world
 #' @param basedir
@@ -62,52 +66,64 @@ read_raster_single <- function(scenario = lix$scenario, world = pix$world,
 #' @param dataname name of data of category (e.g. "Cap1") 
 #' @param starttick 
 #' @param endtick 
-#' @param tickinterval 
+#' @param tickinterval Note: tickinterval is based on starttick which defaults to 0!
 #' @return list of lists of raster data
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_raster_output <- function(simp, datatype, dataname, starttick = NULL, endtick = NULL, tickinterval = 1) {
+input_raster_output <- function(simp,
+		datatype,
+		dataname, 
+		starttick = 0,
+		endtick = simp$tech$maxtick,
+		tickinterval = 1,
+		encapsefileinfo = TRUE) {
 	
-	for (region in simp$regions) {
-		# retrieve vector of available ticks
-		# parsing ticks is not only valuable to limit treated ticks but also to name lists
-		ticks <- input_tools_getAvailableTicks(dir = input_tools_getModelOutputDir(simp),
-				datatype = datatype,
-				dataname = dataname,
-				starttick = starttick,
-				endtick = endtick,
-				tickinterval = tickinterval)
+	files <- input_tools_getModelOutputFilenames(simp = simp, 
+			datatype = datatype,
+			dataname = dataname,
+			extension = "asc",
+			pertick = TRUE,
+			starttick = starttick,
+			endtick = endtick, 
+			tickinterval = tickinterval)
 	
-		filenames <- paste(input_tools_getModelOutputDir(simp), '/',
-			simp$sim$scenario, "-",
-			simp$sim$run_id, "-",
-			simp$sim$regions, "-",
-			datatype, "-",
-			dataname, "-",
-			ticks,
-			".asc", sep="")
-	}
-	# TODO
-	output <- NULL
-	years <- c()
-	if (!is.null(startYear) && !is.null(endYear)) {
-		years <- seq(startYear, endYear, everyYear)
-	} else {
-		years <- read_raster_getAvailableYears(scenario=scenario, world=world, run_id=run_id, basedir=basedir,
-				region=region, dataType=dataType, dataName=dataName)
-	}
-	for(year in years) {
-		print(paste("Read year ", year, sep=""))
-		fn <- read_raster_getMainFilename(basedir=basedir, scenario=scenario, world=world, run_id=run_id, region=region,
-				dataType=dataType, dataName=dataName, year=year, useRegionDir=useRegionDir)
-		print(paste("Reading file", fn))
-		raster <- read_raster_single(scenario=scenario, world=world, basedir=basedir, run_id=run_id, year=year,
-				region=region, dataType=dataType, dataName=dataName, useRegionDir=useRegionDir)
-		data <- values(raster)
-		data[is.na(data)] <- 0.0
-	}
-	output
+#	listnames <- names(files)
+#	mapply(function(fileinfovector, name) {
+#		if (simp$debug$input > 0) cat("Handle directory", name, "...\n")
+#		apply(fileinfovector, MARGIN=1, function(fileinfo) {
+#				if (simp$debug$input > 0) cat("Read year", fileinfo["Tick"], "\n")
+#				r <- raster::raster(fileinfo["Filename"])
+#				data <- raster::values(r)
+#				data[is.na(data)] <- 0.0
+#				if (encapsefileinfo) {
+#					fileinfo["raster"] <- r
+#					result = fileinfo
+#				} else {
+#					result = r
+#				}
+#				result
+#			})
+#		}, files, listnames)
+
+	listnames <- names(files)
+	mapply(function(fileinfovector, name) {
+				if (simp$debug$input > 0) cat("Handle directory", name, "...\n")
+				rasters <- apply(fileinfovector, MARGIN=1, function(fileinfo) {
+							if (simp$debug$input > 0) cat("Read year", fileinfo["Tick"], "\n")
+							r <- raster::raster(fileinfo["Filename"])
+							data <- raster::values(r)
+							data[is.na(data)] <- 0.0
+							r
+						})
+				if (encapsefileinfo) {
+					fileinfovector$Raster <- rasters
+					result = fileinfovector
+				} else {
+					result = rasters
+				}
+				result
+			}, files, listnames, SIMPLIFY = FALSE)
 }
 #' Read a number of raster files and combine them in a list of data.
 #' @param scenario

@@ -1,4 +1,13 @@
-convert_raster_aggregate <- function(rasters, aggregatefunction) {
+convert_raster_flatlist <- function(inforasterdata, aggregatefunction) {
+	flatdata <- lapply(raster_adoption, function(infodata) {
+				idata <- apply(infodata, MARGIN=1, function(infodataitem) {
+							infodataitem$Adoption <- cellStats(infodataitem$Raster, stat="sum")
+							infodataitem$Raster <- NULL
+							infodataitem
+						})
+				do.call(rbind, idata)})
+			
+
 	if (!is.null(func) && !is.na(func)) {
 		data <- data.frame(value = eval(parse(text=func)))
 	} else if (aggregate) {

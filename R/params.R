@@ -33,22 +33,22 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$dirs$output$data		<- paste(defsimp$dirs$outputdir, "Data/", sep="")
 	defsimp$dirs$output$rdata		<- paste(defsimp$dirs$outputdir, "RData/", sep="") 
 	defsimp$dirs$output$raster		<- paste(defsimp$dirs$outputdir, "Raster/", sep="") 
-	defsimp$dirs$output$figures	<- paste(defsimp$dirs$outputdir, "Figures/", sep="")
-	defsimp$dirs$output$reports	<- paste(defsimp$dirs$outputdir, "Reports/", sep="")
+	defsimp$dirs$output$figures		<- paste(defsimp$dirs$outputdir, "Figures/", sep="")
+	defsimp$dirs$output$reports		<- paste(defsimp$dirs$outputdir, "Reports/", sep="")
 	
 	
 	### CSV Column Names ###########################################################
 	defsimp$csv <- list()
 	defsimp$csv$cname_region 		<- "Region"
-	defsimp$csv$cname_tick 		<- "Tick"
+	defsimp$csv$cname_tick 			<- "Tick"
 	defsimp$csv$cname_aft 			<- "Agent"
-	defsimp$csv$cname_x			<- "Y"
-	defsimp$csv$cname_y			<- "X"
+	defsimp$csv$cname_x				<- "Y"
+	defsimp$csv$cname_y				<- "X"
 	
 	### Model Data ################################################################
 	
 	defsimp$mdata <- list()
-	defsimp$mdata$capitals 		<- c("Cprod", "Fprod", "Infra", "Grass", "Nat", "Econ")
+	defsimp$mdata$capitals 			<- c("Cprod", "Fprod", "Infra", "Grass", "Nat", "Econ")
 	defsimp$mdata$aftNames			<- c("0" = 'C_Cereal', "1" = 'NC_Cereal', "2" = 'C_Livestock', "3" = 'NC_Livestock',
 			"4" = 'Forester', "5" = 'Conservationist', "6" = 'BiofuelFarmer')
 	
@@ -57,11 +57,30 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$resfactor		<- 3
 	defsimp$fig$outputformat 	<- "png" #"jpeg"
 	defsimp$fig$init			<- craftyr::output_visualise_initFigure
-	defsimp$fig$numfigs		<- 1
-	defsimp$fig$numcols		<- 1
+	defsimp$fig$numfigs			<- 1
+	defsimp$fig$numcols			<- 1
 	defsimp$fig$height			<- 700
 	defsimp$fig$width			<- 1000
 	defsimp$fig$splitfigs		<- FALSE
+	
+	### Colour Settings ###########################################################
+	defsimp$colours <- list()
+	defsimp$colours$AFT 		<- settings_colours_getAftColours()
+	defsimp$colours$Region 		<- settings_colours_getColorSet(12, "Set3")
+	defsimp$colours$Runid 		<- settings_colours_getColorSet(12, "Set3")
+	
+	### Technical Settings ###########################################################
+	defsimp$tech <- list()
+	defsimp$tech$maxtick <- 3000
+	
+	### Debug Settings ############################################################
+	defsimp$debug <- list()
+	# the higher, the more verbose
+	defsimp$debug$global 	<- 0
+	defsimp$debug$db		<- defsimp$debug$global
+	defsimp$debug$input		<- defsimp$debug$global
+	defsimp$debug$output		<- defsimp$debug$global
+	
 	
 	result <- modifyList(defsimp, simp)
 	result
