@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2014-10-27" />
+<meta name="date" content="2014-12-13" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,57 +54,62 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2014-10-27</em></h4>
+<h4 class="date"><em>2014-12-13</em></h4>
 </div>
 
 
 <div id="concept" class="section level1">
 <h1>Concept</h1>
-<p>The package provides Separate functions for basic tasks and 2nd order tasks that are combined to load data from model output, convert, and finally visualise it.</p>
+<p>The package provides separate functions for basic tasks and 2nd order tasks that are combined to load data from model output, convert, and finally visualise it.</p>
 <div id="parameters" class="section level2">
 <h2>Parameters</h2>
 <p>There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and parameters. The basic idea is to define a simp list for each project and execute the simp defining R code every time you start a script with the according project. Within the script, “local” properties can overwrite the project level settings, e.g. runID, image resolutions etc.</p>
-<p>Since some paths vary according to the machine that executes the R code, the simp list consists of two parts: A machine-specific part and a general, machine-independent part.</p>
+<p>Since some paths vary according to the machine that executes the R code, the simp list is created from two parts: A machine-specific part and a general, machine-independent part.</p>
 <pre class="sourceCode r"><code class="sourceCode r">###############################################################################
 <span class="co"># Machine=specific SIMP definition</span>
+<span class="co"># NOTE: Changes in super-level parameters that are used to derive further</span>
+<span class="co"># parameters need to trigger a re-evaluation of the derived parameters!</span>
 ### Environment ###############################################################
 <span class="co"># craftyr demo</span>
 ### Remove existing definition ################################################
 <span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span><span class="ot">TRUE</span>))
 <span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span><span class="ot">TRUE</span>, <span class="dt">envir=</span><span class="kw">globalenv</span>()), <span class="dt">envir=</span><span class="kw">globalenv</span>())
+<span class="kw">library</span>(craftyr)
 #### Set path to itself #######################################################
 simp &lt;-<span class="st"> </span><span class="kw">list</span>()
 simp$simpDefinition &lt;-<span class="st"> &quot;../demo/simp-machine.R&quot;</span>
-#### Load gneral SIMP #########################################################
-<span class="kw">source</span>(<span class="st">&quot;./simp.R&quot;</span>)
+#### Load project default SIMP ################################################
+<span class="kw">source</span>(<span class="st">&quot;../demo/simp.R&quot;</span>)
+#### Merge crafty default SIMP ################################################
+simp &lt;-<span class="st"> </span><span class="kw">param_mergeDefaultSimp</span>(simp)
 
 ### Directories ###############################################################
+
 simp$dirs &lt;-<span class="st"> </span><span class="kw">list</span>()
-simp$dirs$project           &lt;-<span class="st"> &quot;./&quot;</span>
+simp$dirs$project           &lt;-<span class="st"> &quot;C:/Data/LURG/workspace/CRAFTY_ConsVis-ToyWorld/&quot;</span>
 simp$dirs$data              &lt;-<span class="st"> </span><span class="kw">paste</span>(simp$dirs$project, <span class="st">&quot;data/&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)
-simp$dirs$outputdir         &lt;-<span class="st"> &quot;./&quot;</span>
-dimp$dirs$simp              &lt;-<span class="st"> </span><span class="kw">paste</span>(simp$dirs$project, <span class="st">&quot;./demo&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)
+simp$dirs$outputdir         &lt;-<span class="st"> &quot;C:/Data/LURG/Projects/Volante/Output/&quot;</span>
+simp$dirs$simp              &lt;-<span class="st"> </span><span class="kw">paste</span>(simp$dirs$project, <span class="st">&quot;./config/R/&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)
 [...]</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">################################################################
 <span class="co"># General SIMulation Properties:</span>
 ################################################################
-if (<span class="kw">is.null</span>(simp)) simp &lt;-<span class="st"> </span><span class="kw">list</span>()
+if (!<span class="kw">exists</span>(<span class="st">&quot;simp&quot;</span>)) simp &lt;-<span class="st"> </span><span class="kw">list</span>()
 simp$sim &lt;-<span class="st"> </span><span class="kw">list</span>()
 simp$sim$worldname              &lt;-<span class="st"> &quot;ToyWorld&quot;</span>
 simp$sim$version                &lt;-<span class="st"> &quot;V001&quot;</span>
 simp$sim$allocversion           &lt;-<span class="st"> &quot;V001AllocGen&quot;</span>
 simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</span>
 [...]</code></pre>
-<p>The machine-specific simp part in an according script (simp-&lt;machine&gt;.R) contains the (machine-specific) path to itself and to the machine-independent simp part script (simp.R), loads that general part and may overwrite certain parameters.</p>
-<p>Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script using craftyr should loud the simp code anew. During that process, the entire simp list including all possible changes are removed from memory and loaded anew.</p>
+<p>The machine-specific simp part in an according script (simp-&lt;machine&gt;.R) contains the (machine-specific) path to itself and to the machine-independent simp part script (simp.R), loads that general part and may overwrite certain parameters. It also merges the defined parameters in the general crafyr default parameter list to apply craftyr defaults when no other specification is given.</p>
+<p>Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script using craftyr should load the simp code anew. During that process, the entire simp list including all possible changes are removed from memory and loaded anew.</p>
 <p>The simp list consists of a number of sublists:</p>
 <ul>
+<li><p>sim</p></li>
 <li><p>dirs</p></li>
-<li><p>output</p>
-<ul>
-<li>fig</li>
-<li>csv</li>
-</ul></li>
+<li><p>csv</p></li>
+<li><p>mdata</p></li>
+<li><p>fig</p></li>
 </ul>
 </div>
 </div>
@@ -112,12 +117,8 @@ simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</spa
 <h1>Visualise Input Data</h1>
 <div id="capital-data" class="section level2">
 <h2>Capital Data</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">getwd</span>())</code></pre>
-<pre><code>## [1] &quot;C:/Data/LURG/workspace/craftyr/vignettes&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co">#source(&quot;../demo/simp-machine.R&quot;)</span>
-<span class="co">#source(paste(simp$dirs$simp, &quot;simp.R&quot;, sep=&quot;&quot;))</span>
-
-<span class="co"># read capital data from CSV into raster</span>
+## read capital data from CSV into raster
 <span class="co">#data &lt;- input_csv_param_capitals(simp)</span>
 <span class="co">#rasters &lt;- convert_2raster(simp, data, layers = simp$mdata$capitals)</span>
 <span class="co">#names(rasters) &lt;- &quot;RegionA&quot;</span>

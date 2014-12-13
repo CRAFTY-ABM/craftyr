@@ -53,8 +53,8 @@ output_visualise_initFigure <- function(simp, outdir, filename, ensurePath = TRU
 		}
 	}
 	
-	if(!is.null(simp$fig$numCols)) {
-		numCols = simp$fig$numCols
+	if(!is.null(simp$fig$numcols)) {
+		numCols = simp$fig$numcols
 	} else {
 		numCols = 1
 	}

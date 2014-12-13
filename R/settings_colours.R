@@ -10,12 +10,12 @@ settings_colours_getAftColours <- function() {
 					"3" = "indianred1",
 					"4" = "green4",
 					"5" = "royalblue2",
-					"6" = "darkgreen")
+					"6" = "darkviolet")
 }
 #' Get colour palette of requested dimension
 #' @param number 
 #' @param dim  
-#' @return coour palette
+#' @return colour palette
 #' 
 #' @author Sascha Holzhauer
 #' @export
@@ -44,6 +44,9 @@ settings_colours_getColorSet <- function(number, set="Set1") {
 		colors = grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
 	} else if (set=="GreenRed") {
 		colors = rev(grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
+	}
+	if (is.null(set)) {
+		colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
 	}
 	else {
 		colors = rev(RColorBrewer::brewer.pal(number, set))

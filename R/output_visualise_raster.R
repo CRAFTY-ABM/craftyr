@@ -1,4 +1,80 @@
 #' Prints a list of raster data as ggplot2 facet plot
+#' 
+#' @param simp SIMulation Properties
+#' @param inforasterdata (list of) data.frames contain info and raster objects. If a list, elements must be named differently
+#' @param idcolumn column used to separate and name rasters
+#' @param title name of plot
+#' @param filenamepostfix appended to the default output filename @seealso output_tools_getDefaultFilename
+#' @param legendtitle title for legend of raster values
+#' @param factorial true if raster values are factorial (affects colour palette)
+#' @param omitaxisticks omit axis ticks if true
+#' @param ncol number of columns of facet wrap. Defauls to the number of rasters in the first dataframe
+#' @param coloursetname id for colour set (if factorial)
+#' @param legenditemnames names for legend items
+#' @return raster visualisation
+#' @example demo/example_visualise_raster_plots.R
+#'
+#' @author Sascha Holzhauer
+#' @export
+visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
+		title = "", filenamepostfix = title, legendtitle = "",
+		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(inforasterdata)) length(inforasterdata[[1]][,1]) else length(inforasterdata[,1]), 
+		coloursetname="None", legenditemnames = NULL) {
+	
+	if (simp$debug$output > 0) cat("Print raster data", "...\n")
+	
+	if(!is.list(inforasterdata)) {
+		inforasterdata <- list("Something" = inforasterdata)
+	}
+	
+	data <- NULL
+	listlen <- length(inforasterdata)
+	data <- mapply(function(infoRasterDataVector, listname) {
+						idata <- apply(infoRasterDataVector, MARGIN=1, function(infoRaster) {
+							s <- data.frame(raster::rasterToPoints(infoRaster[["Raster"]]), 
+									ID = paste(if (listlen > 1) listname, infoRaster[[idcolumn]]))
+							colnames(s) <- c("X", "Y", "Values", "ID")
+							s
+						})
+						do.call(rbind, idata)
+		}, inforasterdata, names(inforasterdata), SIMPLIFY = FALSE)
+	d <- do.call(rbind, data)
+
+	## PLOTTING
+	simp$fig$numcols <- ncol
+	simp$fig$numfigs <- length(unique(d$ID))
+	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", sep="/"), 
+			filename = output_tools_getDefaultFilename(simp, postfix = filenamepostfix))
+
+	scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = c("red", "green"))
+	if (factorial) {
+		pointDf$Values <- factor(pointDf$Values)
+		scaleFillElem <- ggplot2::scale_fill_manual(name=legendtitle, 
+				values = settings_colours_getColorSet(set = coloursetname),
+				labels = legenditemnames)
+	}
+	
+	omitaxistickselem <- NULL
+	if (omitaxisticks) {
+		omitaxistickselem <- ggplot2::theme(axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), 
+				axis.title = ggplot2::element_blank())
+	}
+	
+	p1 <- ggplot2::ggplot()+
+			ggplot2::layer(geom="raster", data=d, mapping=ggplot2::aes(X,Y,fill=Values)) +
+			ggplot2::facet_wrap(~ID, ncol = ncol) +
+			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
+			if (title != "") ggplot2::labs(title = title) else NULL + 
+			scaleFillElem +
+			omitaxistickselem +
+			#ggplot2::scale_x_continuous(name=expression(paste("Longitude (",degree,")")),limits=c(-4,2),expand=c(0,0))+
+			#ggplot2::scale_y_continuous(name=expression(paste("Latitude (",degree,")")),limits=c(4,12),expand=c(0,0))+
+			ggplot2::coord_equal()
+	print(p1)
+	dev.off()
+}
+#' Prints a list of raster data as ggplot2 facet plot
+#' DEPRECATED
 #' @param simp SIMulation Properties
 #' @param rasterdata if a list, elements must be named differently
 #' @param dataname vector of names of the same length as rasterData
@@ -13,7 +89,7 @@
 #'
 #' @author Sascha Holzhauer
 #' @export
-visualise_raster_printPlots <- function(simp, rasterdata, dataname = NULL, legendtitle = "",
+visualise_raster_printPlotsUnnamed <- function(simp, rasterdata, dataname = NULL, legendtitle = "",
 		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname="None", legenditemnames = NULL) {
 
 	if(!is.list(rasterdata)) {
@@ -30,16 +106,16 @@ visualise_raster_printPlots <- function(simp, rasterdata, dataname = NULL, legen
 		outerListName <- names(rasterdata)[outercounter]
 		for (l in rasters) {
 			rasterName <- names(l)
-			
+			if (is.null(rasterName)) 
 			counter = counter + 1
-			s <- data.frame(raster::rasterToPoints(l), id = paste(outerListName, "-", names(l)), sep="")
+			s <- data.frame(raster::rasterToPoints(l), ID = paste(outerListName, "-", names(l)), sep="")
 			colnames(s) <- c("X", "Y", "Values", "ID")
 			pointDf <- rbind(pointDf,s)
 		}
 	}
 
 	if (length(rasterdata) != length(unique(pointDf$ID))) {
-		R.oo::throw("Elemens of rasterData must be named differently!")
+		R.oo::throw.default("Elemens of rasterData must be named differently!")
 	}
 
 	if (!is.null(dataname)) {
