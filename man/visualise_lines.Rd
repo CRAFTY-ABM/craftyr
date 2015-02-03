@@ -15,7 +15,7 @@ visualise_lines(simp, data, y_column, title = NULL, colour_column = NULL,
 \arguments{
 \item{simp}{SIMulation Properties}
 
-\item{data}{data.frame}
+\item{data}{data.frame or list that is rbinded to a data.frame}
 
 \item{y_column}{}
 

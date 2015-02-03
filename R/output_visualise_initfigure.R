@@ -1,13 +1,13 @@
 #' Init figure output
 #' @param simp SIMulation Properties
-#' @param outdir
+#' @param outdir (default: simp$dirs$output$figures) 
 #' @param filename 
 #' @param ensurePath switch
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-output_visualise_initFigure <- function(simp, outdir, filename, ensurePath = TRUE) {
+output_visualise_initFigure <- function(simp, outdir = simp$dirs$output$figures, filename, ensurePath = TRUE) {
 
 	if (is.null(filename)) {
 		R.oo::throw("Filename may not be NULL!")

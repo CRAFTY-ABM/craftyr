@@ -24,3 +24,8 @@ devtools::build(pkgsName)
 install(pkgsName)
 # devtools::install_bitbucket("geoslurg/craftyr@default")
 browseVignettes("craftyr")
+
+
+## prepare data objects
+cellData <- read.csv("./inst/extdata/Scenario-0-0-Region-Cell-2010.csv")
+save(cellData, file="./data/cellData.rda")

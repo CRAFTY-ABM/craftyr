@@ -1,3 +1,4 @@
+library(ggplot2)  # correct (see stack exchange question) for %+replace%
 #' Prints a list of raster data as ggplot2 facet plot
 #' 
 #' @param simp SIMulation Properties
@@ -19,7 +20,7 @@
 visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 		title = "", filenamepostfix = title, legendtitle = "",
 		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(inforasterdata)) length(inforasterdata[[1]][,1]) else length(inforasterdata[,1]), 
-		coloursetname="None", legenditemnames = NULL) {
+		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL) {
 	
 	if (simp$debug$output > 0) cat("Print raster data", "...\n")
 	
@@ -46,11 +47,11 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", sep="/"), 
 			filename = output_tools_getDefaultFilename(simp, postfix = filenamepostfix))
 
-	scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = c("red", "green"))
+	scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = simp$colours$binarycolours)
 	if (factorial) {
-		pointDf$Values <- factor(pointDf$Values)
+		d$Values <- factor(d$Values)
 		scaleFillElem <- ggplot2::scale_fill_manual(name=legendtitle, 
-				values = settings_colours_getColorSet(set = coloursetname),
+				values = simp$colours$GenericFun(set = coloursetname),
 				labels = legenditemnames)
 	}
 	
@@ -63,15 +64,14 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 	p1 <- ggplot2::ggplot()+
 			ggplot2::layer(geom="raster", data=d, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
-			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
-			if (title != "") ggplot2::labs(title = title) else NULL + 
+			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
+			(if (title != "") ggplot2::labs(title = title)) + 
 			scaleFillElem +
 			omitaxistickselem +
-			#ggplot2::scale_x_continuous(name=expression(paste("Longitude (",degree,")")),limits=c(-4,2),expand=c(0,0))+
-			#ggplot2::scale_y_continuous(name=expression(paste("Latitude (",degree,")")),limits=c(4,12),expand=c(0,0))+
-			ggplot2::coord_equal()
+			ggplot2::coord_equal(ratio=1) +
+			ggplotaddon
 	print(p1)
-	dev.off()
+	simp$fig$close()
 }
 #' Prints a list of raster data as ggplot2 facet plot
 #' DEPRECATED
@@ -90,7 +90,7 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 #' @author Sascha Holzhauer
 #' @export
 visualise_raster_printPlotsUnnamed <- function(simp, rasterdata, dataname = NULL, legendtitle = "",
-		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname="None", legenditemnames = NULL) {
+		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname=simp$colours$defaultset, legenditemnames = NULL) {
 
 	if(!is.list(rasterdata)) {
 		rasterdata <- list(rasterdata)
@@ -139,14 +139,12 @@ visualise_raster_printPlotsUnnamed <- function(simp, rasterdata, dataname = NULL
 	p1 <- ggplot2::ggplot()+
 			ggplot2::layer(geom="raster", data=pointDf, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
-			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
+			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
 			scaleFillElem +
 			omitaxistickselem +
-			#ggplot2::scale_x_continuous(name=expression(paste("Longitude (",degree,")")),limits=c(-4,2),expand=c(0,0))+
-			#ggplot2::scale_y_continuous(name=expression(paste("Latitude (",degree,")")),limits=c(4,12),expand=c(0,0))+
 			ggplot2::coord_equal()
 	print(p1)
-	dev.off()
+	simp$fig$close()
 }
 #' Writes a list of raster data as single raw (only the raster data) ggplot2 plot files
 #' @param simp SIMulation Properties
@@ -163,7 +161,7 @@ visualise_raster_printPlotsUnnamed <- function(simp, rasterdata, dataname = NULL
 #' @author Sascha Holzhauer
 #' @export
 visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, legendtitle = "", 
-		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname="None", legenditemnames = NULL) {
+		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname=simp$colours$defaultset, legenditemnames = NULL) {
 
 	if(!is.list(rasterdata)) {
 		rasterdata <- list(rasterdata)
@@ -179,13 +177,13 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 			
 			simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", outerListName, sep="/"), filename = rasterName)
 			
-			s <- data.frame(rasterToPoints(l), id = names(l))
+			s <- data.frame(raster::rasterToPoints(l), id = names(l))
 			colnames(s) <- c("X", "Y", "Values", "ID")
 			if (!is.null(datanames)) {
 				levels(s$ID) <- unlist(datanames)
 			}
 	
-			scaleFillElem <- scale_fill_gradientn(name=legendtitle, colours = c("red", "green"))
+			scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = c("red", "green"))
 			if (factorial) {
 				s$Values <- factor(s$Values)
 				scaleFillElem <- ggplot2::scale_fill_manual(name=legendtitle, 
@@ -194,7 +192,7 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 			}
 	
 			p1 <- ggplot2::ggplot()+
-				ggplot2::layer(geom="raster", data=s, mapping=aes(X,Y,fill=Values)) +
+				ggplot2::layer(geom="raster", data=s, mapping=ggplot2::aes(X,Y,fill=Values)) +
 				scaleFillElem +
 				visualisation_raster_printRawPlots_theme_nothing() +
 				ggplot2::scale_x_continuous(expand=c(0,0)) + ggplot2::scale_y_continuous(expand=c(0,0)) +
@@ -205,7 +203,7 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 	
 			grid::grid.draw(gt[ge$t:ge$b, ge$l:ge$r])
 	
-			dev.off()
+			simp$fig$close()
 		}
 	}
 }
@@ -230,6 +228,35 @@ visualisation_raster_printRawPlots_theme_nothing <- function(base_size = 12, bas
 					panel.margin = grid::unit(0,"lines"),
 					panel.border = ggplot2::element_blank(),
 					plot.margin = grid::unit(rep(0,4),"lines"),
+					axis.ticks = ggplot2::element_blank(),
+					axis.text.x = ggplot2::element_blank(),
+					axis.text.y = ggplot2::element_blank(),
+					axis.title.x = ggplot2::element_blank(),
+					axis.title.y = ggplot2::element_blank(),
+					axis.line = ggplot2::element_blank(),
+					axis.ticks.length = grid::unit(0,"null"),
+					axis.ticks.margin = grid::unit(0,"null")
+			)
+}
+
+#' Only facet elements
+#' @param base_size 
+#' @param base_family 
+#' @return theme
+#' 
+#' @author Sascha Holzhauer
+#' @export
+visualisation_raster_legendonlytheme <- function(base_size = 11, base_family = "Helvetica"){
+	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
+			ggplot2::theme(
+					axis.ticks.margin = grid::unit(0, "lines"),
+					panel.background = ggplot2::element_blank(),
+					panel.grid.major = ggplot2::element_blank(),
+					panel.grid.minor = ggplot2::element_blank(),
+					panel.margin = grid::unit(0,"lines"),
+					panel.border = ggplot2::element_blank(),
+					plot.margin = grid::unit(rep(0,4),"lines"),
+					plot.title = ggplot2::element_blank(),
 					axis.ticks = ggplot2::element_blank(),
 					axis.text.x = ggplot2::element_blank(),
 					axis.text.y = ggplot2::element_blank(),

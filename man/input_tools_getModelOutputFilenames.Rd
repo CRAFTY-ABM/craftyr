@@ -2,6 +2,7 @@
 \name{input_tools_getModelOutputFilenames}
 \alias{input_tools_getModelOutputFilenames}
 \title{Determines the model output filenames for the given simp and datatype, dataname, ticks settings.
+Able to read multiple scenarios/regions/runids.
 Attaches infos (region, runid, scenario).}
 \usage{
 input_tools_getModelOutputFilenames(simp,
@@ -34,6 +35,7 @@ vector of filenames
 }
 \description{
 Determines the model output filenames for the given simp and datatype, dataname, ticks settings.
+Able to read multiple scenarios/regions/runids.
 Attaches infos (region, runid, scenario).
 }
 \author{

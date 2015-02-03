@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2014-12-13" />
+<meta name="date" content="2015-02-03" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2014-12-13</em></h4>
+<h4 class="date"><em>2015-02-03</em></h4>
 </div>
 
 
@@ -113,6 +113,11 @@ simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</spa
 </ul>
 </div>
 </div>
+<div id="handling-data" class="section level1">
+<h1>Handling Data</h1>
+<p>Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store processed and aggregated data for further use. R provides the possibility of storing R objects into a file.</p>
+<p>To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data changes. Crucial is a consistent naming of R objects!</p>
+</div>
 <div id="visualise-input-data" class="section level1">
 <h1>Visualise Input Data</h1>
 <div id="capital-data" class="section level2">
@@ -124,6 +129,14 @@ simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</spa
 <span class="co">#names(rasters) &lt;- &quot;RegionA&quot;</span>
 <span class="co">#visualise_raster_printRawPlots(simp, rasters, legendtitle = &quot;Capitals Example&quot;, </span>
 <span class="co">#       factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id=&quot;None&quot;)</span></code></pre>
+</div>
+<div id="using-craftyr-to-put-custom-plots-in-the-right-place" class="section level2">
+<h2>Using craftyr to Put Custom Plots in the Right Place</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="dt">package=</span><span class="st">&quot;craftyr&quot;</span>)
+<span class="kw">source</span>(<span class="st">&quot;../demo/simp-machine.R&quot;</span>)
+simp$fig$<span class="kw">init</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;example/hist_aft.png&quot;</span>)
+<span class="kw">hist</span>(cellData$LandUseIndex, <span class="dt">breaks=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>)
+<span class="kw">dev.off</span>()</code></pre>
 </div>
 </div>
 
