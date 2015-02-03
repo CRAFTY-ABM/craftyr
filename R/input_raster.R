@@ -42,7 +42,7 @@ read_raster_single <- function(scenario = lix$scenario, world = pix$world,
 		year = lix$year, region = NULL, dataType = NULL, dataName = NULL, useRegionDir = FALSE) {
 	
 	if (is.null(year)) {
-		throw("No parameter year given and lix$year not set!")
+		R.oo::throw.default("No parameter year given and lix$year not set!")
 	}
 	
 	
@@ -52,14 +52,14 @@ read_raster_single <- function(scenario = lix$scenario, world = pix$world,
 	print(paste("Read raster file ", fn, sep=""))
 	
 	if(!file.exists(fn)) {
-		throw(paste("File ", fn, "\n does not exist!\nCheck basedir, scenario, world, runid and year!", sep=""))
+		R.oo::throw.default(paste("File ", fn, "\n does not exist!\nCheck basedir, scenario, world, runid and year!", sep=""))
 	}
 	
 	r <- raster(fn)
 	# r[is.na(r)] <- 0.0
 	r
 }
-#' Get list (regions) of lists (ticks) of raster data from files whose source is taken from simp.
+#' Get list (scenarios/regions/runids) of lists (ticks) of raster data from files whose source is taken from simp.
 #' 
 #' @param simp SIMulation Properties
 #' @param datatype category of raster data (e.g. "Capital")
@@ -72,7 +72,7 @@ read_raster_single <- function(scenario = lix$scenario, world = pix$world,
 #' @author Sascha Holzhauer
 #' @export
 input_raster_output <- function(simp,
-		datatype,
+		datatype = NULL ,
 		dataname, 
 		starttick = 0,
 		endtick = simp$tech$maxtick,

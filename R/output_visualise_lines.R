@@ -3,7 +3,7 @@
 #' Uses ticks as X variable if present, runid otherwise.
 #' 
 #' @param simp SIMulation Properties
-#' @param data data.frame
+#' @param data data.frame or list that is rbinded to a data.frame
 #' @param y_column
 #' @param title figure title
 #' @param colour_column column used to define colours
@@ -28,6 +28,9 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 		facet_column = NULL, facet_ncol = 2, filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
 		alpha=0.7, ggplotparams = NULL) {
 
+	if (!is.data.frame(data)) {
+		data <- do.call(rbind, data)
+	}
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "lines", sep="/"), filename = filename)
 	
 	scaleColourElem <- NULL
@@ -66,5 +69,5 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 			scaleLinetypeElem + 
 			if (title != "") ggplot2::labs(title = title) else NULL
 	print(p1)
-	dev.off()
+	simp$fig$close()
 }

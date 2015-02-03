@@ -5,7 +5,7 @@
 \usage{
 visualise_raster_printRawPlots(simp, rasterdata, datanames = NULL,
   legendtitle = "", factorial = FALSE, omitaxisticks = FALSE, ncol = 1,
-  coloursetname = "None", legenditemnames = NULL)
+  coloursetname = simp$colours$defaultset, legenditemnames = NULL)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

@@ -96,6 +96,7 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 	filteredTicks
 }
 #' Determines the model output filenames for the given simp and datatype, dataname, ticks settings.
+#' Able to read multiple scenarios/regions/runids.
 #' Attaches infos (region, runid, scenario).
 #' 
 #' @inheritParams input_tools_getAvailableTicks
@@ -190,4 +191,35 @@ input_tools_getModelInputFilenames <- function(simp, folders = input_tools_getMo
 		tickinterval = NULL) {
 	input_tools_getModelOutputFilenames(simp, folders, datatype, dataname,	extension,
 			pertick, starttick, endtick, tickinterval)
+}
+#' Wrapper for save
+#' @param simp 
+#' @param object 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_save <- function(simp, object) {
+	if (simp$debug$input > 0) {
+		cat("Saving object", object, "to",
+				paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
+						simp$sim$id, ".RData", sep=""), "\n")
+	}
+	shbasic::sh.ensurePath(paste(simp$dirs$output$rdata, simp$sim$id, "/", sep=""))
+	save(list=object, file = paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
+					simp$sim$id, ".RData", sep=""), envir = parent.frame())
+}
+#' #' Wrapper for load
+#' @param simp 
+#' @param objectName 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_load <- function(simp, objectName,...) {
+	if (simp$debug$input > 0) {
+		cat("Loading object", objectName, "from",
+				paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
+						simp$sim$id, ".RData", sep=""), "\n")
+	}
+	load(file = paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
+					simp$sim$id, ".RData", sep=""), envir = parent.frame(), ...)
 }

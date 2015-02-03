@@ -4,13 +4,41 @@
 #' @author Sascha Holzhauer
 #' @export
 settings_colours_getAftColours <- function() {
-	aftColours <- c("0" = "orange1",
+	aftColours <- c("-1" = "white",
+					"0" = "orange1",
 					"1" = "lightgoldenrod",
 					"2" = "indianred4",
 					"3" = "indianred1",
 					"4" = "green4",
 					"5" = "royalblue2",
 					"6" = "darkviolet")
+}
+#' Return AFT colours
+#' @return coolour pallete
+#' 
+#' @author Sascha Holzhauer
+#' @export
+settings_colours_getServiceColours <- function() {
+	aftColours <- c("-1" = "white",
+			"Meat" 			= "indianred1",
+			"Cereal" 	 	= "orange1",
+			"Recreation" 	= "royalblue2",
+			"Timber" 		= "green4",
+			"Biofuel" 		= "darkviolet")
+}
+#' Return AFT colours
+#' @return coolour pallete
+#' 
+#' @author Sascha Holzhauer
+#' @export
+settings_colours_getCapitalColours <- function() {
+	aftColours <- c("-1" = "white",
+			"Cprod" = "orange1",
+			"Fprod" = "darkgreen",
+			"Infra" = "violet",
+			"Grass" = "indianred1",
+			"Nat" 	= "green4",
+			"Econ" 	= "blue")
 }
 #' Get colour palette of requested dimension
 #' @param number 
@@ -35,7 +63,7 @@ settings_colours_getColors <- function(number, dim=1) {
 #' 
 #' @author Sascha Holzhauer
 #' @export
-settings_colours_getColorSet <- function(number, set="Set1") {
+settings_colours_getColorSet <- function(number=9, set="Set1") {
 	if (set=="AFT") {
 		colors = settings_colours_getAftColours()
 	} else if (set=="Topo") {
@@ -44,8 +72,7 @@ settings_colours_getColorSet <- function(number, set="Set1") {
 		colors = grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
 	} else if (set=="GreenRed") {
 		colors = rev(grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
-	}
-	if (is.null(set)) {
+	} else if (is.null(set)) {
 		colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
 	}
 	else {

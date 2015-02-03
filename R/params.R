@@ -57,17 +57,24 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$resfactor		<- 3
 	defsimp$fig$outputformat 	<- "png" #"jpeg"
 	defsimp$fig$init			<- craftyr::output_visualise_initFigure
+	defsimp$fig$close			<- dev.off
 	defsimp$fig$numfigs			<- 1
 	defsimp$fig$numcols			<- 1
 	defsimp$fig$height			<- 700
 	defsimp$fig$width			<- 1000
 	defsimp$fig$splitfigs		<- FALSE
+	defsimp$fig$facetlabelsize	<- 12
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()
-	defsimp$colours$AFT 		<- settings_colours_getAftColours()
-	defsimp$colours$Region 		<- settings_colours_getColorSet(12, "Set3")
-	defsimp$colours$Runid 		<- settings_colours_getColorSet(12, "Set3")
+	defsimp$colours$AFT 			<- settings_colours_getAftColours()
+	defsimp$colours$Service 		<- settings_colours_getServiceColours()
+	defsimp$colours$Capital 		<- settings_colours_getCapitalColours()
+	defsimp$colours$Region 			<- settings_colours_getColorSet(12, "Set3")
+	defsimp$colours$Runid 			<- settings_colours_getColorSet(12, "Set3")
+	defsimp$colours$GenericFun		<- settings_colours_getColorSet
+	defsimp$colours$binarycolours 	<- c("skyblue1", "black")
+	defsimp$colours$defaultset		<- "Dark2"
 	
 	### Technical Settings ###########################################################
 	defsimp$tech <- list()
@@ -79,7 +86,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$debug$global 	<- 0
 	defsimp$debug$db		<- defsimp$debug$global
 	defsimp$debug$input		<- defsimp$debug$global
-	defsimp$debug$output		<- defsimp$debug$global
+	defsimp$debug$output	<- defsimp$debug$global
 	
 	
 	result <- modifyList(defsimp, simp)

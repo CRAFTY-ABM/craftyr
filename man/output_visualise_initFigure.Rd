@@ -3,12 +3,13 @@
 \alias{output_visualise_initFigure}
 \title{Init figure output}
 \usage{
-output_visualise_initFigure(simp, outdir, filename, ensurePath = TRUE)
+output_visualise_initFigure(simp, outdir = simp$dirs$output$figures, filename,
+  ensurePath = TRUE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}
 
-\item{outdir}{}
+\item{outdir}{(default: simp$dirs$output$figures)}
 
 \item{filename}{}
 

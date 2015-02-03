@@ -87,6 +87,15 @@ The simp list consists of a number of sublists:
 
 * fig
     
+    
+# Handling Data
+
+Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store
+processed and aggregated data for further use. R provides the possibility of storing R objects into a file.
+
+To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation
+routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data
+changes. Crucial is a consistent naming of R objects!
 
 # Visualise Input Data
 
@@ -100,4 +109,14 @@ The simp list consists of a number of sublists:
 #names(rasters) <- "RegionA"
 #visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
 #		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
+```
+
+## Using craftyr to Put Custom Plots in the Right Place
+```{r, eval=FALSE}
+data(package="craftyr")
+source("../demo/simp-machine.R")
+simp$fig$init(simp, filename = "example/hist_aft.png")
+hist(cellData$LandUseIndex, breaks=3, col="red")
+dev.off()
+
 ```

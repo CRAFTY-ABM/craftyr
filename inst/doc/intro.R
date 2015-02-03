@@ -47,3 +47,11 @@
 #visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
 #		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
 
+## ----, eval=FALSE--------------------------------------------------------
+#  data(package="craftyr")
+#  source("../demo/simp-machine.R")
+#  simp$fig$init(simp, filename = "example/hist_aft.png")
+#  hist(cellData$LandUseIndex, breaks=3, col="red")
+#  dev.off()
+#  
+
