@@ -3,8 +3,8 @@
 \alias{input_tools_getModelOutputDir}
 \title{Determines the model output folder(s) for the given \eqn{simp}.
 If one of the parameters \eqn{simp$sim$version}, \eqn{simp$sim$world},
-\eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runid},
-or \eqn{simp$sim$regions} is a vector a vector of directories is returned.}
+\eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runids},
+or \eqn{simp$sim$regions} is a vector, a vector of directories is returned.}
 \usage{
 input_tools_getModelOutputDir(simp)
 }
@@ -17,8 +17,8 @@ String or vector of output folder(s)
 \description{
 Determines the model output folder(s) for the given \eqn{simp}.
 If one of the parameters \eqn{simp$sim$version}, \eqn{simp$sim$world},
-\eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runid},
-or \eqn{simp$sim$regions} is a vector a vector of directories is returned.
+\eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runids},
+or \eqn{simp$sim$regions} is a vector, a vector of directories is returned.
 }
 \author{
 Sascha Holzhauer

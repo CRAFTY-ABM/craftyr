@@ -3,12 +3,14 @@
 \alias{settings_colours_getColorSet}
 \title{Return requested colour palette}
 \usage{
-settings_colours_getColorSet(number = 9, set = "Set1")
+settings_colours_getColorSet(simp, number = 9, set = "Set1")
 }
 \arguments{
 \item{number}{number of required colours}
 
 \item{set}{one of c("Topo","RedGreen","GreenRed") or one for brewer.pal}
+
+\item{SIMP}{}
 }
 \value{
 colour palette

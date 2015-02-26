@@ -86,9 +86,43 @@ The simp list consists of a number of sublists:
 * mdata
 
 * fig
+
+* debug
     
-    
+### Defining Colours
+
+Craftyr functions take colour set names which are passed to the generic colour setting function to obtain sets of colours
+(simp$colours$GenericFun). The function is implemented in crafty and maps common colour sets (AFT, Capitals, Services, Regions,
+Runids, binary colour set for e.g. adoption) to colour sets defined via particular simp parameters (e.g. simp$colours$AFT).
+Therefore, there are two ways to influence colour settings:
+
+* change the assignment to specific colour sets (simp$colours$<Set>)
+
+* change the assignment for the generic colour setting function, using your own implementation that may deal with defined 
+colour set names in a specific, dynamic way.
+
+# Debugging/Logging
+
+Craftyr uses the package 'futile.logger'. Initially, it sets up a console outputter 
+to log everything on INFO level. However, the logger can be configured in a detailed way.
+
+```{r, eval=FALSE}
+futile.logger::flog.threshold(futile.logger::DEBUG, name='crafty')
+futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
+```
+It is also possible to add handlers for further sinks.  
+
+```{r, eval=FALSE}
+flog.appender(appender.file(filename), name='test.logger')
+```
+
+Compare the documentation for package 'futile.logger' for more detailed information.
+A tutorial is also [available](http://www.r-bloggers.com/better-logging-in-r-aka-futile-logger-1-3-0-released/).
+
+ 
 # Handling Data
+
+## Storing Data
 
 Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store
 processed and aggregated data for further use. R provides the possibility of storing R objects into a file.
@@ -96,6 +130,17 @@ processed and aggregated data for further use. R provides the possibility of sto
 To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation
 routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data
 changes. Crucial is a consistent naming of R objects!
+
+```{r, eval=FALSE}
+csv_LandUseIndex_rbinded <- data
+input_tools_save(simp, "csv_LandUseIndex_rbinded")
+rm (csv_LandUseIndex_rbinded)
+```
+
+To load an object to the global environment again, just execute
+```{r, eval=FALSE}
+input_tools_load(simp, "csv_LandUseIndex_rbinded")
+```
 
 # Visualise Input Data
 
@@ -120,3 +165,15 @@ hist(cellData$LandUseIndex, breaks=3, col="red")
 dev.off()
 
 ```
+
+
+# Troubleshooting
+
+## Error Messages
+
+```{r, eval=FALSE}
+Error in if (simp$fig$plottitle > 0) { : argument is of length zero
+```
+Such an error message indicates a missing component in SIMP. Usually, the custom configuration assigned new lists
+to a super-component, erasing the orignal (default) content of that super-compomnent. Therefore, make sure your
+custom configuration does not assign new lists unchecked (ie. without checking ```if (is.null(simp$sim)) simp$sim <- list()```. 

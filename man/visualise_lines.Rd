@@ -53,7 +53,7 @@ Uses ticks as X variable if present, runid otherwise.
 }
 \examples{
 #######################################################################
-# crafty demo for raster visualisation
+# crafty demo for raster visualisation (capital input data)
 # Last update: 	23.06.2014
 # Author: 		Sascha Holzhauer
 # TODO adapt from rawPlot

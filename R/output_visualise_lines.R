@@ -31,6 +31,13 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
 	}
+	if (!is.null(linetype_column)) {
+		data[,linetype_column] <- as.factor(data[,linetype_column])
+	}
+	if (!is.null(facet_column)) {
+		data[,facet_column] <- as.factor(data[,facet_column])
+	}
+
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "lines", sep="/"), filename = filename)
 	
 	scaleColourElem <- NULL

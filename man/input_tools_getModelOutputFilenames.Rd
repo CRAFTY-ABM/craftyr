@@ -31,7 +31,7 @@ input_tools_getModelOutputFilenames(simp,
 \item{tickinterval}{interval of requested range of ticks}
 }
 \value{
-vector of filenames
+list of vector of filenames (list elements rerpesent files of one folder)
 }
 \description{
 Determines the model output filenames for the given simp and datatype, dataname, ticks settings.

@@ -38,6 +38,23 @@
 #  simp$sim$scenario				<- "Scenario"
 #  [...]
 
+## ----, eval=FALSE--------------------------------------------------------
+#  logging::setLevel('DEBUG', "craftyr")
+#  logging::setLevel("FINER", "craftyr.input")
+
+## ----, eval=FALSE--------------------------------------------------------
+#  logging::addHandler(logging::writeToFile, logger="craftyr", file="sample.log")
+#  logging::setLevel("FINER", logging::getHandler("logging::writeToFile")
+#  
+
+## ----, eval=FALSE--------------------------------------------------------
+#  csv_LandUseIndex_rbinded <- data
+#  input_tools_save(simp, "csv_LandUseIndex_rbinded")
+#  rm (csv_LandUseIndex_rbinded)
+
+## ----, eval=FALSE--------------------------------------------------------
+#  input_tools_load(simp, "csv_LandUseIndex_rbinded")
+
 ## ----, eval=TRUE---------------------------------------------------------
 #source("../demo/simp-machine.R")
 ## read capital data from CSV into raster
@@ -54,4 +71,7 @@
 #  hist(cellData$LandUseIndex, breaks=3, col="red")
 #  dev.off()
 #  
+
+## ----, eval=FALSE--------------------------------------------------------
+#  Error in if (simp$fig$plottitle > 0) { : argument is of length zero
 

@@ -108,9 +108,15 @@ input_raster_output <- function(simp,
 
 	listnames <- names(files)
 	mapply(function(fileinfovector, name) {
-				if (simp$debug$input > 0) cat("Handle directory", name, "...\n")
+				futile.logger::flog.debug("Handle directory %s...\n",
+						name,
+						name="crafy.input.raster")
+				
 				rasters <- apply(fileinfovector, MARGIN=1, function(fileinfo) {
-							if (simp$debug$input > 0) cat("Read year", fileinfo["Tick"], "\n")
+							futile.logger::flog.debug("Read year %s...\n",
+									fileinfo["Tick"],
+									name="crafy.input.raster")
+						
 							r <- raster::raster(fileinfo["Filename"])
 							data <- raster::values(r)
 							data[is.na(data)] <- 0.0

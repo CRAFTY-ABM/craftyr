@@ -23,7 +23,7 @@ visualise_raster_printPlotsUnnamed(simp, rasterdata, dataname = NULL,
 
 \item{ncol}{number of columns of facet wrap}
 
-\item{coloursetname}{id for colour set (if factorial)}
+\item{coloursetname}{id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")}
 
 \item{legenditemnames}{names for legend items}
 }
@@ -36,7 +36,7 @@ DEPRECATED
 }
 \examples{
 #######################################################################
-# crafty demo for raster visualisation
+# crafty demo for raster visualisation (capital input data)
 # Last update: 	23.06.2014
 # Author: 		Sascha Holzhauer
 # TODO adapt from rawPlot

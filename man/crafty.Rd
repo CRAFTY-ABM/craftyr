@@ -20,10 +20,6 @@ Date	   	\tab 	2014-06-27 \cr
 Changes	\tab	refactoring, comment \cr
 }
 }
-\examples{
-source(simp$simpDefinition)
-input_csv_param_capitals()
-}
 \author{
 Sascha Holzhauer, CESR/UoE \email{Sascha.Holzhauer@ed.ac.uk},
 			Calum Brown, UoE, \email{Calum.Brown@ed.ac.uk}
@@ -35,6 +31,8 @@ TODO
 \keyword{LUCC}
 \keyword{change}
 \keyword{crafty}
+\keyword{demo/example_visualise_raster_capitals.R}
+\keyword{example}
 \keyword{land}
 \keyword{post-processing}
 \keyword{use}

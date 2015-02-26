@@ -5,7 +5,8 @@
 \usage{
 visualise_raster_printRawPlots(simp, rasterdata, datanames = NULL,
   legendtitle = "", factorial = FALSE, omitaxisticks = FALSE, ncol = 1,
-  coloursetname = simp$colours$defaultset, legenditemnames = NULL)
+  coloursetname = simp$colours$defaultset, legenditemnames = NULL,
+  theme = visualisation_raster_legendonlytheme)
 }
 \arguments{
 \item{simp}{SIMulation Properties}
@@ -22,7 +23,7 @@ visualise_raster_printRawPlots(simp, rasterdata, datanames = NULL,
 
 \item{ncol}{number of columns of facet wrap}
 
-\item{coloursetname}{name of colour set from settings_colours_getColorSet (if factorial)}
+\item{coloursetname}{id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")}
 }
 \value{
 raster visualisation files

@@ -10,9 +10,12 @@ vignette: >
 ---
 
 
-## Input Raster Data
+## Input (read) Raster Data
 
 ### Features
 
 	* Limit considered ticks by starttick, endtick, and interval
 	* Read raster files of multiple regions at once
+
+### Source: Regional CSV data
+
