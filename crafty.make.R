@@ -1,5 +1,6 @@
 library(roxygen2)
 library("devtools")
+full <- FALSE
 
 # has_devel() 	# does not work because of 'C:\Program' is not recognized as an internal or 
 # external command, operable program or batch file.
@@ -13,17 +14,24 @@ setwd(paste("./", pkgsName, sep=""))
 #devtools::use_vignette("craftyr-intro")
 #devtools::use_vignette("craftyr-raster")
 
-document()
+if (full) {
+	document()
+}
 
 setwd("..")
 
+if (full) {
+	devtools::build_vignettes(pkgsName)
+}
 
-devtools::build_vignettes(pkgsName)
 devtools::build(pkgsName)
 
 install(pkgsName)
 # devtools::install_bitbucket("geoslurg/craftyr@default")
-browseVignettes("craftyr")
+
+if (full) {
+	browseVignettes("craftyr")
+}
 
 
 ## prepare data objects

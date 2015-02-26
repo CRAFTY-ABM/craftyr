@@ -1,25 +1,67 @@
+#' Reads output data from CSV files
 #' Reads output data for the specified datatype amd dataname from CSV data for potentially multiple runs, 
 #' regions, and multiple ticks.
 #' @param simp SIMulation Properties
-#' @param datatype  (e.g. "Capital")
-#' @param dataname (e.g. "Cap1")
-#' @param colums vector of colum names. If given restricted returned colums to the given headers (plus X and Y coordinates)
-#' @param pertick if TRUE the filename will be complemented by all available ticks 
-#' @param attachfileinfo
-#' @return list of data.frames containing requested data  
+#' @param datatype  datatype (e.g. "Capital")
+#' @param dataname dataname (e.g. "Cap1")
+#' @param columns Vector of colum names. If given restricts returned colums to the given headers 
+#' 			(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region)
+#' @param pertick If TRUE the filename will be complemented by all available ticks 
+#' @param attachfileinfo If TRUE, further information about the file is attached to the returned list
+#' @param splitfileinfo If TRUE, use split upon fileinfo data (not tested)
+#' @param bindrows, If TRUE, rbind all data into one data.frame
+#' @return List of data.frames containing requested data  
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", colums = NULL, pertick = FALSE, attachfileinfo = TRUE) {	
-	fileinfos = input_tools_getModelOutputFilenames(simp, datatype = datatype, dataname = dataname, pertick = pertick)
-	data <- lapply(fileinfos$filename, utils::read.csv)
-	if (!is.null(colums)) {
-		data <- lapply(data, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, colums)])
+input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = NULL, pertick = FALSE, extension = "csv",
+		starttick = 0,
+		endtick = simp$tech$maxtick, 
+		tickinterval = 1, 
+		attachfileinfo = TRUE,
+		splitfileinfo = FALSE,
+		bindrows = FALSE,
+		aggregationFunction = NULL,
+		skipXY = FALSE) {	
+	fileinfos = input_tools_getModelOutputFilenames(simp, datatype = datatype, dataname = dataname, extension = extension, pertick = pertick,
+			starttick = starttick, endtick = endtick, tickinterval = tickinterval)
+	
+	futile.logger::flog.debug("File infos: \n%s", 
+			paste(do.call(rbind, fileinfos)$Filename, collapse="\n"),
+			name="crafty.input.csv")
+	
+	data <- lapply(fileinfos, function(item) {
+				result <- plyr::ddply(item, "Filename", function(df) {
+							return <- utils::read.csv(df[,"Filename"])
+							if (attachfileinfo) {
+								infos <- df[,-which(colnames(df)  %in% c("Filename", names(return)))]
+								return <- cbind(return, infos, row.names=NULL)
+							}
+							if (skipXY) {
+								return[,simp$csv$cname_x] <- NULL
+								return[,simp$csv$cname_y] <- NULL
+							}
+							if (!is.null(aggregationFunction)) {
+								return <- aggregationFunction(simp, return)
+							}
+							return
+				})
+				# don't know why filename is within ddply return...
+				result[,-which(colnames(result)  %in% c("Filename"))]
+	})
+	
+	if (!is.null(columns)) {
+		# assumes that fileinfos structure is the same for all list elements!
+		data <- lapply(data, function(x) x[, c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y), columns, 
+									if (attachfileinfo) 
+						colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])])
 	}
-	if (attachfileinfo) {
-		data  <- mapply(function(d, info) cbind(d, info[,-which(names(info)  %in% c("filename", names(d)))], row.names=NULL),
-			data,
-			split(fileinfos, rownames(fileinfos)), SIMPLIFY = FALSE)
-	}
-	do.call(rbind.data.frame, data) 
+			
+	if (attachfileinfo & splitfileinfo) data <- split(data, data[,names(fileinfos)])
+	
+	if (bindrows) 
+		result <- do.call(rbind.data.frame, data)
+	else
+		result <- data
+	result
 }

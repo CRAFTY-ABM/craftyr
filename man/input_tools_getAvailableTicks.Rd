@@ -16,7 +16,8 @@ input_tools_getAvailableTicks(simp, dir, pattern = NULL, datatype = NULL,
 
 \item{dir}{directory to search in}
 
-\item{pattern}{pattern for matching considered files excluding the tick and extension. If NULL, the default is used (\\.*<scenario>-<runid>-<region>-<datatype>-<dataname>-).}
+\item{pattern}{pattern for matching considered files including the tick (as TICK) and excluding the extension.
+If NULL, the default is used (\\.*<scenario>-<runid>-<region>-<datatype>-<dataname>-TICK).}
 
 \item{datatype}{(e.g. "Capital")}
 

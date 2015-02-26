@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-02-03" />
+<meta name="date" content="2015-02-24" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-02-03</em></h4>
+<h4 class="date"><em>2015-02-24</em></h4>
 </div>
 
 
@@ -110,13 +110,38 @@ simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</spa
 <li><p>csv</p></li>
 <li><p>mdata</p></li>
 <li><p>fig</p></li>
+<li><p>debug</p></li>
+</ul>
+<div id="defining-colours" class="section level3">
+<h3>Defining Colours</h3>
+<p>Craftyr functions take colour set names which are passed to the generic colour setting function to obtain sets of colours (simp<span class="math">\(colours\)</span>GenericFun). The function is implemented in crafty and maps common colour sets (AFT, Capitals, Services, Regions, Runids, binary colour set for e.g. adoption) to colour sets defined via particular simp parameters (e.g. simp<span class="math">\(colours\)</span>AFT). Therefore, there are two ways to influence colour settings:</p>
+<ul>
+<li><p>change the assignment to specific colour sets (simp<span class="math">\(colours\)</span><Set>)</p></li>
+<li><p>change the assignment for the generic colour setting function, using your own implementation that may deal with defined colour set names in a specific, dynamic way.</p></li>
 </ul>
 </div>
 </div>
-<div id="handling-data" class="section level1">
-<h1>Handling Data</h1>
+</div>
+<div id="debugging" class="section level1">
+<h1>Debugging</h1>
+<p>Craftyr uses the package ‘logging’ which is based on pyhton logging. Initially, it sets up a console outputter to log everything on INFO level. However, the logger can be configured in a detailed way.</p>
+<pre class="sourceCode r"><code class="sourceCode r">logging::<span class="kw">setLevel</span>(<span class="st">'DEBUG'</span>, <span class="st">&quot;craftyr&quot;</span>)
+logging::<span class="kw">setLevel</span>(<span class="st">&quot;FINER&quot;</span>, <span class="st">&quot;craftyr.input&quot;</span>)</code></pre>
+<p>It is also possible to add handlers for further sinks.</p>
+<pre class="sourceCode r"><code class="sourceCode r">logging::<span class="kw">addHandler</span>(logging::writeToFile, <span class="dt">logger=</span><span class="st">&quot;craftyr&quot;</span>, <span class="dt">file=</span><span class="st">&quot;sample.log&quot;</span>)
+logging::<span class="kw">setLevel</span>(<span class="st">&quot;FINER&quot;</span>, logging::<span class="kw">getHandler</span>(<span class="st">&quot;logging::writeToFile&quot;</span>)</code></pre>
+<p>Compare the documentation for package ‘logging’ for more detailed information.</p>
+<p>The # Handling Data</p>
+<div id="storing-data" class="section level2">
+<h2>Storing Data</h2>
 <p>Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store processed and aggregated data for further use. R provides the possibility of storing R objects into a file.</p>
 <p>To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data changes. Crucial is a consistent naming of R objects!</p>
+<pre class="sourceCode r"><code class="sourceCode r">csv_LandUseIndex_rbinded &lt;-<span class="st"> </span>data
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)
+<span class="kw">rm</span> (csv_LandUseIndex_rbinded)</code></pre>
+<p>To load an object to the global environment again, just execute</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)</code></pre>
+</div>
 </div>
 <div id="visualise-input-data" class="section level1">
 <h1>Visualise Input Data</h1>
@@ -137,6 +162,14 @@ simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</spa
 simp$fig$<span class="kw">init</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;example/hist_aft.png&quot;</span>)
 <span class="kw">hist</span>(cellData$LandUseIndex, <span class="dt">breaks=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>)
 <span class="kw">dev.off</span>()</code></pre>
+</div>
+</div>
+<div id="troubleshooting" class="section level1">
+<h1>Troubleshooting</h1>
+<div id="error-messages" class="section level2">
+<h2>Error Messages</h2>
+<pre class="sourceCode r"><code class="sourceCode r">Error in if (simp$fig$plottitle &gt;<span class="st"> </span><span class="dv">0</span>) { :<span class="st"> </span>argument is of length zero</code></pre>
+<p>Such an error message indicates a missing component in SIMP. Usually, the custom configuration assigned new lists to a super-component, erasing the orignal (default) content of that super-compomnent. Therefore, make sure your custom configuration does not assign new lists unchecked (ie. without checking <code>if (is.null(simp$sim)) simp$sim &lt;- list()</code>.</p>
 </div>
 </div>
 

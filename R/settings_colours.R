@@ -57,16 +57,22 @@ settings_colours_getColors <- function(number, dim=1) {
 	colors
 }
 #' Return requested colour palette
+#' @param SIMP
 #' @param number number of required colours
 #' @param set one of c("Topo","RedGreen","GreenRed") or one for brewer.pal
 #' @return colour palette
 #' 
 #' @author Sascha Holzhauer
 #' @export
-settings_colours_getColorSet <- function(number=9, set="Set1") {
+settings_colours_getColorSet <- function(simp, number=9, set="Set1") {
 	if (set=="AFT") {
+		colors = simp$colours$AFT
+	} else if (set=="AFT") {
 		colors = settings_colours_getAftColours()
-	} else if (set=="Topo") {
+	} else if (set=="Mixed100") {
+		colors = settings_colours_getAftColours() # TODO
+	} 
+	else if (set=="Topo") {
 		colors = fBasics::topoPalette(number)
 	} else if (set=="RedGreen") {
 		colors = grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
@@ -74,8 +80,7 @@ settings_colours_getColorSet <- function(number=9, set="Set1") {
 		colors = rev(grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
 	} else if (is.null(set)) {
 		colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
-	}
-	else {
+	} else {
 		colors = rev(RColorBrewer::brewer.pal(number, set))
 	}
 	colors

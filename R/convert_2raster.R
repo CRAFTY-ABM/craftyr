@@ -7,14 +7,22 @@
 #' @author Sascha Holzhauer
 #' @export
 convert_2raster <- function(simp, data, targetCRS = "+init=EPSG:32632", layers=c(1)) {
+	
+	if(is.data.frame(data)) {
+		data <- list(data)
+	}
+	
 	data <- lapply(data, function(d) {sp::coordinates(d)=as.formula(paste("~", simp$csv$cname_x, "+", simp$csv$cname_y, 
 						sep="")); d})
 	data <- lapply(data, function(x) {sp::proj4string(x)=targetCRS; x})
-
+	
 	data <- lapply(data, function(x) {sp::spTransform(x, sp::CRS(targetCRS)); x})
 	data <- lapply(data, function(x) {sp::gridded(x) = TRUE; x})
 	
-	rasters <- lapply(data, function(x) lapply(layers, function(y) raster::raster(x, layer=y)))
+	rasters <- lapply(data, function(x) {
+				lapply(layers, function(y) {
+							raster::raster(x, layer=y)})
+			})
 	# seems to work rather without setting projection...:
 	#rasters <- lapply(rasters, function(x) {raster::projection(x)=targetCRS; x})
 	rasters

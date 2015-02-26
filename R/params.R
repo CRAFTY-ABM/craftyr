@@ -20,8 +20,10 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$sim$scenario				<- "Scenario"
 	defsimp$sim$regionalisation			<- "1"
 	defsimp$sim$regions					<- c("Region")
-	defsimp$sim$runid					<- 0
-	defsimp$sim$runids					<- NULL
+	defsimp$sim$runids					<- c(0)
+	defsimp$sim$hasregiondir			<- TRUE
+	defsimp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
+											"datatype", "D", "dataname", "D", "tick")
 	
 	### Directories ################################################################
 	defsimp$dirs <- list()
@@ -50,8 +52,14 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$mdata <- list()
 	defsimp$mdata$capitals 			<- c("Cprod", "Fprod", "Infra", "Grass", "Nat", "Econ")
 	defsimp$mdata$aftNames			<- c("0" = 'C_Cereal', "1" = 'NC_Cereal', "2" = 'C_Livestock', "3" = 'NC_Livestock',
-			"4" = 'Forester', "5" = 'Conservationist', "6" = 'BiofuelFarmer')
+			"4" = 'Forester', "5" = 'Conservationist', "6" = 'BiofuelFarmer')	
 	
+	defsimp$mdata$conversion$aft <- c("AFT.C_Cereal" = 0, "AFT.NC_Cereal" = 1,
+			"AFT.C_Livestock" = 2, "AFT.NC_Livestock" = 3,
+			"AFT.Forester" = 4, "AFT.Conservationist" = 5)
+	
+	defsimp$mdata$conversion$services <- c("Service.Meat"="Meat", "Service.Cereal"="Cereal", 
+			"Service.Recreation"="Recreation", "Service.Timber"="Timber")
 	### Figure Settings ###########################################################
 	defsimp$fig <- list()
 	defsimp$fig$resfactor		<- 3
@@ -63,6 +71,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$height			<- 700
 	defsimp$fig$width			<- 1000
 	defsimp$fig$splitfigs		<- FALSE
+	defsimp$fig$plottitle		<- TRUE
 	defsimp$fig$facetlabelsize	<- 12
 	
 	### Colour Settings ###########################################################
@@ -84,9 +93,9 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$debug <- list()
 	# the higher, the more verbose
 	defsimp$debug$global 	<- 0
-	defsimp$debug$db		<- defsimp$debug$global
-	defsimp$debug$input		<- defsimp$debug$global
-	defsimp$debug$output	<- defsimp$debug$global
+	defsimp$debug$db		<- NA
+	defsimp$debug$input		<- NA
+	defsimp$debug$output	<- NA
 	
 	
 	result <- modifyList(defsimp, simp)

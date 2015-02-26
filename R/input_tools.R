@@ -11,10 +11,14 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 		R.oo::throw.default("Parameter 'datatype' may not be null!")
 	}
 	return <- paste(simp$dirs$data,
-					if (datatype %in% c("capitals", "demand")) {
+					if (datatype %in% c("capitals")) {
 						paste("worlds", simp$sim$worldname,
 							if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
 									simp$sim$regionalisation, sep="/"), sep="/")
+					} else if (datatype %in% c("demand")) {
+						paste("worlds", simp$sim$worldname,
+								if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
+											simp$sim$regionalisation, simp$sim$scenario, sep="/"), sep="/")
 					},
 					if (datatype %in% c("allocation")) {
 						"allocation"
@@ -23,8 +27,8 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 }
 #' Determines the model output folder(s) for the given \eqn{simp}.
 #' If one of the parameters \eqn{simp$sim$version}, \eqn{simp$sim$world}, 
-#' \eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runid},
-#' or \eqn{simp$sim$regions} is a vector a vector of directories is returned.
+#' \eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runids},
+#' or \eqn{simp$sim$regions} is a vector, a vector of directories is returned.
 #' @param simp SIMulation Properties
 #' @return String or vector of output folder(s)
 #' 
@@ -34,10 +38,10 @@ input_tools_getModelOutputDir <- function(simp) {
 	result = do.call(paste, c(expand.grid(simp$dirs$outputdir,
 							simp$sim$version,
 							simp$sim$world,
-							if(!is.null(simp$sim$regionalisation)) simp$sim$regionalisation,
+							if(!is.null(simp$sim$regionalisation)) simp$sim$regionalisation else "",
 							simp$sim$scenario,
-							simp$sim$runid,
-							if(!is.null(simp$sim$regions)) simp$sim$regions), sep="/"))
+							simp$sim$runids,
+							if(!is.null(simp$sim$regions) & simp$sim$hasregiondir) simp$sim$regions else rep("", times=length(simp$sim$regions))), sep="/"))
 	result
 }
 #' Determine a vector of ticks for the files in the given directory that match the given pattern.
@@ -48,7 +52,8 @@ input_tools_getModelOutputDir <- function(simp) {
 #' 
 #' @inheritParams input_tools_getModelOutputDir
 #' @param dir directory to search in
-#' @param pattern pattern for matching considered files excluding the tick and extension. If NULL, the default is used (\\.*<scenario>-<runid>-<region>-<datatype>-<dataname>-).
+#' @param pattern pattern for matching considered files including the tick (as TICK) and excluding the extension. 
+#' 		  If NULL, the default is used (\\.*<scenario>-<runid>-<region>-<datatype>-<dataname>-TICK).
 #' @param datatype (e.g. "Capital")
 #' @param dataname (e.g. "Cap1")
 #' @param extension used to restrict filenames by extension (without "."!)
@@ -66,29 +71,51 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 		endtick = simp$tech$maxtick, 
 		tickinterval = 1) {
 	# pattern = NULL
+	
+	# TODO use input_tools_constructFilenameList
 	if (is.null(pattern)) pattern <- paste(".*",
 			simp$sim$scenario, "-",
-			simp$sim$runid, "-",
+			simp$sim$runids, "-",
 			simp$sim$regions, "-",
 			datatype, if(!is.null(datatype)) "-",
-			dataname, if(!is.null(dataname)) "-", sep="")
+			dataname, if(!is.null(dataname)) "-", ".", sep="")
 
-	files <- grep(paste(pattern, "\\d*\\.", if (!is.null(extension)) extension else "*", sep=""),
+	if (length(grep("TICK", pattern)) ==  0) {
+		R.oo::throw.default(paste("Pattern must contain 'TICK' (pattern: ", pattern, "). Check simp$sim$filepartorder!", sep=""))
+	}
+
+	patternRegex 	<- sub("TICK", "\\d*", pattern, fixed = TRUE)
+	patternPre		<- stringr::str_sub(pattern, 1, regexpr(pattern ='TICK', pattern)[[1]] - 1)
+	patternPost		<- stringr::str_sub(pattern, regexpr(pattern ='TICK', pattern)[[1]] + 4, -1)
+
+	futile.logger::flog.info("Look for files in dir %s", dir, name="craftyr.input.tools")
+	
+	files <- grep(paste(patternRegex, ".", if (!is.null(extension)) extension else "*", sep=""),
 			list.files(path=dir),value=T)
-	ticks <- as.numeric(sub(paste("\\.", if (!is.null(extension)) extension else "*", sep=""), "", 
-					sub(pattern, "", files)))
+
+	futile.logger::flog.debug("Found files in %s\nfor pattern'%s.%s'\n%s",
+			dir,
+			patternRegex,
+			if (!is.null(extension)) extension else "",
+			paste("\t", files, collapse = "\n"),
+			name="crafty.input.tools")
+	
+	
+	ticks <- as.numeric(sub(paste(patternPost, ".", if (!is.null(extension)) extension else "*", sep=""), "", 
+					sub(patternPre, "", files)))
 		
 	if (length(ticks) == 0) {
-		R.oo::throw.default(paste("No ticks found in ", dir, "\nfor pattern '", pattern, paste("\\d*\\.", if (!is.null(extension)) 
-											extension else "*", sep=""), "' (available files:\n", 
+		R.oo::throw.default(paste("No ticks found in ", dir, "\nfor pattern '", patternRegex, ".", if (!is.null(extension)) 
+											extension else "*", "' (available files:\n", 
 						paste(list.files(path=dir), collapse = "\n"), ")", sep=""))
 	}
 	filteredTicks <- ticks[ticks %in% seq(from=starttick, to=endtick, by=tickinterval)]
 	
-	if (!is.null(simp$debug$input) & simp$debug$input > 0) {
-		cat("Available ticks:", ticks, "\n", sep=" ")
-		cat("Requested ticks:", seq(from=starttick, to=endtick, by=tickinterval), "\n", sep=" ")
-	}
+	futile.logger::flog.debug("Available ticks: %s\nRequested Ticks: %s",
+			paste(ticks, collapse =", "),
+			paste(seq(from=starttick, to=endtick, by=tickinterval), collapse =", "),
+			name="crafy.input.raster")
+	
 	if (length(ticks) == 0) {
 		R.oo::throw.default("None of found ticks matched parameters starttick (", starttick, "), endtick (", enttick, 
 				") and interval (", tickinterval, "), \nAvailable ticks: ", ticks)
@@ -102,7 +129,7 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 #' @inheritParams input_tools_getAvailableTicks
 #' @param folders 
 #' @param pertick if TRUE the filename will be complemented by all available ticks
-#' @return vector of filenames
+#' @return list of vector of filenames (list elements rerpesent files of one folder)
 #' 
 #' @author Sascha Holzhauer
 #' @export
@@ -117,21 +144,17 @@ input_tools_getModelOutputFilenames <- function(simp,
 		endtick = simp$tech$maxtick, 
 		tickinterval = 1) {
 	
-	
 	# generate file info matrix by combining various vectors:
 	fileinfogrid <- c(expand.grid(				
 					Scenario = simp$sim$scenario,
-					Runid = simp$sim$runid,
+					Runid = simp$sim$runids,
 					Region = simp$sim$regions))
 	
 	# attach filename:
 	# Folder = filename need to be concatenated here because of lapply when pertick == FALSE (difficulties for vector of folders)
-	fileinfogrid <- data.frame(fileinfogrid, Filename = paste(folders, do.call(paste, c(expand.grid(				
-									simp$sim$scenario, "-",
-									simp$sim$runid, "-",
-									simp$sim$regions, "-",
-									if (!is.null(datatype)) paste(datatype, "-", sep="") else "",
-									dataname, stringsAsFactors = FALSE), sep="")), sep="/"))
+	fileinfogrid <- data.frame(fileinfogrid, Filename = paste(folders, 
+					input_tools_getFilenameListRepetitions(simp, datatype = datatype, dataname = dataname, folders),
+					sep="/"))
 	
 	if (pertick) {
 		fileinfogrid <- mapply(function(foldername, scenario, runid, region, filename)
@@ -141,8 +164,9 @@ input_tools_getModelOutputFilenames <- function(simp,
 											Region = region,
 											Tick = input_tools_getAvailableTicks(simp = simp,
 													dir = foldername, 
-													pattern = paste(substr(filename, gregexpr(pattern ='/', 
-																	filename)[[1]][length(gregexpr(pattern ='/', filename)[[1]])] + 1, nchar(as.character(filename[1]))), "-", sep=""),
+													pattern = paste(substr(filename,
+																	gregexpr(pattern ='/', filename)[[1]][length(gregexpr(pattern ='/', filename)[[1]])] + 1, 
+															nchar(as.character(filename))), sep=""),
 													datatype = datatype,
 													dataname = dataname,
 													extension = extension,
@@ -155,15 +179,18 @@ input_tools_getModelOutputFilenames <- function(simp,
 										SIMPLIFY = FALSE)
 
 		fileinfogrid <- sapply(fileinfogrid, function(infogrid) {
-					infogrid$Filename = paste(infogrid$Filename, "-", infogrid$Tick, ".", extension, sep="")
+					infogrid$Filename = mapply(function(tick, filename)
+								paste(sub("TICK", tick, filename), ".", extension, sep=""),
+							infogrid$Tick, infogrid$Filename)
+					#rownames(infogrid) <- 
 					infogrid},
 				simplify = FALSE)
 	} else {
 		# attach filename:
-		fileinfogrid <- as.data.frame(sapply(list(fileinfogrid), function(infogrid) {
+		fileinfogrid <- sapply(list(fileinfogrid), function(infogrid) {
 					infogrid$Filename = paste(infogrid$Filename, ".", extension, sep="")
 					infogrid},
-							simplify = FALSE))
+							simplify = FALSE)
 	}
 	
 	lapply(fileinfogrid$filename, shbasic::sh.checkFilename)
@@ -174,6 +201,40 @@ input_tools_getModelOutputFilenames <- function(simp,
 		return = fileinfogrid$Filename
 	}
 	return
+}
+input_tools_getFilenameListRepetitions <- function(simp, 
+		datatype,
+		dataname,
+		folders) {
+	# TODO check & test
+	filenameList <- expand.grid(input_tools_constructFilenameList(simp, datatype = datatype, dataname = dataname), stringsAsFactors = FALSE)
+	reps <- length(folders) / length(filenameList[,1])
+	reps <- if (reps < 1) 1 else reps
+	rep(do.call(paste, c(filenameList, sep="")), each=reps)
+}
+input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = NULL, 
+		order = simp$sim$filepartorder) {
+	vectors <- list("scenario" = simp$sim$scenario,
+				"regionalisation" = simp$sim$regionalisation, 	
+				"runid" 	= simp$sim$runids,
+				"regions"	= simp$sim$regions,
+				"datatype"	= datatype,
+				"dataname"	= dataname,
+				"tick"		= "TICK",
+				"D"			= "-"	,
+				"U"			= "_")
+	
+	l <- vectors[order]
+	
+	if (any(unlist(lapply(l, is.null)))) {
+		R.oo::throw.default("simp$sim$filepartorder contains an element which is not defined (", 
+				names(l)[which(unlist(lapply(l, is.null))==TRUE)], ")")
+	}
+	if (length(l) == 0) {
+		R.oo::throw.default("Cannot construct filenamelist. Something's wrong with simp$sim$filepartorder (",
+				simp$sim$filepartorder, ")\n")
+	}
+	l
 }
 #' Determines the model input filenames for the given simp and datatype, dataname, ticks settings.
 #' @inheritParams input_tools_getModelOutputFilenames
@@ -199,14 +260,16 @@ input_tools_getModelInputFilenames <- function(simp, folders = input_tools_getMo
 #' @author Sascha Holzhauer
 #' @export
 input_tools_save <- function(simp, object) {
-	if (simp$debug$input > 0) {
-		cat("Saving object", object, "to",
+	futile.logger::flog.info("Saving object %s to %s",
+				object,
 				paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
-						simp$sim$id, ".RData", sep=""), "\n")
-	}
+					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),
+				name = "crafty.input.tools")
+	
 	shbasic::sh.ensurePath(paste(simp$dirs$output$rdata, simp$sim$id, "/", sep=""))
 	save(list=object, file = paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
-					simp$sim$id, ".RData", sep=""), envir = parent.frame())
+					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""), 
+			envir = parent.frame())
 }
 #' #' Wrapper for load
 #' @param simp 
@@ -215,11 +278,14 @@ input_tools_save <- function(simp, object) {
 #' @author Sascha Holzhauer
 #' @export
 input_tools_load <- function(simp, objectName,...) {
-	if (simp$debug$input > 0) {
-		cat("Loading object", objectName, "from",
-				paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
-						simp$sim$id, ".RData", sep=""), "\n")
-	}
+	
+	futile.logger::flog.info("Loading object %s from %s",
+			objectName,
+			paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
+					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),
+			name = "crafty.input.tools")
+	
 	load(file = paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
-					simp$sim$id, ".RData", sep=""), envir = parent.frame(), ...)
+					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),
+			envir = parent.frame(), ...)
 }

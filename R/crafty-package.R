@@ -19,7 +19,7 @@
 #' 			Calum Brown, UoE, \email{Calum.Brown@@ed.ac.uk}
 #' @references TODO
 #' @keywords crafty post-processing ABM land use change LUCC
-#' @example demo/example_visualise_raster_capitals.R
+#' 	example demo/example_visualise_raster_capitals.R
 #' 
 NULL
 .onAttach <- function(...) {
