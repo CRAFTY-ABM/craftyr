@@ -14,7 +14,7 @@ library(ggplot2)  # correct (see stack exchange question) for %+replace%
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
 #' @param legenditemnames names for legend items
 #' @return raster visualisation
-#' @example demo/example_visualise_raster_plots.R
+#' @example demo/example_visualise_cells_raster_aft.R
 #'
 #' @author Sascha Holzhauer
 #' @export
@@ -23,7 +23,8 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(inforasterdata)) length(inforasterdata[[1]][,1]) else length(inforasterdata[,1]), 
 		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL) {
 	
-	if (simp$debug$output > 0) cat("Print raster data", "...\n")
+	futile.logger::flog.info("Print raster data...",
+			name="crafty.visualise.raster")
 	
 	if(is.data.frame(inforasterdata)) {
 		inforasterdata <- list("Something" = inforasterdata)
@@ -74,79 +75,6 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 	print(p1)
 	simp$fig$close()
 }
-#' Prints a list of raster data as ggplot2 facet plot
-#' DEPRECATED
-#' @param simp SIMulation Properties
-#' @param rasterdata if a list, elements must be named differently
-#' @param dataname vector of names of the same length as rasterData
-#' @param legendtitle title for legend of raster values
-#' @param factorial true if raster values are factorial (affects colour palette)
-#' @param omitaxisticks omit axis ticks if true
-#' @param ncol number of columns of facet wrap
-#' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
-#' @param legenditemnames names for legend items
-#' @return raster visualisation
-#' @example demo/example_visualise_raster_plots.R
-#'
-#' @author Sascha Holzhauer
-#' @export
-visualise_raster_printPlotsUnnamed <- function(simp, rasterdata, dataname = NULL, legendtitle = "",
-		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname=simp$colours$defaultset, legenditemnames = NULL) {
-
-	if(is.data.frame(rasterdata)) {
-		rasterdata <- list(rasterdata)
-	}
-	
-	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", legendtitle, sep="/"), filename = legendtitle)
-	
-	pointDf <- data.frame()
-	counter = 0
-	outercounter = 0
-	for (rasters in rasterdata) {
-		outercounter = outercounter + 1
-		outerListName <- names(rasterdata)[outercounter]
-		for (l in rasters) {
-			rasterName <- names(l)
-			if (is.null(rasterName)) 
-			counter = counter + 1
-			s <- data.frame(raster::rasterToPoints(l), ID = paste(outerListName, "-", names(l)), sep="")
-			colnames(s) <- c("X", "Y", "Values", "ID")
-			pointDf <- rbind(pointDf,s)
-		}
-	}
-
-	if (length(rasterdata) != length(unique(pointDf$ID))) {
-		R.oo::throw.default("Elemens of rasterData must be named differently!")
-	}
-
-	if (!is.null(dataname)) {
-		levels(pointDf$ID) <- unlist(dataname)
-	}
-
-	scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = c("red", "green"))
-	if (factorial) {
-		pointDf$Values <- factor(pointDf$Values)
-		scaleFillElem <- ggplot2::scale_fill_manual(name=legendtitle, 
-				values = simp$colours$GenericFun(simp, set = coloursetname),
-				labels = legenditemnames)
-	}
-
-	omitaxistickselem <- NULL
-	if (omitaxisticks) {
-		omitaxistickselem <- ggplot2::theme(axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), 
-				axis.title = ggplot2::element_blank())
-	}
-
-	p1 <- ggplot2::ggplot()+
-			ggplot2::layer(geom="raster", data=pointDf, mapping=ggplot2::aes(X,Y,fill=Values)) +
-			ggplot2::facet_wrap(~ID, ncol = ncol) +
-			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
-			scaleFillElem +
-			omitaxistickselem +
-			ggplot2::coord_equal()
-	print(p1)
-	simp$fig$close()
-}
 #' Writes a list of raster data as single raw (only the raster data) ggplot2 plot files
 #' @param simp SIMulation Properties
 #' @param rasterdata if a list, elements must be named differently
@@ -157,7 +85,7 @@ visualise_raster_printPlotsUnnamed <- function(simp, rasterdata, dataname = NULL
 #' @param ncol number of columns of facet wrap
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
 #' @return raster visualisation files
-#' @example demo/example_visualise_raster_rawplots.R
+#' @example demo/example_visualise_cells_raster_aft_raw.R
 #'
 #' @author Sascha Holzhauer
 #' @export

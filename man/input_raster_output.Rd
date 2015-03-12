@@ -13,9 +13,9 @@ input_raster_output(simp, datatype = NULL, dataname, starttick = 0,
 
 \item{dataname}{name of data of category (e.g. "Cap1")}
 
-\item{starttick}{}
+\item{starttick}{first tick to consider}
 
-\item{endtick}{}
+\item{endtick}{last tick to consider}
 
 \item{tickinterval}{Note: tickinterval is based on starttick which defaults to 0!}
 }

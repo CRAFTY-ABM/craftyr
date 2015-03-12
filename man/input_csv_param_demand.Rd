@@ -9,7 +9,7 @@ input_csv_param_demand(simp)
 \item{simp}{SIMulation Properties}
 }
 \value{
-list of data.frames containing capital levels
+list of data.frames containing demand values, and the filename of their origin
 }
 \description{
 Reads demand values from CSV data for potentially multiple regions

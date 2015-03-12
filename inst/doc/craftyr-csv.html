@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-02-24" />
+<meta name="date" content="2015-03-12" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-02-24</em></h4>
+<h4 class="date"><em>2015-03-12</em></h4>
 </div>
 
 
@@ -67,11 +67,18 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="source-regional-csv-data" class="section level2">
 <h2>Source: Regional CSV data</h2>
-<pre class="sourceCode r"><code class="sourceCode r">cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">colums =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
-        <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2040</span>, <span class="dt">tickinterval =</span> <span class="dv">30</span>, <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>)
-cdata &lt;&lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
-csv_LandUseIndex_split &lt;-<span class="st"> </span>cadata
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">columns =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
+        <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>,
+        <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>)</code></pre>
+<pre><code>## WARN [2015-03-12 14:36:19] simp$sim$filepartorder contains an element which is not defined (dataname).
+##              Removing that element and preceeding one (assuming it's a separator).
+## INFO [2015-03-12 14:36:19] Look for files in dir C:/Users/sholzhau/Documents/R/win-library/3.1/craftyr/extdata/output/simulation//version/world/regionalisation/scenario/0-0/region</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
+csv_LandUseIndex_split &lt;-<span class="st"> </span>cdata
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)</code></pre>
+<pre><code>## INFO [2015-03-12 14:36:19] Saving object csv_LandUseIndex_split to C:/Users/sholzhau/Documents/R/win-library/3.1/craftyr/extdata/output/rData/Example/csv_LandUseIndex_split_Example.RData</code></pre>
 <p>For large data sets it is a good idea to clean the data somewhat before storing:</p>
 <pre class="sourceCode r"><code class="sourceCode r">cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">colums =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
         <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2040</span>, <span class="dt">tickinterval =</span> <span class="dv">30</span>, <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>)
@@ -93,9 +100,10 @@ csv_LandUseIndex_split &lt;-<span class="st"> </span>cadata
 <h1>Visualise CSV Data</h1>
 <div id="map-data" class="section level2">
 <h2>Map Data</h2>
-<div id="landuseindex" class="section level3">
-<h3>LandUseIndex</h3>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)
+<div id="landuseindex-facets" class="section level3">
+<h3>LandUseIndex: Facets</h3>
+<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getDefaultSimp</span>()
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)
 cdata &lt;-<span class="st"> </span>csv_LandUseIndex_split
 cdata$<span class="st">&quot;2010.2&quot;</span>$ID &lt;&lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="st">&quot;Homo_2010&quot;</span>)
 cdata$<span class="st">&quot;2040.2&quot;</span>$ID &lt;&lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="st">&quot;Homo_2040&quot;</span>)
@@ -112,6 +120,22 @@ toplot &lt;-<span class="st"> </span><span class="kw">list</span>(cdata$<span cl
         <span class="dt">title =</span> <span class="st">&quot;EU-Homo&quot;</span>, <span class="dt">legendtitle =</span> <span class="st">&quot;AFTs&quot;</span>,
         <span class="dt">factorial=</span> <span class="ot">TRUE</span>, <span class="dt">omitaxisticks =</span> <span class="ot">TRUE</span>, <span class="dt">ncol =</span> <span class="dv">3</span>,
         <span class="dt">legenditemnames =</span> simp$mdata$aftNames, <span class="dt">coloursetname=</span><span class="st">&quot;AFT&quot;</span>)</code></pre>
+</div>
+<div id="landuseindex-raw-plot" class="section level3">
+<h3>LandUseIndex: Raw Plot</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)</code></pre>
+<pre><code>## INFO [2015-03-12 14:36:19] Loading object csv_LandUseIndex_split from C:/Users/sholzhau/Documents/R/win-library/3.1/craftyr/extdata/output/rData/Example/csv_LandUseIndex_split_Example.RData</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">visualise_cells_printRawPlots</span>(simp, csv_LandUseIndex_split,
+        <span class="dt">factorial=</span> <span class="ot">TRUE</span>, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">id=</span><span class="st">&quot;None&quot;</span>)       </code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAABlBMVEUA5f9MAP/P1Gy4AAAACXBIWXMAAA7DAAAOwwHHb6hkAAACVUlEQVR4nO3QgQ2DMADEQNh/6W6ApSghQO8m+PdxPsyxxvieid+mECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQK/xJo0c81BAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQGFRoN23biJQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBhPNB36l0eEUigJFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKOwINGxDg+s9E79NIVAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBHoZgYJAQaAgUBAoCBQECgIFgYJAQaAgUBAoCBQECgIFgYJAQaAgUBAoCBQECgIFgYJAQaDwAzhFh7meInuAAAAAAElFTkSuQmCC" /></p>
+</div>
+</div>
+<div id="aggregate-data" class="section level2">
+<h2>Aggregate Data</h2>
+<div id="total-productivity" class="section level3">
+<h3>Total Productivity</h3>
 </div>
 </div>
 </div>
