@@ -22,7 +22,7 @@ settings_colours_getServiceColours <- function() {
 	aftColours <- c("-1" = "white",
 			"Meat" 			= "indianred1",
 			"Cereal" 	 	= "orange1",
-			"Recreation" 	= "royalblue2",
+			"Conservation" 	= "royalblue2",
 			"Timber" 		= "green4",
 			"Biofuel" 		= "darkviolet")
 }
@@ -71,18 +71,19 @@ settings_colours_getColorSet <- function(simp, number=9, set="Set1") {
 		colors = settings_colours_getAftColours()
 	} else if (set=="Mixed100") {
 		colors = settings_colours_getAftColours() # TODO
-	} 
-	else if (set=="Topo") {
+	} else if (set=="Topo") {
 		colors = fBasics::topoPalette(number)
 	} else if (set=="RedGreen") {
 		colors = grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
 	} else if (set=="GreenRed") {
 		colors = rev(grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
-	} else if (is.null(set)) {
-		colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
-	} else {
-		colors = rev(RColorBrewer::brewer.pal(number, set))
-	}
+	} else  {
+		if (number < 9 & number > 3) {
+			colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
+		} else {
+			colors = topo.colors(number)
+		}
+	} 
 	colors
 }
 #' Show colour palette

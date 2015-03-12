@@ -64,8 +64,8 @@ read_raster_single <- function(scenario = lix$scenario, world = pix$world,
 #' @param simp SIMulation Properties
 #' @param datatype category of raster data (e.g. "Capital")
 #' @param dataname name of data of category (e.g. "Cap1") 
-#' @param starttick 
-#' @param endtick 
+#' @param starttick first tick to consider 
+#' @param endtick  last tick to consider
 #' @param tickinterval Note: tickinterval is based on starttick which defaults to 0!
 #' @return list of lists of raster data
 #' 
@@ -87,24 +87,6 @@ input_raster_output <- function(simp,
 			starttick = starttick,
 			endtick = endtick, 
 			tickinterval = tickinterval)
-	
-#	listnames <- names(files)
-#	mapply(function(fileinfovector, name) {
-#		if (simp$debug$input > 0) cat("Handle directory", name, "...\n")
-#		apply(fileinfovector, MARGIN=1, function(fileinfo) {
-#				if (simp$debug$input > 0) cat("Read year", fileinfo["Tick"], "\n")
-#				r <- raster::raster(fileinfo["Filename"])
-#				data <- raster::values(r)
-#				data[is.na(data)] <- 0.0
-#				if (encapsefileinfo) {
-#					fileinfo["raster"] <- r
-#					result = fileinfo
-#				} else {
-#					result = r
-#				}
-#				result
-#			})
-#		}, files, listnames)
 
 	listnames <- names(files)
 	mapply(function(fileinfovector, name) {

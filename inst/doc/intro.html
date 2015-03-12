@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-02-24" />
+<meta name="date" content="2015-03-12" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-02-24</em></h4>
+<h4 class="date"><em>2015-03-12</em></h4>
 </div>
 
 
@@ -122,20 +122,21 @@ simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</spa
 </div>
 </div>
 </div>
-<div id="debugging" class="section level1">
-<h1>Debugging</h1>
-<p>Craftyr uses the package ‘logging’ which is based on pyhton logging. Initially, it sets up a console outputter to log everything on INFO level. However, the logger can be configured in a detailed way.</p>
-<pre class="sourceCode r"><code class="sourceCode r">logging::<span class="kw">setLevel</span>(<span class="st">'DEBUG'</span>, <span class="st">&quot;craftyr&quot;</span>)
-logging::<span class="kw">setLevel</span>(<span class="st">&quot;FINER&quot;</span>, <span class="st">&quot;craftyr.input&quot;</span>)</code></pre>
+<div id="debugginglogging" class="section level1">
+<h1>Debugging/Logging</h1>
+<p>Craftyr uses the package ‘futile.logger’. Initially, it sets up a console outputter to log everything on INFO level. However, the logger can be configured in a detailed way.</p>
+<pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.threshold</span>(futile.logger::DEBUG, <span class="dt">name=</span><span class="st">'crafty'</span>)
+futile.logger::<span class="kw">flog.threshold</span>(futile.logger::TRACE, <span class="dt">name=</span><span class="st">'crafty.input'</span>)</code></pre>
 <p>It is also possible to add handlers for further sinks.</p>
-<pre class="sourceCode r"><code class="sourceCode r">logging::<span class="kw">addHandler</span>(logging::writeToFile, <span class="dt">logger=</span><span class="st">&quot;craftyr&quot;</span>, <span class="dt">file=</span><span class="st">&quot;sample.log&quot;</span>)
-logging::<span class="kw">setLevel</span>(<span class="st">&quot;FINER&quot;</span>, logging::<span class="kw">getHandler</span>(<span class="st">&quot;logging::writeToFile&quot;</span>)</code></pre>
-<p>Compare the documentation for package ‘logging’ for more detailed information.</p>
-<p>The # Handling Data</p>
+<pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.appender</span>(<span class="kw">appender.file</span>(filename), <span class="dt">name=</span><span class="st">'test.logger'</span>)</code></pre>
+<p>Compare the documentation for package ‘futile.logger’ for more detailed information. A tutorial is also <a href="http://www.r-bloggers.com/better-logging-in-r-aka-futile-logger-1-3-0-released/">available</a>.</p>
+</div>
+<div id="handling-data" class="section level1">
+<h1>Handling Data</h1>
 <div id="storing-data" class="section level2">
 <h2>Storing Data</h2>
 <p>Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store processed and aggregated data for further use. R provides the possibility of storing R objects into a file.</p>
-<p>To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data changes. Crucial is a consistent naming of R objects!</p>
+<p>To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data changes. Crucial is a consistent naming of R objects! To manage data it is possible to assign an ID during storage, which is added to the filename. This way it is possible to use the same script (which uses specific names for objects) with multiple data. Also make sure that IDs make clear what data is stored (e.g. regions, scenarios) since there is currently no mechanism to check whether loaded data corresponds to current SIMP settings.</p>
 <pre class="sourceCode r"><code class="sourceCode r">csv_LandUseIndex_rbinded &lt;-<span class="st"> </span>data
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)
 <span class="kw">rm</span> (csv_LandUseIndex_rbinded)</code></pre>

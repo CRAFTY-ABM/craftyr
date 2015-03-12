@@ -15,7 +15,7 @@ library(ggplot2)  # correct (see stack exchange question) for %+replace%
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
 #' @param legenditemnames names for legend items
 #' @return raster visualisation
-#' @example demo/example_visualise_cells_plots.R
+#' @example demo/example_visualise_cells_csv_aft.R
 #'
 #' @author Sascha Holzhauer
 #' @export
@@ -24,7 +24,8 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(celldata)) length(celldata[[1]][,1]) else length(celldata[,1]), 
 		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL) {
 	
-	if (simp$debug$output > 0) cat("Print cell data", "...\n")
+	futile.logger::flog.debug("Print cell data...",
+			name="crafty.visualise.cells")
 	
 	if(!is.list(celldata)) {
 		Roo::throw.default("Parameter celldata must be a data.frame or other list!")
@@ -54,7 +55,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 	simp$fig$numcols <- ncol
 	simp$fig$numfigs <- length(unique(celldata$ID))
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", sep="/"), 
-			filename = output_tools_getDefaultFilename(simp, postfix = filenamepostfix))
+			filename = output_tools_getDefaultFilename(simp, postfix = paste(title, filenamepostfix, sep="-")))
 
 	scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = simp$colours$binarycolours)
 	if (factorial) {
@@ -81,4 +82,78 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 			ggplotaddon
 	print(p1)
 	simp$fig$close()
+}
+#' Writes a list of raster data as single raw (only the raster data) ggplot2 plot files
+#' @param simp SIMulation Properties
+#' @param rasterdata if a list, elements must be named differently
+#' @param datanames vector of names of the same length as rasterData
+#' @param factorial true if raster values are factorial (affects colour palette)
+#' @param omitaxisticks omit axis ticks if true
+#' @param ncol number of columns of facet wrap
+#' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
+#' @return raster visualisation files
+#' @example demo/example_visualise_cells_raster_aft_raw.R
+#'
+#' @author Sascha Holzhauer
+#' @export
+visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", valuecolumn = "LandUseIndex",
+		title = "", filenamepostfix = title,
+		factorial= FALSE, ncol = if (is.list(celldata)) length(celldata[[1]][,1]) else length(celldata[,1]), 
+		coloursetname=simp$colours$defaultset, ggplotaddon = NULL) {
+	
+	futile.logger::flog.debug("Print cell data...",
+			name="crafty.visualise.cells")
+	
+	if(!is.list(celldata)) {
+		Roo::throw.default("Parameter celldata must be a data.frame or other list!")
+	}
+	
+	if(is.null(names(celldata))) {
+		warning("Assign names to elements of list! Using letters...")
+		names(celldata) <- letters[1:length(celldata)]
+	}
+	
+	listlen <- length(celldata)
+	
+	celldata <- mapply(function(infoCellDataVector, listname) {
+				s <- data.frame(
+						X = infoCellDataVector[simp$csv$cname_x],
+						Y = infoCellDataVector[simp$csv$cname_y],
+						Values = as.numeric(infoCellDataVector[[valuecolumn]]),
+						ID = paste(if (listlen > 1) listname else "", infoCellDataVector[[idcolumn]]))
+				colnames(s) <- c("X", "Y", "Values", "ID")
+				s
+			}, celldata, names(celldata), SIMPLIFY = FALSE)
+	
+	gc()
+	celldata <- do.call(rbind, celldata)
+	
+	## PLOTTING
+	simp$fig$numcols <- ncol
+	simp$fig$numfigs <- length(unique(celldata$ID))
+	
+	scaleFillElem <- ggplot2::scale_fill_gradientn(colours = simp$colours$binarycolours)
+	if (factorial) {
+		celldata$Values <- factor(celldata$Values)
+		scaleFillElem <- ggplot2::scale_fill_manual( 
+				values = simp$colours$GenericFun(simp, number = length(unique(celldata$Values)), set = coloursetname))
+	}
+			
+	p1 <- ggplot2::ggplot()+
+			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
+			ggplot2::facet_wrap(~ID, ncol = ncol) +
+			scaleFillElem +
+			ggplot2::scale_x_continuous(expand=c(0,0)) + ggplot2::scale_y_continuous(expand=c(0,0)) +
+			ggplot2::coord_equal()
+	
+	gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p1))
+	ge <- subset(gt$layout, substring(name,1,5) == "panel")
+	
+	for (i in 1:length(ge[,1])) {
+		g <- ge[i,]
+		simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", sep="/"), 
+				filename = output_tools_getDefaultFilename(simp, postfix = paste(filenamepostfix, "_", i, sep="")))
+		grid::grid.draw(gt[g$t:g$b, g$l:g$r])
+		simp$fig$close()
+	}
 }

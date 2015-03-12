@@ -2,13 +2,14 @@
 \name{input_csv_data}
 \alias{input_csv_data}
 \title{Reads output data from CSV files
-Reads output data for the specified datatype amd dataname from CSV data for potentially multiple runs,
+Reads output data for the specified datatype and dataname from CSV data for potentially multiple runs,
 regions, and multiple ticks.}
 \usage{
-input_csv_data(simp, datatype = NULL, dataname = "Cell", colums = NULL,
+input_csv_data(simp, datatype = NULL, dataname = "Cell", columns = NULL,
   pertick = FALSE, extension = "csv", starttick = 0,
   endtick = simp$tech$maxtick, tickinterval = 1, attachfileinfo = TRUE,
-  splitfileinfo = FALSE, bindrows = FALSE)
+  splitfileinfo = FALSE, bindrows = FALSE, aggregationFunction = NULL,
+  skipXY = FALSE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}
@@ -17,25 +18,38 @@ input_csv_data(simp, datatype = NULL, dataname = "Cell", colums = NULL,
 
 \item{dataname}{dataname (e.g. "Cap1")}
 
-\item{colums}{Vector of colum names. If given restricts returned colums to the given headers (plus X and Y coordinates)}
+\item{columns}{Vector of colum names. If given restricts returned colums to the given headers
+(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region)}
 
 \item{pertick}{If TRUE the filename will be complemented by all available ticks}
+
+\item{extension}{file extension of those files to read}
+
+\item{starttick}{first tick to consider}
+
+\item{endtick}{last tick to consider}
+
+\item{tickinterval}{Note: tickinterval is based on starttick which defaults to 0!}
 
 \item{attachfileinfo}{If TRUE, further information about the file is attached to the returned list}
 
 \item{splitfileinfo}{If TRUE, use split upon fileinfo data (not tested)}
 
 \item{bindrows,}{If TRUE, rbind all data into one data.frame}
+
+\item{aggregationFunction}{function applied to aggregate data}
+
+\item{do}{not return X and Y columns}
 }
 \value{
-List of data.frames containing requested data
+List (unless bindrows == TRUE) of data.frames (one list item per data folder) containing requested data
 }
 \description{
 Reads output data from CSV files
-Reads output data for the specified datatype amd dataname from CSV data for potentially multiple runs,
+Reads output data for the specified datatype and dataname from CSV data for potentially multiple runs,
 regions, and multiple ticks.
 }
 \author{
-Sascha Holzhauer
+Sascha Holzhauer debug
 }
 

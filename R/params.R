@@ -14,13 +14,13 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	
 	if (!exists("defsimp")) defsimp <- list()
 	defsimp$sim <- list()
-	defsimp$sim$worldname 				<- "ToyWorld"
-	defsimp$sim$version					<- "V001"
-	defsimp$sim$allocversion			<- "V001AllocGen"
-	defsimp$sim$scenario				<- "Scenario"
-	defsimp$sim$regionalisation			<- "1"
-	defsimp$sim$regions					<- c("Region")
-	defsimp$sim$runids					<- c(0)
+	defsimp$sim$worldname 				<- "world"
+	defsimp$sim$version					<- "version"
+	defsimp$sim$allocversion			<- "allocversion"
+	defsimp$sim$scenario				<- "scenario"
+	defsimp$sim$regionalisation			<- "regionalisation"
+	defsimp$sim$regions					<- c("region")
+	defsimp$sim$runids					<- c("0-0")
 	defsimp$sim$hasregiondir			<- TRUE
 	defsimp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
 											"datatype", "D", "dataname", "D", "tick")
@@ -29,14 +29,14 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$dirs <- list()
 	defsimp$dirs$project			<- "./"
 	defsimp$dirs$data 				<- paste(defsimp$dirs$project, "data/", sep="")
-	defsimp$dirs$outputdir			<- NA
+	defsimp$dirs$outputdir			<- paste(defsimp$dirs$project, "output/", sep="")
 	
 	defsimp$dirs$output <- list()
-	defsimp$dirs$output$data		<- paste(defsimp$dirs$outputdir, "Data/", sep="")
-	defsimp$dirs$output$rdata		<- paste(defsimp$dirs$outputdir, "RData/", sep="") 
-	defsimp$dirs$output$raster		<- paste(defsimp$dirs$outputdir, "Raster/", sep="") 
-	defsimp$dirs$output$figures		<- paste(defsimp$dirs$outputdir, "Figures/", sep="")
-	defsimp$dirs$output$reports		<- paste(defsimp$dirs$outputdir, "Reports/", sep="")
+	defsimp$dirs$output$simulation	<- paste(defsimp$dirs$outputdir, "simulation/", sep="")
+	defsimp$dirs$output$rdata		<- paste(defsimp$dirs$outputdir, "rData/", sep="") 
+	defsimp$dirs$output$raster		<- paste(defsimp$dirs$outputdir, "raster/", sep="") 
+	defsimp$dirs$output$figures		<- paste(defsimp$dirs$outputdir, "figures/", sep="")
+	defsimp$dirs$output$reports		<- paste(defsimp$dirs$outputdir, "reports/", sep="")
 	
 	
 	### CSV Column Names ###########################################################
@@ -51,7 +51,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	
 	defsimp$mdata <- list()
 	defsimp$mdata$capitals 			<- c("Cprod", "Fprod", "Infra", "Grass", "Nat", "Econ")
-	defsimp$mdata$aftNames			<- c("0" = 'C_Cereal', "1" = 'NC_Cereal', "2" = 'C_Livestock', "3" = 'NC_Livestock',
+	defsimp$mdata$services			<- c("Meat", "Cereal" ,"Conservation", "Timber","Biofuel")
+	defsimp$mdata$aftNames			<- c("-1" = "Unmanaged", "0" = 'C_Cereal', "1" = 'NC_Cereal', "2" = 'C_Livestock', "3" = 'NC_Livestock',
 			"4" = 'Forester', "5" = 'Conservationist', "6" = 'BiofuelFarmer')	
 	
 	defsimp$mdata$conversion$aft <- c("AFT.C_Cereal" = 0, "AFT.NC_Cereal" = 1,
@@ -59,7 +60,10 @@ param_mergeDefaultSimp <- function(simp = list()) {
 			"AFT.Forester" = 4, "AFT.Conservationist" = 5)
 	
 	defsimp$mdata$conversion$services <- c("Service.Meat"="Meat", "Service.Cereal"="Cereal", 
-			"Service.Recreation"="Recreation", "Service.Timber"="Timber")
+			"Service.Recreation"="Conservation", "Service.Timber"="Timber", "Recreation"="Conservation",
+			"Meat"="Meat", "Cereal"="Cereal", 
+			"Conservation"="Conservation", "Timber"="Timber")
+	
 	### Figure Settings ###########################################################
 	defsimp$fig <- list()
 	defsimp$fig$resfactor		<- 3
@@ -79,8 +83,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$colours$AFT 			<- settings_colours_getAftColours()
 	defsimp$colours$Service 		<- settings_colours_getServiceColours()
 	defsimp$colours$Capital 		<- settings_colours_getCapitalColours()
-	defsimp$colours$Region 			<- settings_colours_getColorSet(12, "Set3")
-	defsimp$colours$Runid 			<- settings_colours_getColorSet(12, "Set3")
+	defsimp$colours$Region 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
+	defsimp$colours$Runid 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
 	defsimp$colours$GenericFun		<- settings_colours_getColorSet
 	defsimp$colours$binarycolours 	<- c("skyblue1", "black")
 	defsimp$colours$defaultset		<- "Dark2"
@@ -108,4 +112,28 @@ param_mergeDefaultSimp <- function(simp = list()) {
 #' @export
 param_getDefaultSimp <- function() {
 	param_mergeDefaultSimp()
+}
+
+#' Get the SIMP parameter list for working with example data
+#' @return list of SIMP parameters to run examples
+#' 
+#' @author Sascha Holzhauer
+#' @export
+param_getExamplesSimp <- function() {
+	simp <- param_mergeDefaultSimp()
+	
+	simp$dirs$outputdir			<- system.file("extdata", "output", package = "craftyr")
+	
+	simp$dirs$output <- list()
+	simp$dirs$output$simulation	<- paste(simp$dirs$outputdir, "/simulation/", sep="")
+	simp$dirs$output$rdata		<- paste(simp$dirs$outputdir, "/rData/", sep="") 
+	simp$dirs$output$raster		<- paste(simp$dirs$outputdir, "/raster/", sep="") 
+	simp$dirs$output$figures	<- paste(simp$dirs$outputdir, "/figures/", sep="")
+	simp$dirs$output$reports	<- paste(simp$dirs$outputdir, "/reports/", sep="")
+	
+	simp$fig$init <- function(simp, outdir, filename) {}
+	simp$fig$close<- function() {}
+	
+	simp$sim$id <- "Example"
+	simp
 }

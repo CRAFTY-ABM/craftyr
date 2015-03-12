@@ -4,7 +4,7 @@ author: "Sascha Holzhauer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using raster data with craftyr}
+  %\VignetteIndexEntry{Using CSV data with craftyr}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -19,11 +19,14 @@ vignette: >
 
 ## Source: Regional CSV data
 
-```{r, eval=FALSE}
-cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", colums = "LandUseIndex",
-		pertick = TRUE, starttick = 2010, endtick = 2040, tickinterval = 30, attachfileinfo = TRUE)
-cdata <<- split(cdata, list(cdata$Tick,cdata$Runid))
-csv_LandUseIndex_split <- cadata
+```{r, eval=TRUE}
+library(craftyr)
+simp <- param_getExamplesSimp()
+cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+		pertick = TRUE, starttick = 2010, endtick = 2020, tickinterval = 10,
+		attachfileinfo = TRUE, bindrows = TRUE)
+cdata <- split(cdata, list(cdata$Tick,cdata$Runid))
+csv_LandUseIndex_split <- cdata
 input_tools_save(simp, "csv_LandUseIndex_split")
 ```
 
@@ -51,9 +54,10 @@ rm(list(csv_LandUseIndex_split, cdata)
 
 ## Map Data
 
-### LandUseIndex
+### LandUseIndex: Facets
 
 ```{r, eval=FALSE}
+simp <- param_getDefaultSimp()
 input_tools_load(simp, "csv_LandUseIndex_split")
 cdata <- csv_LandUseIndex_split
 cdata$"2010.2"$ID <<- as.factor("Homo_2010")
@@ -73,6 +77,15 @@ visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
 		legenditemnames = simp$mdata$aftNames, coloursetname="AFT")
 ```
 
+### LandUseIndex: Raw Plot
+
+```{r, eval=TRUE, dev="png", fig.show='hold'}
+library(craftyr)
+simp <- param_getExamplesSimp()
+input_tools_load(simp, "csv_LandUseIndex_split")
+visualise_cells_printRawPlots(simp, csv_LandUseIndex_split,
+		factorial= TRUE, ncol = 1, id="None")		
+```
 
 ## Aggregate Data
 

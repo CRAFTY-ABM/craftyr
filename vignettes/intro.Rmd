@@ -113,7 +113,7 @@ futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
 It is also possible to add handlers for further sinks.  
 
 ```{r, eval=FALSE}
-flog.appender(appender.file(filename), name='test.logger')
+futile.logger::flog.appender(appender.file(filename), name='test.logger')
 ```
 
 Compare the documentation for package 'futile.logger' for more detailed information.
@@ -129,7 +129,9 @@ processed and aggregated data for further use. R provides the possibility of sto
 
 To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation
 routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data
-changes. Crucial is a consistent naming of R objects!
+changes. Crucial is a consistent naming of R objects! To manage data it is possible to assign an ID during storage, which is added to the filename. This way it is possible to use the same script (which
+uses specific names for objects) with multiple data. Also make sure that IDs make clear what data is stored (e.g. regions, scenarios) since there is currently no mechanism to check whether loaded data
+corresponds to current SIMP settings.
 
 ```{r, eval=FALSE}
 csv_LandUseIndex_rbinded <- data

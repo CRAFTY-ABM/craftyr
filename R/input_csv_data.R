@@ -1,5 +1,5 @@
 #' Reads output data from CSV files
-#' Reads output data for the specified datatype amd dataname from CSV data for potentially multiple runs, 
+#' Reads output data for the specified datatype and dataname from CSV data for potentially multiple runs, 
 #' regions, and multiple ticks.
 #' @param simp SIMulation Properties
 #' @param datatype  datatype (e.g. "Capital")
@@ -7,14 +7,21 @@
 #' @param columns Vector of colum names. If given restricts returned colums to the given headers 
 #' 			(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region)
 #' @param pertick If TRUE the filename will be complemented by all available ticks 
+#' @param extension file extension of those files to read
+#' @param starttick first tick to consider 
+#' @param endtick  last tick to consider
+#' @param tickinterval Note: tickinterval is based on starttick which defaults to 0!
 #' @param attachfileinfo If TRUE, further information about the file is attached to the returned list
 #' @param splitfileinfo If TRUE, use split upon fileinfo data (not tested)
 #' @param bindrows, If TRUE, rbind all data into one data.frame
-#' @return List of data.frames containing requested data  
+#' @param aggregationFunction function applied to aggregate data
+#' @param do not return X and Y columns
+#' @return List (unless bindrows == TRUE) of data.frames (one list item per data folder) containing requested data  
 #' 
-#' @author Sascha Holzhauer
+#' @author Sascha Holzhauer debug
 #' @export
-input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = NULL, pertick = FALSE, extension = "csv",
+input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = NULL, pertick = FALSE, 
+		extension = "csv",
 		starttick = 0,
 		endtick = simp$tech$maxtick, 
 		tickinterval = 1, 

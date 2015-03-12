@@ -1,9 +1,12 @@
-## ----, eval=FALSE--------------------------------------------------------
-#  cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", colums = "LandUseIndex",
-#  		pertick = TRUE, starttick = 2010, endtick = 2040, tickinterval = 30, attachfileinfo = TRUE)
-#  cdata <<- split(cdata, list(cdata$Tick,cdata$Runid))
-#  csv_LandUseIndex_split <- cadata
-#  input_tools_save(simp, "csv_LandUseIndex_split")
+## ----, eval=TRUE---------------------------------------------------------
+library(craftyr)
+simp <- param_getExamplesSimp()
+cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+		pertick = TRUE, starttick = 2010, endtick = 2020, tickinterval = 10,
+		attachfileinfo = TRUE, bindrows = TRUE)
+cdata <- split(cdata, list(cdata$Tick,cdata$Runid))
+csv_LandUseIndex_split <- cdata
+input_tools_save(simp, "csv_LandUseIndex_split")
 
 ## ----, eval=FALSE--------------------------------------------------------
 #  cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", colums = "LandUseIndex",
@@ -22,6 +25,7 @@
 #  rm(list(csv_LandUseIndex_split, cdata)
 
 ## ----, eval=FALSE--------------------------------------------------------
+#  simp <- param_getDefaultSimp()
 #  input_tools_load(simp, "csv_LandUseIndex_split")
 #  cdata <- csv_LandUseIndex_split
 #  cdata$"2010.2"$ID <<- as.factor("Homo_2010")
@@ -39,4 +43,11 @@
 #  		title = "EU-Homo", legendtitle = "AFTs",
 #  		factorial= TRUE, omitaxisticks = TRUE, ncol = 3,
 #  		legenditemnames = simp$mdata$aftNames, coloursetname="AFT")
+
+## ----, eval=TRUE, dev="png", fig.show='hold'-----------------------------
+library(craftyr)
+simp <- param_getExamplesSimp()
+input_tools_load(simp, "csv_LandUseIndex_split")
+visualise_cells_printRawPlots(simp, csv_LandUseIndex_split,
+		factorial= TRUE, ncol = 1, id="None")		
 

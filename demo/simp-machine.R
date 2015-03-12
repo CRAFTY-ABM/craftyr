@@ -18,16 +18,16 @@ simp <- param_mergeDefaultSimp(simp)
 ### Directories ###############################################################
 simp$dirs <- list()
 
-simp$dirs$project			<- "C:/Data/LURG/workspace/CRAFTY_ConsVis-ToyWorld/"
+simp$dirs$project			<- "PathToProject/"
 simp$dirs$data 				<- paste(simp$dirs$project, "data/", sep="")
-simp$dirs$outputdir			<- "C:/Data/LURG/Projects/Volante/Output/"
+simp$dirs$outputdir			<- "./Output/"
 simp$dirs$simp				<- paste(simp$dirs$project, "config/R/", sep="")
 
 simp$dirs$output <- list()
-simp$dirs$output$data		<- paste(simp$dirs$outputdir, "Data/", sep="")
-simp$dirs$output$rdata		<- paste(simp$dirs$outputdir, "RData/", sep="") 
-simp$dirs$output$raster		<- paste(simp$dirs$outputdir, "Raster/", sep="") 
-simp$dirs$output$figures	<- paste(simp$dirs$outputdir, "Figures/", sep="")
-simp$dirs$output$reports	<- paste(simp$dirs$outputdir, "Reports/", sep="")
+simp$dirs$output$simulation	<- paste(simp$dirs$outputdir, "simulation/", sep="")
+simp$dirs$output$rdata		<- paste(simp$dirs$outputdir, "rData/", sep="") 
+simp$dirs$output$raster		<- paste(simp$dirs$outputdir, "raster/", sep="") 
+simp$dirs$output$figures	<- paste(simp$dirs$outputdir, "figures/", sep="")
+simp$dirs$output$reports	<- paste(simp$dirs$outputdir, "reports/", sep="")
 
 cat("Working Directory: ", getwd())

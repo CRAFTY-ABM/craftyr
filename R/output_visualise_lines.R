@@ -18,7 +18,7 @@
 #' @param alpha
 #' @param ggplotparams vector of ggplot objects to add
 #' @return ggplot2 line visualisation
-#' @example demo/example_visualise_raster_plots.R
+#' @example demo/example_visualise_lines_csv_allocation.R
 #'
 #' @author Sascha Holzhauer
 #' @export

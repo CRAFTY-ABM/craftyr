@@ -5,8 +5,5 @@
 # TODO adapt from rawPlot
 #######################################################################
 source(simp$simpDefinition)   # read simp
-
 data <- input_csv_data(dataname = "AggregateAFTComposition")
-
-visualisation_lines(raster, legendTitle = "Capitals Example", 
-		factorial= FALSE, omitAxisTicks = FALSE, ncol = 1, id="None")
+visualisation_lines(data, legendTitle = "Capitals Example", factorial= FALSE, omitAxisTicks = FALSE, ncol = 1, id="None")

@@ -9,9 +9,9 @@
 output_tools_getDefaultFilename <- function(simp, postfix = "") {
 	paste(simp$sim$world, "_",
 		  simp$sim$scenario, "_",
-		  shbasic::shbasic_condenseRunids(simp$sim$runids), "_",
-		  if (length(simp$sim$regions) > 7) simp$sim$worldname else
-					  paste(simp$sim$regions, collapse = "+"), "_",
-		  if (postfix != "") "-",
+		  shbasic::shbasic_condenseRunids(simp$sim$runids), 
+		  if (length(simp$sim$regions) > 7) "" else
+					  paste("_", simp$sim$regions, collapse = "+", sep=""),
+		  if (postfix != "") "_",
 		  postfix, sep="")
 }

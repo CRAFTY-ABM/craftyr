@@ -101,26 +101,25 @@ Therefore, there are two ways to influence colour settings:
 * change the assignment for the generic colour setting function, using your own implementation that may deal with defined 
 colour set names in a specific, dynamic way.
 
-# Debugging
+# Debugging/Logging
 
-Craftyr uses the package 'logging' which is based on pyhton logging. Initially, it sets up a console outputter 
+Craftyr uses the package 'futile.logger'. Initially, it sets up a console outputter 
 to log everything on INFO level. However, the logger can be configured in a detailed way.
 
 ```{r, eval=FALSE}
-logging::setLevel('DEBUG', "craftyr")
-logging::setLevel("FINER", "craftyr.input")
+futile.logger::flog.threshold(futile.logger::DEBUG, name='crafty')
+futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
 ```
 It is also possible to add handlers for further sinks.  
 
 ```{r, eval=FALSE}
-logging::addHandler(logging::writeToFile, logger="craftyr", file="sample.log")
-logging::setLevel("FINER", logging::getHandler("logging::writeToFile")
-
+futile.logger::flog.appender(appender.file(filename), name='test.logger')
 ```
 
-Compare the documentation for package 'logging' for more detailed information.
+Compare the documentation for package 'futile.logger' for more detailed information.
+A tutorial is also [available](http://www.r-bloggers.com/better-logging-in-r-aka-futile-logger-1-3-0-released/).
 
-The 
+ 
 # Handling Data
 
 ## Storing Data
@@ -130,7 +129,9 @@ processed and aggregated data for further use. R provides the possibility of sto
 
 To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation
 routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data
-changes. Crucial is a consistent naming of R objects!
+changes. Crucial is a consistent naming of R objects! To manage data it is possible to assign an ID during storage, which is added to the filename. This way it is possible to use the same script (which
+uses specific names for objects) with multiple data. Also make sure that IDs make clear what data is stored (e.g. regions, scenarios) since there is currently no mechanism to check whether loaded data
+corresponds to current SIMP settings.
 
 ```{r, eval=FALSE}
 csv_LandUseIndex_rbinded <- data

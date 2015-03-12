@@ -35,7 +35,7 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 #' @author Sascha Holzhauer
 #' @export
 input_tools_getModelOutputDir <- function(simp) {
-	result = do.call(paste, c(expand.grid(simp$dirs$outputdir,
+	result = do.call(paste, c(expand.grid(simp$dirs$output$simulation,
 							simp$sim$version,
 							simp$sim$world,
 							if(!is.null(simp$sim$regionalisation)) simp$sim$regionalisation else "",
@@ -227,8 +227,12 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 	l <- vectors[order]
 	
 	if (any(unlist(lapply(l, is.null)))) {
-		R.oo::throw.default("simp$sim$filepartorder contains an element which is not defined (", 
-				names(l)[which(unlist(lapply(l, is.null))==TRUE)], ")")
+		futile.logger::flog.warn("simp$sim$filepartorder contains an element which is not defined (%s).
+				Removing that element and preceeding one (assuming it's a separator).",
+				names(l)[which(unlist(lapply(l, is.null))==TRUE)],
+				name="crafty.input.tools")
+		
+		l <- l[-c(which(unlist(lapply(l, is.null))==TRUE), which(unlist(lapply(l, is.null))==TRUE) - 1)]
 	}
 	if (length(l) == 0) {
 		R.oo::throw.default("Cannot construct filenamelist. Something's wrong with simp$sim$filepartorder (",
@@ -238,7 +242,7 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 }
 #' Determines the model input filenames for the given simp and datatype, dataname, ticks settings.
 #' @inheritParams input_tools_getModelOutputFilenames
-#' @return vector of filenames
+#' @return  list of vector of filenames (list elements rerpesent files of one folder)
 #' 
 #' @author Sascha Holzhauer
 #' @export
