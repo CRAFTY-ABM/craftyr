@@ -10,7 +10,7 @@ Maintainer: Sascha Holzhauer <Sascha.Holzhauer@ed.ac.uk>
 Description: Routines to input, convert, analyse, visualise and output CRAFTY
     generated model data.
 Depends:
-    R (>= 3.1.0)
+    R (>= 3.0.1)
 Imports:
     futile.logger,
     ggplot2,
@@ -26,10 +26,10 @@ Imports:
     rmarkdown,
     shbasic,
     sp,
-    sqldf,
     stringr
 License: GPL-3
 VignetteBuilder: knitr
 Suggests:
-    knitr
+    knitr,
+    sqldf
 LazyData: true
