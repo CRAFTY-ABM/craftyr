@@ -1,0 +1,3 @@
+
+syntax: regexp
+^inst/extdata/output/version/figures$

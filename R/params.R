@@ -29,7 +29,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$dirs <- list()
 	defsimp$dirs$project			<- "./"
 	defsimp$dirs$data 				<- paste(defsimp$dirs$project, "data/", sep="")
-	defsimp$dirs$outputdir			<- paste(defsimp$dirs$project, "output/", sep="")
+	defsimp$dirs$outputdir			<- paste(defsimp$dirs$project, "output/version/", sep="")
 	
 	defsimp$dirs$output <- list()
 	defsimp$dirs$output$simulation	<- paste(defsimp$dirs$outputdir, "simulation/", sep="")
