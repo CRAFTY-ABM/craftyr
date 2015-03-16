@@ -36,12 +36,20 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 #' @export
 input_tools_getModelOutputDir <- function(simp) {
 	result = do.call(paste, c(expand.grid(simp$dirs$output$simulation,
-							simp$sim$version,
 							simp$sim$world,
 							if(!is.null(simp$sim$regionalisation)) simp$sim$regionalisation else "",
 							simp$sim$scenario,
 							simp$sim$runids,
 							if(!is.null(simp$sim$regions) & simp$sim$hasregiondir) simp$sim$regions else rep("", times=length(simp$sim$regions))), sep="/"))
+	
+	if (length(result) == 0) {
+		R.oo::throw.default(paste("No output dir(s) constructed. Check simp parameters\n\t", 
+					"dirs$output$simulation (",  simp$dirs$output$simulation, ")\n\t", 
+					"sim$world (",  simp$sim$world, ")\n\t",
+					"sim$scenario (",  simp$sim$scenario, ")\n\t",
+					"and sim$runids (",  simp$sim$runids, ")!", sep=""))
+	}
+	
 	result
 }
 #' Determine a vector of ticks for the files in the given directory that match the given pattern.
