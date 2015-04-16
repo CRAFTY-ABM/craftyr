@@ -6,9 +6,9 @@
 visualise_cells_printPlots(simp, celldata, idcolumn = "Tick",
   valuecolumn = "LandUseIndex", title = "", filenamepostfix = title,
   legendtitle = "", factorial = FALSE, omitaxisticks = FALSE, ncol = if
-  (is.list(celldata)) length(celldata[[1]][, 1]) else length(celldata[, 1]),
+  (!is.data.frame(celldata)) length(celldata) else 1,
   coloursetname = simp$colours$defaultset, legenditemnames = NULL,
-  ggplotaddon = NULL)
+  ggplotaddon = NULL, theme = visualisation_raster_legendonlytheme)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

@@ -5,9 +5,8 @@
 \usage{
 visualise_cells_printRawPlots(simp, celldata, idcolumn = "Tick",
   valuecolumn = "LandUseIndex", title = "", filenamepostfix = title,
-  factorial = FALSE, ncol = if (is.list(celldata)) length(celldata[[1]][,
-  1]) else length(celldata[, 1]), coloursetname = simp$colours$defaultset,
-  ggplotaddon = NULL)
+  factorial = FALSE, ncol = if (!is.data.frame(celldata)) length(celldata)
+  else 1, coloursetname = simp$colours$defaultset, ggplotaddon = NULL)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

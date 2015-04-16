@@ -21,8 +21,9 @@ library(ggplot2)  # correct (see stack exchange question) for %+replace%
 #' @export
 visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuecolumn = "LandUseIndex",
 		title = "", filenamepostfix = title, legendtitle = "",
-		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(celldata)) length(celldata[[1]][,1]) else length(celldata[,1]), 
-		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL) {
+		factorial= FALSE, omitaxisticks = FALSE, ncol = if (!is.data.frame(celldata)) length(celldata) else 1, 
+		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL,
+		theme = visualisation_raster_legendonlytheme) {
 	
 	futile.logger::flog.debug("Print cell data...",
 			name="crafty.visualise.cells")
@@ -37,7 +38,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 	}
 	
 	listlen <- length(celldata)
-	
+
 	celldata <- mapply(function(infoCellDataVector, listname) {
 				s <- data.frame(
 						X = infoCellDataVector[simp$csv$cname_x],
@@ -76,6 +77,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
 			(if (title != "") ggplot2::labs(title = title)) + 
+			theme() +
 			scaleFillElem +
 			omitaxistickselem +
 			ggplot2::coord_equal(ratio=1) +
@@ -98,12 +100,15 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 #' @export
 visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", valuecolumn = "LandUseIndex",
 		title = "", filenamepostfix = title,
-		factorial= FALSE, ncol = if (is.list(celldata)) length(celldata[[1]][,1]) else length(celldata[,1]), 
+		factorial= FALSE, ncol = if (!is.data.frame(celldata)) length(celldata) else 1, 
 		coloursetname=simp$colours$defaultset, ggplotaddon = NULL) {
 	
 	futile.logger::flog.debug("Print cell data...",
 			name="crafty.visualise.cells")
 	
+	if (is.null(celldata)) {
+		Roo::throw.default("celldata is null!")
+	}
 	if(!is.list(celldata)) {
 		Roo::throw.default("Parameter celldata must be a data.frame or other list!")
 	}
@@ -144,7 +149,9 @@ visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", val
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			scaleFillElem +
 			ggplot2::scale_x_continuous(expand=c(0,0)) + ggplot2::scale_y_continuous(expand=c(0,0)) +
-			ggplot2::coord_equal()
+			ggplot2::coord_equal() +
+			ggplot2::theme_bw() +
+			visualisation_raster_legendonlytheme()
 	
 	gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p1))
 	ge <- subset(gt$layout, substring(name,1,5) == "panel")

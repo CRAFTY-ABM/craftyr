@@ -1,6 +1,6 @@
 #' Visualise takeovers of land uses as transition plot
 #' @param simp SIMulation Properties
-#' @param data takeover data with column "Tick" and one for each AFT 
+#' @param data takeover data with column "Tick" and one for each AFT (afts flow from row to column)
 #' @param startpopulation needs to contain a column 'Number' which contains agent numbers of the start tick
 #' @param starttick first tick to consider 
 #' @param endtick  last tick to consider
@@ -43,6 +43,7 @@ output_visualise_takeovers <- function(simp,
 			aftNumbers <- names(simp$mdata$aftNames)
 			names(aftNumbers) <- simp$mdata$aftNames
 			
+			# order data according to AFT numbers
 			t <- t[order(aftNumbers[as.character(t$AFT)]),]
 			t <- as.table(as.matrix(t[, -c(1)]))
 			
@@ -59,7 +60,7 @@ output_visualise_takeovers <- function(simp,
 		
 		filename <- output_tools_getDefaultFilename(simp, postfix = 
 						paste("AftTakeOvers_", shbasic::shbasic_condenseRunids(
-								unique(data$Region)),"_", starttick, "-", endtick, sep="")) 
+								unique(data$Region)),"_", starttick, "-", endtick, "_", simp$sim$id, sep="")) 
 		simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "takeovers", sep="/"), filename = filename)
 		
 		# TODO integerate absolute AFT numbers
@@ -95,4 +96,37 @@ output_visualise_takeovers <- function(simp,
 		
 	simp$fig$close()
 	}
+}
+#' Visualise AFT fluctuations
+#' @param simp 
+#' @param data 
+#' @param startpopulation 
+#' @param starttick 
+#' @param endtick 
+#' @param tickinterval 
+#' @param title 
+#' @param filename  
+#' @return plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+output_visualise_aftFluctuations <- function(simp,
+		data,
+		startpopulation = NULL,
+		starttick = 0,
+		endtick = simp$tech$maxtick, 
+		tickinterval = 1,
+		title = "AFT Fluctuations",
+		filename = title) {
+	
+	fluctuations <- ddply(data, "Tick", function(df) {
+				m <- df[,simp$mdata$aftNames]
+				netto <- colSums(m) - rowSums(m)
+				data.frame(AFT = names(netto), sum = netto)
+			})
+	
+	visualise_lines(simp, fluctuations, "sum", title = title,
+			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+			filename = filename,
+			alpha=0.7)
 }
