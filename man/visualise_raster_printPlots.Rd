@@ -8,7 +8,8 @@ visualise_raster_printPlots(simp, inforasterdata, idcolumn = "Tick",
   factorial = FALSE, omitaxisticks = FALSE, ncol = if
   (is.list(inforasterdata)) length(inforasterdata[[1]][, 1]) else
   length(inforasterdata[, 1]), coloursetname = simp$colours$defaultset,
-  legenditemnames = NULL, ggplotaddon = NULL)
+  legenditemnames = NULL, ggplotaddon = NULL,
+  theme = visualisation_raster_nobackground)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

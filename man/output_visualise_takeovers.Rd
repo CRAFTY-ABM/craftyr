@@ -10,7 +10,7 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
 \arguments{
 \item{simp}{SIMulation Properties}
 
-\item{data}{takeover data with column "Tick" and one for each AFT}
+\item{data}{takeover data with column "Tick" and one for each AFT (afts flow from row to column)}
 
 \item{startpopulation}{needs to contain a column 'Number' which contains agent numbers of the start tick}
 

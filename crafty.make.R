@@ -28,7 +28,7 @@ if (full) {
 
 install(pkgsName)
 # devtools::install_bitbucket("geoslurg/craftyr@default")
-
+# devtools::install_bitbucket("craftyr", username="geoslurg", ref="default") # R 3.0.1
 # for eddie (use qlogin session!):
 # devtools::install_bitbucket("geoslurg/craftyr@default", args="--library='/exports/home/sholzhau/R/x86_64-unknown-linux-gnu-library/3.1'")
 if (full) {
@@ -37,5 +37,5 @@ if (full) {
 
 
 ## prepare data objects
-cellData <- read.csv("./inst/extdata/Scenario-0-0-Region-Cell-2010.csv")
+cellData <- read.csv("./inst/extdata/NEEDS ADAPTATION/Scenario-0-0-Region-Cell-2010.csv")
 save(cellData, file="./data/cellData.rda")

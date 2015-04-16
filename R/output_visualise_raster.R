@@ -1,4 +1,3 @@
-library(ggplot2)  # correct (see stack exchange question) for %+replace%
 #' Prints a list of raster data as ggplot2 facet plot
 #' 
 #' @param simp SIMulation Properties
@@ -21,7 +20,8 @@ library(ggplot2)  # correct (see stack exchange question) for %+replace%
 visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 		title = "", filenamepostfix = title, legendtitle = "",
 		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(inforasterdata)) length(inforasterdata[[1]][,1]) else length(inforasterdata[,1]), 
-		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL) {
+		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL,
+		theme = visualisation_raster_nobackground) {
 	
 	futile.logger::flog.info("Print raster data...",
 			name="crafty.visualise.raster")
@@ -68,6 +68,7 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
 			(if (title != "") ggplot2::labs(title = title)) + 
+			theme() +
 			scaleFillElem +
 			omitaxistickselem +
 			ggplot2::coord_equal(ratio=1) +
@@ -146,6 +147,7 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 #' @author Sascha Holzhauer
 visualisation_raster_printRawPlots_theme_nothing <- function(base_size = 12, base_family = "Helvetica")
 {
+	library(ggplot2)  # correct (see stack exchange question) for %+replace%
 	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
 			ggplot2::theme(
 					rect             = ggplot2::element_blank(),
@@ -178,6 +180,7 @@ visualisation_raster_printRawPlots_theme_nothing <- function(base_size = 12, bas
 #' @author Sascha Holzhauer
 #' @export
 visualisation_raster_legendonlytheme <- function(base_size = 11, base_family = "Helvetica"){
+	library(ggplot2)  # correct (see stack exchange question) for %+replace%
 	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
 			ggplot2::theme(
 					axis.ticks.margin = grid::unit(0, "lines"),
@@ -200,3 +203,19 @@ visualisation_raster_legendonlytheme <- function(base_size = 11, base_family = "
 }
 # check that it is a complete theme
 # attr(theme_nothing(), "complete")
+#' white background
+#' @param base_size 
+#' @param base_family 
+#' @return theme
+#' 
+#' @author Sascha Holzhauer
+#' @export
+visualisation_raster_nobackground <- function(base_size = 11, base_family = "Helvetica"){
+	library(ggplot2)  # correct (see stack exchange question) for %+replace%
+	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
+			ggplot2::theme(
+					panel.background = ggplot2::element_blank(),
+					panel.grid.major = ggplot2::element_blank(),
+					panel.grid.minor = ggplot2::element_blank(),
+			)
+}

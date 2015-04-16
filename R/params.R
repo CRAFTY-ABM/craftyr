@@ -122,7 +122,7 @@ param_getDefaultSimp <- function() {
 param_getExamplesSimp <- function() {
 	simp <- param_mergeDefaultSimp()
 	
-	simp$dirs$outputdir			<- system.file("extdata", "output", package = "craftyr")
+	simp$dirs$outputdir			<- system.file("extdata", "output/version", package = "craftyr")
 	
 	simp$dirs$output <- list()
 	simp$dirs$output$simulation	<- paste(simp$dirs$outputdir, "/simulation/", sep="")
