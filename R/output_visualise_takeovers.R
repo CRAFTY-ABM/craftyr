@@ -100,7 +100,6 @@ output_visualise_takeovers <- function(simp,
 #' Visualise AFT fluctuations
 #' @param simp 
 #' @param data 
-#' @param startpopulation 
 #' @param starttick 
 #' @param endtick 
 #' @param tickinterval 
@@ -112,7 +111,6 @@ output_visualise_takeovers <- function(simp,
 #' @export
 output_visualise_aftFluctuations <- function(simp,
 		data,
-		startpopulation = NULL,
 		starttick = 0,
 		endtick = simp$tech$maxtick, 
 		tickinterval = 1,
@@ -125,6 +123,12 @@ output_visualise_aftFluctuations <- function(simp,
 				data.frame(AFT = names(netto), sum = netto)
 			})
 	
+	fluctuations <- fluctuations[fluctuations$Tick >= starttick & fluctuations$Tick <= simp$tech$maxtick,]
+	# replace AFT names by AFT serial ids (for correct colours)
+	aftNumbers <- names(simp$mdata$aftNames)
+	names(aftNumbers) <- simp$mdata$aftNames
+	fluctuations$AFT <- aftNumbers[levels(fluctuations$AFT)[fluctuations$AFT]]
+
 	visualise_lines(simp, fluctuations, "sum", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			filename = filename,

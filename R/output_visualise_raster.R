@@ -216,6 +216,6 @@ visualisation_raster_nobackground <- function(base_size = 11, base_family = "Hel
 			ggplot2::theme(
 					panel.background = ggplot2::element_blank(),
 					panel.grid.major = ggplot2::element_blank(),
-					panel.grid.minor = ggplot2::element_blank(),
+					panel.grid.minor = ggplot2::element_blank()
 			)
 }

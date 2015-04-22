@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-04-16" />
+<meta name="date" content="2015-04-21" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,9 +54,31 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-04-16</em></h4>
+<h4 class="date"><em>2015-04-21</em></h4>
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#input-read-csv-data">Input (read) CSV Data</a><ul>
+<li><a href="#features">Features</a></li>
+<li><a href="#source-regional-csv-data-celltable">Source: Regional CSV data (CellTable)</a></li>
+<li><a href="#source-aggregated-demand-and-supply-data-aggregatedemandsupplycsvoutputter">Source: Aggregated Demand and Supply Data (AggregateDemandSupplyCSVOutputter)</a></li>
+<li><a href="#source-marginal-utilities">Source: Marginal Utilities</a></li>
+</ul></li>
+<li><a href="#visualise-csv-data">Visualise CSV Data</a><ul>
+<li><a href="#map-data">Map Data</a><ul>
+<li><a href="#landuseindex-facets">LandUseIndex: Facets</a></li>
+<li><a href="#landuseindex-raw-plot">LandUseIndex: Raw Plot</a></li>
+</ul></li>
+<li><a href="#aggregate-data">Aggregate Data</a><ul>
+<li><a href="#aft-composition-as-timeline">AFT Composition as Timeline</a></li>
+<li><a href="#aggregated-demand-and-supply-data">Aggregated Demand and Supply Data</a></li>
+<li><a href="#marginal-utilities">Marginal Utilities</a></li>
+<li><a href="#total-productivity">Total Productivity</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="input-read-csv-data" class="section level1">
 <h1>Input (read) CSV Data</h1>
@@ -65,20 +87,18 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre><code>* Limit considered ticks by starttick, endtick, and interval
 * Read CSV files of multiple regions at once</code></pre>
 </div>
-<div id="source-regional-csv-data" class="section level2">
-<h2>Source: Regional CSV data</h2>
+<div id="source-regional-csv-data-celltable" class="section level2">
+<h2>Source: Regional CSV data (CellTable)</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
 cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">columns =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
         <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>,
-        <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>)</code></pre>
-<pre><code>## WARN [2015-04-16 08:38:17] simp$sim$filepartorder contains an element which is not defined (dataname).
-##              Removing that element and preceeding one (assuming it's a separator).
-## INFO [2015-04-16 08:38:17] Look for files in dir C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/simulation//world/regionalisation/scenario/0-0/region</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
+        <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>)
+csv_LandUseIndex &lt;-<span class="st"> </span>cdata
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex&quot;</span>)
+cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
 csv_LandUseIndex_split &lt;-<span class="st"> </span>cdata
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)</code></pre>
-<pre><code>## INFO [2015-04-16 08:38:17] Saving object csv_LandUseIndex_split to C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/rData/Example/csv_LandUseIndex_split_Example.RData</code></pre>
 <p>For large data sets it is a good idea to clean the data somewhat before storing:</p>
 <pre class="sourceCode r"><code class="sourceCode r">cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">colums =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
         <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2040</span>, <span class="dt">tickinterval =</span> <span class="dv">30</span>, <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>)
@@ -94,6 +114,23 @@ cdata &lt;-<span class="st"> </span><span class="kw">lapply</span>(cdata, functi
 csv_LandUseIndex_split &lt;-<span class="st"> </span>cadata
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)
 <span class="kw">rm</span>(<span class="kw">list</span>(csv_LandUseIndex_split, cdata)</code></pre>
+</div>
+<div id="source-aggregated-demand-and-supply-data-aggregatedemandsupplycsvoutputter" class="section level2">
+<h2>Source: Aggregated Demand and Supply Data (AggregateDemandSupplyCSVOutputter)</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+csv_aggregateServiceDemand &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;AggregateServiceDemand&quot;</span>,
+        <span class="dt">pertick =</span> <span class="ot">FALSE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>)
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_aggregateServiceDemand&quot;</span>)</code></pre>
+</div>
+<div id="source-marginal-utilities" class="section level2">
+<h2>Source: Marginal Utilities</h2>
+<p>Note: currently, there is no outputter, but marginal utilities can be extracted from log data using a python script (see Py4ABM, <a href="https://bitbucket.org/S-Holzhauer/py4abm" class="uri">https://bitbucket.org/S-Holzhauer/py4abm</a>). The resulting CSV file should be places in the projects RData folder.</p>
+<p>TODO</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+csv_MarginalUtilitites_melt &lt;-<span class="st"> </span><span class="kw">input_marginalutilities</span>(simp)
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_MarginalUtilitites_melt&quot;</span>)</code></pre>
 </div>
 </div>
 <div id="visualise-csv-data" class="section level1">
@@ -125,15 +162,78 @@ toplot &lt;-<span class="st"> </span><span class="kw">list</span>(cdata$<span cl
 <h3>LandUseIndex: Raw Plot</h3>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
-<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)</code></pre>
-<pre><code>## INFO [2015-04-16 08:38:17] Loading object csv_LandUseIndex_split from C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/rData/Example/csv_LandUseIndex_split_Example.RData</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">visualise_cells_printRawPlots</span>(simp, csv_LandUseIndex_split,
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)
+<span class="kw">visualise_cells_printRawPlots</span>(simp, csv_LandUseIndex_split,
         <span class="dt">factorial=</span> <span class="ot">TRUE</span>, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">id=</span><span class="st">&quot;None&quot;</span>)       </code></pre>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAABlBMVEUA5f9MAP/P1Gy4AAAACXBIWXMAAA7DAAAOwwHHb6hkAAACVUlEQVR4nO3QgQ2DMADEQNh/6W6ApSghQO8m+PdxPsyxxvieid+mECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQK/xJo0c81BAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQGFRoN23biJQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBBoCBQECgIFAQKAgWBgkBhPNB36l0eEUigJFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKOwINGxDg+s9E79NIVAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBAoCBYGCQEGgIFAQKAgUBHoZgYJAQaAgUBAoCBQECgIFgYJAQaAgUBAoCBQECgIFgYJAQaAgUBAoCBQECgIFgYJAQaDwAzhFh7meInuAAAAAAElFTkSuQmCC" /></p>
 </div>
 </div>
 <div id="aggregate-data" class="section level2">
 <h2>Aggregate Data</h2>
+<div id="aft-composition-as-timeline" class="section level3">
+<h3>AFT Composition as Timeline</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex&quot;</span>)
+
+<span class="co"># aggregate regions:</span>
+csv_LandUseIndex$AftNumbers &lt;-<span class="st"> </span>csv_LandUseIndex$LandUseIndex
+aftData &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(csv_LandUseIndex, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;AftNumbers&quot;</span>)),
+        <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">ID =</span> csv_LandUseIndex[,<span class="st">&quot;Runid&quot;</span>],
+                <span class="dt">Tick=</span>csv_LandUseIndex[, <span class="st">&quot;Tick&quot;</span>],  <span class="dt">AFT=</span>csv_LandUseIndex[,<span class="st">&quot;LandUseIndex&quot;</span>]),
+        <span class="dt">FUN=</span>sum)
+aftData$AFT &lt;-<span class="st"> </span><span class="kw">as.factor</span>(aftData$AFT)
+aftData$Proportion &lt;-<span class="st"> </span><span class="kw">ave</span>(aftData$AftNumbers, aftData$ID, aftData$Tick, <span class="dt">FUN =</span>  function(.x) .x/<span class="kw">sum</span>(.x))
+aftData$Number &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+<span class="kw">visualise_lines</span>(simp, aftData, <span class="st">&quot;Proportion&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;Total AFT composition&quot;</span>,
+        <span class="dt">colour_column =</span> <span class="st">&quot;AFT&quot;</span>,
+        <span class="dt">colour_legenditemnames =</span> simp$mdata$aftNames,
+        <span class="dt">linetype_column =</span> <span class="st">&quot;ID&quot;</span>,
+        <span class="dt">linetype_legendtitle =</span> simp$sim$rundesclabel,
+        <span class="dt">linetype_legenditemnames =</span> simp$sim$rundesc,
+        <span class="dt">filename =</span> <span class="kw">paste</span>(<span class="st">&quot;TotalAftComposition&quot;</span>, 
+                shbasic::<span class="kw">shbasic_condenseRunids</span>(<span class="kw">data.frame</span>(aftData)[, <span class="st">&quot;ID&quot;</span>]), <span class="dt">sep=</span><span class="st">&quot;_&quot;</span>),
+        <span class="dt">alpha=</span><span class="fl">0.7</span>)</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+</div>
+<div id="aggregated-demand-and-supply-data" class="section level3">
+<h3>Aggregated Demand and Supply Data</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+<span class="kw">library</span>(reshape)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_aggregateServiceDemand&quot;</span>)
+
+data &lt;-<span class="st"> </span><span class="kw">convert_aggregate_meltsupplydemand</span>(simp, csv_aggregateServiceDemand)
+
+<span class="co"># aggregate regions:</span>
+data &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(data, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;Value&quot;</span>)),
+        <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">ID =</span> data[,<span class="st">&quot;Runid&quot;</span>],
+                <span class="dt">Tick=</span>data[, <span class="st">&quot;Tick&quot;</span>],  <span class="dt">Scenario =</span> data[,<span class="st">&quot;Scenario&quot;</span>],
+                <span class="dt">Service=</span>data[,<span class="st">&quot;Service&quot;</span>], <span class="dt">Type=</span>data[,<span class="st">&quot;Type&quot;</span>]),
+        <span class="dt">FUN=</span>sum)
+
+<span class="kw">visualise_lines</span>(simp, data, <span class="st">&quot;Value&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;Aggregated Service Supply &amp; Demand&quot;</span>,
+        <span class="dt">colour_column =</span> <span class="st">&quot;Service&quot;</span>,
+        <span class="dt">linetype_column =</span> <span class="st">&quot;Type&quot;</span>,
+        <span class="dt">filename =</span> <span class="kw">paste</span>(<span class="st">&quot;AggregateServiceDemand&quot;</span>, 
+                shbasic::<span class="kw">shbasic_condenseRunids</span>(<span class="kw">data.frame</span>(data)[, <span class="st">&quot;ID&quot;</span>]), <span class="dt">sep=</span><span class="st">&quot;_&quot;</span>),
+        <span class="dt">alpha=</span><span class="fl">0.7</span>)</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_aggregate_demandsupply</span>(simp)</code></pre>
+</div>
+<div id="marginal-utilities" class="section level3">
+<h3>Marginal Utilities</h3>
+<p>TODO</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_MarginalUtilitites_melt&quot;</span>)
+<span class="kw">visualise_lines</span>(simp, data, <span class="st">&quot;value&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;Marginal Utilities&quot;</span>,
+        <span class="dt">colour_column =</span> <span class="st">&quot;Service&quot;</span>,
+        <span class="dt">filename =</span> <span class="kw">paste</span>(<span class="st">&quot;MarginalUtilities&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>),
+        <span class="dt">alpha=</span><span class="fl">0.7</span>)</code></pre>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_marginalutilities</span>(simp)</code></pre>
+</div>
 <div id="total-productivity" class="section level3">
 <h3>Total Productivity</h3>
 </div>

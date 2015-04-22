@@ -10,11 +10,37 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-04-16" />
+<meta name="date" content="2015-04-21" />
 
 <title>Using raster data with craftyr</title>
 
 
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
 
 
 <link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
@@ -28,19 +54,56 @@
 <div id="header">
 <h1 class="title">Using raster data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-04-16</em></h4>
+<h4 class="date"><em>2015-04-21</em></h4>
 </div>
 
 
-<div id="input-read-raster-data" class="section level2">
-<h2>Input (read) Raster Data</h2>
-<div id="features" class="section level3">
-<h3>Features</h3>
+<div id="input-read-raster-data" class="section level1">
+<h1>Input (read) Raster Data</h1>
+<div id="features" class="section level2">
+<h2>Features</h2>
 <pre><code>* Limit considered ticks by starttick, endtick, and interval
 * Read raster files of multiple regions at once</code></pre>
 </div>
-<div id="source-regional-csv-data" class="section level3">
-<h3>Source: Regional CSV data</h3>
+<div id="source-regional-raster-data" class="section level2">
+<h2>Source: Regional Raster Data</h2>
+<div id="landuseindex" class="section level3">
+<h3>LandUseIndex</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+raster_landUseIndex &lt;-<span class="st"> </span><span class="kw">input_raster_output</span>(simp,
+        <span class="dt">datatype =</span> <span class="st">&quot;Agent&quot;</span>, 
+        <span class="dt">dataname =</span> <span class="st">&quot;SerialID&quot;</span>,
+        <span class="dt">starttick =</span> <span class="dv">2010</span>)
+<span class="kw">names</span>(raster_landUseIndex) &lt;-<span class="st"> </span>simp$sim$rundesc
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;raster_landUseIndex&quot;</span>)</code></pre>
+</div>
+</div>
+</div>
+<div id="visualise-raster-data" class="section level1">
+<h1>Visualise Raster Data</h1>
+<div id="maps" class="section level2">
+<h2>Maps</h2>
+</div>
+<div id="aggregate-data" class="section level2">
+<h2>Aggregate Data</h2>
+</div>
+<div id="landuseindex-timeline" class="section level2">
+<h2>LandUseIndex: Timeline</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">input_tools_load</span>(simp, <span class="st">&quot;raster_landUseIndex&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">landUseIndexData &lt;-<span class="st"> </span><span class="kw">convert_raster_getAftNumbers</span>(raster_landUseIndex)
+landUseIndexData$AFT &lt;-<span class="st"> </span><span class="kw">factor</span>(landUseIndexData$AFT)
+<span class="kw">visualise_lines</span>(simp, landUseIndexData, <span class="st">&quot;Value&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;Total AFT composition&quot;</span>,
+        <span class="dt">colour_column =</span> <span class="st">&quot;AFT&quot;</span>,
+        <span class="dt">colour_legenditemnames =</span> simp$mdata$aftNames,
+        <span class="dt">linetype_column =</span> <span class="st">&quot;Runid&quot;</span>,
+        <span class="dt">linetype_legendtitle =</span> simp$sim$rundesclabel,
+        <span class="dt">linetype_legenditemnames =</span> simp$sim$rundesc,
+        <span class="dt">filename =</span> <span class="kw">paste</span>(<span class="st">&quot;TotalAftComposition&quot;</span>, 
+                shbasic::<span class="kw">shbasic_condenseRunids</span>(<span class="kw">data.frame</span>(aftData)[, <span class="st">&quot;ID&quot;</span>]), <span class="dt">sep=</span><span class="st">&quot;_&quot;</span>),
+        <span class="dt">alpha=</span><span class="fl">0.7</span>)</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+<pre><code>## NULL</code></pre>
 </div>
 </div>
 

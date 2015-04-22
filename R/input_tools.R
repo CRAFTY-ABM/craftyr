@@ -161,7 +161,7 @@ input_tools_getModelOutputFilenames <- function(simp,
 	# attach filename:
 	# Folder = filename need to be concatenated here because of lapply when pertick == FALSE (difficulties for vector of folders)
 	fileinfogrid <- data.frame(fileinfogrid, Filename = paste(folders, 
-					input_tools_getFilenameListRepetitions(simp, datatype = datatype, dataname = dataname, folders),
+					input_tools_getFilenameListRepetitions(simp, datatype = datatype, dataname = dataname, folders, considertick = pertick),
 					sep="/"))
 	
 	if (pertick) {
@@ -213,15 +213,17 @@ input_tools_getModelOutputFilenames <- function(simp,
 input_tools_getFilenameListRepetitions <- function(simp, 
 		datatype,
 		dataname,
-		folders) {
+		folders,
+		considertick = TRUE) {
 	# TODO check & test
-	filenameList <- expand.grid(input_tools_constructFilenameList(simp, datatype = datatype, dataname = dataname), stringsAsFactors = FALSE)
+	filenameList <- expand.grid(input_tools_constructFilenameList(simp, datatype = datatype, dataname = dataname,
+					considertick = considertick), stringsAsFactors = FALSE)
 	reps <- length(folders) / length(filenameList[,1])
 	reps <- if (reps < 1) 1 else reps
 	rep(do.call(paste, c(filenameList, sep="")), each=reps)
 }
 input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = NULL, 
-		order = simp$sim$filepartorder) {
+		order = simp$sim$filepartorder, considertick = TRUE) {
 	vectors <- list("scenario" = simp$sim$scenario,
 				"regionalisation" = simp$sim$regionalisation, 	
 				"runid" 	= simp$sim$runids,
@@ -231,6 +233,10 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 				"tick"		= "TICK",
 				"D"			= "-"	,
 				"U"			= "_")
+	
+	if (!considertick) {
+		order <- order[-(c(-1,0) + (which(order == "tick")))]
+	}
 	
 	l <- vectors[order]
 	
@@ -282,6 +288,17 @@ input_tools_save <- function(simp, object) {
 	save(list=object, file = paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
 					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""), 
 			envir = parent.frame())
+}
+#' Checks whether an object with the given object name has been stored under the given simp configuration 
+#' @param simp 
+#' @param objectName 
+#' @return TRUE if object already stored
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_checkexists <- function(simp, objectName) {
+	return(file.exists(paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
+							if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep="")))
 }
 #' #' Wrapper for load
 #' @param simp 

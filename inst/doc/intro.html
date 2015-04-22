@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-04-16" />
+<meta name="date" content="2015-04-21" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,13 +54,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-04-16</em></h4>
+<h4 class="date"><em>2015-04-21</em></h4>
 </div>
 
 
 <div id="concept" class="section level1">
 <h1>Concept</h1>
-<p>The package provides separate functions for basic tasks and 2nd order tasks that are combined to load data from model output, convert, and finally visualise it.</p>
+<p>The package provides various functions to load data from model output, convert, and finally visualise it. Therefore, in a chain of production these functions need to be combined. At the same time, there are a number of high level functions which integrate the more basic functions but leave less scope for customisation. These high level functions start with hl.</p>
 <div id="parameters" class="section level2">
 <h2>Parameters</h2>
 <p>There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and parameters. The basic idea is to define a simp list for each project and execute the simp defining R code every time you start a script with the according project. Within the script, “local” properties can overwrite the project level settings, e.g. runID, image resolutions etc.</p>

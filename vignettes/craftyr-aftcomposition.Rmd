@@ -4,7 +4,7 @@ author: "Sascha Holzhauer"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using CSV data with craftyr}
+  %\VignetteIndexEntry{Using AFT composition CSV data with craftyr}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -22,7 +22,8 @@ vignette: >
 ```{r, eval=FALSE}
 library(craftyr)
 simp <- param_getExamplesSimp()
-dataAggregateAFTComposition <- input_csv_data(simp, dataname = NULL, datatype = "AggregateAFTComposition", pertick = FALSE,
+dataAggregateAFTComposition <- input_csv_data(simp, dataname = NULL, datatype = "AggregateAFTComposition",
+		pertick = FALSE,
 		bindrows = TRUE,
 		skipXY = TRUE)
 input_tools_save(simp, "dataAggregateAFTComposition")

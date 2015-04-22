@@ -26,11 +26,11 @@ if (full) {
 	devtools::build_vignettes(pkgsName)
 }
 
+
 install(pkgsName)
 # devtools::install_bitbucket("geoslurg/craftyr@default")
-# devtools::install_bitbucket("craftyr", username="geoslurg", ref="default") # R 3.0.1
 # for eddie (use qlogin session!):
-# devtools::install_bitbucket("geoslurg/craftyr@default", args="--library='/exports/home/sholzhau/R/x86_64-unknown-linux-gnu-library/3.1'")
+# devtools::install_bitbucket("craftyr", username="geoslurg", ref="default")
 if (full) {
 	browseVignettes("craftyr")
 }

@@ -134,6 +134,11 @@ param_getExamplesSimp <- function() {
 	simp$fig$init <- function(simp, outdir, filename) {}
 	simp$fig$close<- function() {}
 	
+	simp$colours$Service <- c("-1" = "white",
+				"Service1" 		= "indianred1",
+				"Service2" 	 	= "orange1",
+				"Service3" 		= "royalblue2")
+	
 	simp$sim$id <- "Example"
 	simp
 }
