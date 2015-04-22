@@ -32,7 +32,7 @@ convert_raster_getAftNumbers <- function(aft_raster) {
 							# get colnames right
 							raster_names <- names(aft_raster_item)
 							raster <- data.frame(aft_raster_item, raster::freq(aft_raster))
-							names(raster) <- c(raster_names, "AFTs")
+							names(raster) <- c(raster_names, "AFT", "Value")
 							raster
 						})
 				do.call(rbind, idata)

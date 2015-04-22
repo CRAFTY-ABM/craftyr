@@ -2,13 +2,14 @@
 title: "Using CSV data with craftyr"
 author: "Sascha Holzhauer"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Using CSV data with craftyr}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
-
 
 # Input (read) CSV Data
 
@@ -17,14 +18,16 @@ vignette: >
 	* Limit considered ticks by starttick, endtick, and interval
 	* Read CSV files of multiple regions at once
 
-## Source: Regional CSV data
+## Source: Regional CSV data (CellTable)
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, results="hide"}
 library(craftyr)
 simp <- param_getExamplesSimp()
 cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
 		pertick = TRUE, starttick = 2010, endtick = 2020, tickinterval = 10,
 		attachfileinfo = TRUE, bindrows = TRUE)
+csv_LandUseIndex <- cdata
+input_tools_save(simp, "csv_LandUseIndex")
 cdata <- split(cdata, list(cdata$Tick,cdata$Runid))
 csv_LandUseIndex_split <- cdata
 input_tools_save(simp, "csv_LandUseIndex_split")
@@ -32,7 +35,7 @@ input_tools_save(simp, "csv_LandUseIndex_split")
 
 For large data sets it is a good idea to clean the data somewhat before storing:
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, results="hide"}
 cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", colums = "LandUseIndex",
 		pertick = TRUE, starttick = 2010, endtick = 2040, tickinterval = 30, attachfileinfo = TRUE)
 
@@ -49,6 +52,28 @@ input_tools_save(simp, "csv_LandUseIndex_split")
 rm(list(csv_LandUseIndex_split, cdata)
 ```
 
+## Source: Aggregated Demand and Supply Data (AggregateDemandSupplyCSVOutputter)
+
+```{r, eval=TRUE, results="hide"}
+library(craftyr)
+simp <- param_getExamplesSimp()
+csv_aggregateServiceDemand <- input_csv_data(simp, dataname = NULL, datatype = "AggregateServiceDemand",
+		pertick = FALSE, bindrows = TRUE)
+input_tools_save(simp, "csv_aggregateServiceDemand")
+```
+
+## Source: Marginal Utilities
+
+Note: currently, there is no outputter, but marginal utilities can be extracted from log data using a
+python script (see Py4ABM, https://bitbucket.org/S-Holzhauer/py4abm). The resulting CSV file should be places in the projects RData folder.
+
+TODO
+```{r, eval=FALSE, results="hide"}
+library(craftyr)
+simp <- param_getExamplesSimp()
+csv_MarginalUtilitites_melt <- input_marginalutilities(simp)
+input_tools_save(simp, "csv_MarginalUtilitites_melt")
+```
 
 # Visualise CSV Data
 
@@ -56,7 +81,7 @@ rm(list(csv_LandUseIndex_split, cdata)
 
 ### LandUseIndex: Facets
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, results="hide"}
 simp <- param_getDefaultSimp()
 input_tools_load(simp, "csv_LandUseIndex_split")
 cdata <- csv_LandUseIndex_split
@@ -79,7 +104,7 @@ visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
 
 ### LandUseIndex: Raw Plot
 
-```{r, eval=TRUE, dev="png", fig.show='hold'}
+```{r, eval=TRUE, dev="png", fig.show='hold', results="hide"}
 library(craftyr)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_LandUseIndex_split")
@@ -88,5 +113,76 @@ visualise_cells_printRawPlots(simp, csv_LandUseIndex_split,
 ```
 
 ## Aggregate Data
+
+### AFT Composition as Timeline
+```{r, eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"}
+library(craftyr)
+simp <- param_getExamplesSimp()
+input_tools_load(simp, "csv_LandUseIndex")
+
+# aggregate regions:
+csv_LandUseIndex$AftNumbers <- csv_LandUseIndex$LandUseIndex
+aftData <- aggregate(subset(csv_LandUseIndex, select=c("AftNumbers")),
+		by = list(ID = csv_LandUseIndex[,"Runid"],
+				Tick=csv_LandUseIndex[, "Tick"],  AFT=csv_LandUseIndex[,"LandUseIndex"]),
+		FUN=sum)
+aftData$AFT <- as.factor(aftData$AFT)
+aftData$Proportion <- ave(aftData$AftNumbers, aftData$ID, aftData$Tick, FUN =  function(.x) .x/sum(.x))
+aftData$Number <- NULL
+
+visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
+		colour_column = "AFT",
+		colour_legenditemnames = simp$mdata$aftNames,
+		linetype_column = "ID",
+		linetype_legendtitle = simp$sim$rundesclabel,
+		linetype_legenditemnames = simp$sim$rundesc,
+		filename = paste("TotalAftComposition", 
+				shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
+		alpha=0.7)
+
+```
+
+### Aggregated Demand and Supply Data
+```{r, eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"}
+library(craftyr)
+library(reshape)
+simp <- param_getExamplesSimp()
+input_tools_load(simp, "csv_aggregateServiceDemand")
+
+data <- convert_aggregate_meltsupplydemand(simp, csv_aggregateServiceDemand)
+
+# aggregate regions:
+data <- aggregate(subset(data, select=c("Value")),
+		by = list(ID = data[,"Runid"],
+				Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
+				Service=data[,"Service"], Type=data[,"Type"]),
+		FUN=sum)
+
+visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand",
+		colour_column = "Service",
+		linetype_column = "Type",
+		filename = paste("AggregateServiceDemand", 
+				shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
+		alpha=0.7)
+```
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_aggregate_demandsupply(simp)
+```
+
+### Marginal Utilities
+TODO
+```{r, eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"}
+input_tools_load(simp, "csv_MarginalUtilitites_melt")
+visualise_lines(simp, data, "value", title = "Marginal Utilities",
+		colour_column = "Service",
+		filename = paste("MarginalUtilities", sep=""),
+		alpha=0.7)
+```
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_marginalutilities(simp)
+```
 
 ### Total Productivity
