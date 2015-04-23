@@ -35,6 +35,11 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 	runinfo <- read.csv(simp$dirs$output$runinfo, skip = 1)
 	rinfo <- runinfo[runinfo$Version == simp$sim$version,]
 	
+	if (length(rinfo) == 0) {
+		Roo::throw.default("Runinfo table ", filename," does not contain a row for version " + 
+						simp$sim$version, "!", sep="")
+	}
+	
 	if (!is.null(rows)) {
 		rinfo <- rinfo[,1:rows]
 	}
