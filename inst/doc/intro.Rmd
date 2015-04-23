@@ -11,8 +11,10 @@ vignette: >
 
 # Concept
 
-The package provides separate functions for basic tasks and 2nd order tasks that are combined to load data from
-model output, convert, and finally visualise it.
+The package provides various functions to load data from model output, convert, and finally visualise it.
+Therefore, in a chain of production these functions need to be combined. At the same time, there are a number
+of high level functions which integrate the more basic functions but leave less scope for customisation. These
+high level functions start with hl. 
 
 ## Parameters
 

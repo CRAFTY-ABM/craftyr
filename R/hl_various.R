@@ -23,3 +23,27 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 			filename = paste("MarginalUtilities", sep=""),
 			alpha=0.7)
 }
+#' Print LaTeX table including run information for the version in simp$sim$version.
+#' @param simp 
+#' @param filename 
+#' @param rows
+#' @return xtable plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
+	runinfo <- read.csv(simp$dirs$output$runinfo, skip = 1)
+	rinfo <- runinfo[runinfo$Version == simp$sim$version,]
+	
+	if (!is.null(rows)) {
+		rinfo <- rinfo[,1:rows]
+	}
+	table <- xtable::xtable(t(rinfo),
+			label="model.run.information", 
+			caption="Model run information",
+			align=c("r", "p{13cm}")
+	)
+	
+	print(table, sanitize.colnames.function = identity,
+			sanitize.rownames.function = identity)
+}

@@ -234,7 +234,7 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 				"D"			= "-"	,
 				"U"			= "_")
 	
-	if (!considertick) {
+	if (!considertick & "tick" %in% order) {
 		order <- order[-(c(-1,0) + (which(order == "tick")))]
 	}
 	
@@ -250,7 +250,7 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 	}
 	if (length(l) == 0) {
 		R.oo::throw.default("Cannot construct filenamelist. Something's wrong with simp$sim$filepartorder (",
-				simp$sim$filepartorder, ")\n")
+				paste(simp$sim$filepartorder, collapse=","), ")\n")
 	}
 	l
 }
