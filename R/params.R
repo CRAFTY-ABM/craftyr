@@ -37,7 +37,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$dirs$output$raster		<- paste(defsimp$dirs$outputdir, "raster/", sep="") 
 	defsimp$dirs$output$figures		<- paste(defsimp$dirs$outputdir, "figures/", sep="")
 	defsimp$dirs$output$reports		<- paste(defsimp$dirs$outputdir, "reports/", sep="")
-	
+	defsimp$dirs$output$runinfo		<- paste(defsimp$dirs$outputdir, "../runinfo/RunInfo.csv", sep="")
 	
 	### CSV Column Names ###########################################################
 	defsimp$csv <- list()

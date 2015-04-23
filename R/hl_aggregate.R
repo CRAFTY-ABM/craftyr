@@ -110,13 +110,16 @@ hl_demandsupply <- function(simp, runid=0, dataname = "csv_cell_aggregated") {
 #' @export
 hl_takeovers <- function(simp, runid = 0, dataname = "csv_cell_aggregated",
 		starttick = 2010, tickinterval=5, endtick = 2040,
-		datanametakeovers = "dataTakeOvers") {
+		datanametakeovers = "csv_aggregateTakeOver") {
 	input_tools_load(simp, dataname)
 	dataAgg <- get(dataname)
 	
-	startPopulation <- aggregate(subset(dataAgg, select=c("AFT"),
+	startPopulation <- data.frame(names(simp$mdata$aftNames), 0)
+	names(startPopulation) <- c("Agent", "AFT")
+	sp <- aggregate(subset(dataAgg, select=c("AFT"),
 					subset = dataAgg$Tick==starttick && dataAgg$Runid == runid), by = list(
 					Agent = dataAgg[dataAgg$Tick == starttick && dataAgg$Runid == runid,"LandUseIndex"]), FUN=sum)
+	startPopulation[startPopulation$Agent %in% sp$Agent,"AFT"] <- sp$AFT 
 	
 	startPopulation$Agent <- simp$mdata$aftNames[as.character(startPopulation$Agent)]
 	
@@ -155,9 +158,9 @@ hl_takeovers <- function(simp, runid = 0, dataname = "csv_cell_aggregated",
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_afttakeoverfluctuations <- function(simp, runid = 0, dataname = "csv_cell_aggregated",
+hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 		starttick = 2010, tickinterval=5, endtick = 2040,
-		datanametakeovers = "dataTakeOvers") {
+		datanametakeovers = "csv_aggregateTakeOver") {
 	input_tools_load(simp, dataname)
 	dataAgg <- get(dataname)
 	

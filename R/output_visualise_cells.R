@@ -72,6 +72,14 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 				axis.title = ggplot2::element_blank())
 	}
 	
+	# ggplot throws an error if any facet consists only of NAs.
+	celldata <- plyr::ddply(celldata, "ID", function(df) {
+				if (all(is.na(df$Values))) {
+					df[df$X==1 & df$Y==1, "Values"] <- levels(df$Values)[1]
+				}
+				df
+			})
+	
 	p1 <- ggplot2::ggplot()+
 			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +

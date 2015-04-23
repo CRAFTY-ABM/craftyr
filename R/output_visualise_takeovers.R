@@ -20,6 +20,7 @@ output_visualise_takeovers <- function(simp,
 		type_of_arrow = "grid",
 		transitionthreshold = 0) {
 	
+	# TODO allow for multiple runids (changes to startpopulation and plot as facet eg.)
 	ticks = seq(starttick, endtick, tickinterval)
 	data[data <= transitionthreshold] <- 0
 	
@@ -117,7 +118,8 @@ output_visualise_aftFluctuations <- function(simp,
 		title = "AFT Fluctuations",
 		filename = title) {
 	
-	fluctuations <- ddply(data, "Tick", function(df) {
+	df <- data[data$Tick == 2010,]
+	fluctuations <- ddply(data, Runid~Tick, function(df) {
 				m <- df[,simp$mdata$aftNames]
 				netto <- colSums(m) - rowSums(m)
 				data.frame(AFT = names(netto), sum = netto)
@@ -131,6 +133,7 @@ output_visualise_aftFluctuations <- function(simp,
 
 	visualise_lines(simp, fluctuations, "sum", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+			linetype_column = "Runid",
 			filename = filename,
 			alpha=0.7)
 }
