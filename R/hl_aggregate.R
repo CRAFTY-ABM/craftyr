@@ -183,7 +183,7 @@ hl_afttakeoverfluctuations <- function(simp, runid = 0, dataname = "csv_cell_agg
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aggregate_aftcompositions <- function(simp, dataname = "csv_AggregateAFTComposition") {
+hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTComposition") {
 	input_tools_load(simp, dataname)
 	dataComp <- get(dataname)
 	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
@@ -202,6 +202,7 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_AggregateAFTCompo
 	
 	visualise_lines(simp, d, "value", title = "Aft Composition",
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+			linetype_column = "Runid",
 			filename = "AftComposition",
 			alpha=0.7)
 }
@@ -226,6 +227,7 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 	visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand",
 			colour_column = "Service",
 			linetype_column = "Type",
+			facet_column = "ID",
 			filename = paste("AggregateServiceDemand", 
 					shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
 			alpha=0.7)
