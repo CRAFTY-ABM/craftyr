@@ -6,8 +6,10 @@ Reads output data for the specified datatype and dataname from CSV data for pote
 regions, and multiple ticks.}
 \usage{
 input_csv_data(simp, datatype = NULL, dataname = "Cell", columns = NULL,
-  pertick = FALSE, extension = "csv", starttick = 0,
-  endtick = simp$tech$maxtick, tickinterval = 1, attachfileinfo = TRUE,
+  pertick = FALSE, extension = "csv", starttick = if
+  (!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+  endtick = if (!is.null(simp$sim$endtick)) simp$sim$endtick else
+  simp$tech$maxtick, tickinterval = 1, attachfileinfo = TRUE,
   splitfileinfo = FALSE, bindrows = FALSE, aggregationFunction = NULL,
   skipXY = FALSE)
 }

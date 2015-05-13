@@ -108,7 +108,7 @@ hl_demandsupply <- function(simp, runid=0, dataname = "csv_cell_aggregated") {
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_takeovers <- function(simp, runid = 0, dataname = "csv_cell_aggregated",
+hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
 		starttick = 2010, tickinterval=5, endtick = 2040,
 		datanametakeovers = "csv_aggregateTakeOver") {
 	input_tools_load(simp, dataname)
@@ -191,7 +191,7 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	dataComp <- get(dataname)
 	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
 	
-	data <- reshape::melt(dataComp, variable_name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
+	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
 			direction="long")
 
 	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, 
@@ -229,9 +229,10 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 	
 	visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand",
 			colour_column = "Service",
+			colour_legenditemnames = simp$mdata$conversion$services,
 			linetype_column = "Type",
 			facet_column = "ID",
 			filename = paste("AggregateServiceDemand", 
-					shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
+					shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), simp$sim$id, sep="_"),
 			alpha=0.7)
 }

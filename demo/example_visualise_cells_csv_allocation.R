@@ -5,7 +5,7 @@
 # TODO adapt from rawPlot
 #######################################################################
 source(simp$simpDefinition)   # read simp
-data <- input_csv_param_capitals()
+data <- input_csv_param_capitals(simp)
 raster <- convert_2raster(simp, data)
-visualisation_raster_printRawPlots(raster, legendTitle = "Capitals Example", 
-		factorial= FALSE, omitAxisTicks = FALSE, ncol = 1, id="None")
+visualise_raster_printRawPlots(simp, raster, legendtitle = "Capitals Example", 
+		factorial= FALSE, omitaxisticks = FALSE, ncol = 1)

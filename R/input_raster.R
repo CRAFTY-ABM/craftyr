@@ -74,8 +74,8 @@ read_raster_single <- function(scenario = lix$scenario, world = pix$world,
 input_raster_output <- function(simp,
 		datatype = NULL ,
 		dataname, 
-		starttick = 0,
-		endtick = simp$tech$maxtick,
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick,
 		tickinterval = 1,
 		encapsefileinfo = TRUE) {
 	

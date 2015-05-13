@@ -94,7 +94,7 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 
 ## ----, eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 library(craftyr)
-library(reshape)
+library(reshape2)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_aggregateServiceDemand")
 

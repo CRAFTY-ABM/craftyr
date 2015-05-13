@@ -8,7 +8,9 @@ Attaches infos (region, runid, scenario).}
 input_tools_getModelOutputFilenames(simp,
   folders = input_tools_getModelOutputDir(simp), datatype = NULL,
   dataname = NULL, extension = NULL, returnfileinfo = TRUE,
-  pertick = FALSE, starttick = 0, endtick = simp$tech$maxtick,
+  pertick = FALSE, starttick = if (!is.null(simp$sim$starttick))
+  simp$sim$starttick else simp$tech$mintick, endtick = if
+  (!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick,
   tickinterval = 1)
 }
 \arguments{

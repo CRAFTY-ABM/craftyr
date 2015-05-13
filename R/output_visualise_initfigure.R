@@ -10,19 +10,19 @@
 output_visualise_initFigure <- function(simp, outdir = simp$dirs$output$figures, filename, ensurePath = TRUE) {
 
 	if (is.null(filename)) {
-		R.oo::throw("Filename may not be NULL!")
+		R.oo::throw.default("Filename may not be NULL!")
 	}
 	if (is.null(simp$fig$resfactor)) {
-		R.oo::throw("Set simp$fig$resFactor!")
+		R.oo::throw.default("Set simp$fig$resFactor!")
 	}
 	if (is.null(simp$fig$width)) {
-		R.oo::throw("Set simp$fig$width!")
+		R.oo::throw.default("Set simp$fig$width!")
 	}
 	if (is.null(simp$fig$height)) {
-		R.oo::throw("Set simp$fig$height!")
+		R.oo::throw.default("Set simp$fig$height!")
 	}
 	if (is.null(simp$fig$numfigs) || length(simp$fig$numfigs) == 0) {
-		R.oo::throw("Set simp$fig$numFigs (correctly)!")
+		R.oo::throw.default("Set simp$fig$numFigs (correctly)!")
 	}
 	
 	if (is.null(simp$fig$outputformat)) {

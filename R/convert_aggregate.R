@@ -6,7 +6,7 @@
 #' @author Sascha Holzhauer
 #' @export
 convert_aggregate_meltsupplydemand <- function(simp, data) {
-	data <-melt(data, variable_name="Service", 
+	data <-reshape2::melt(data, variable.name="Service", 
 			id.vars= c("Region", "Tick", "Runid", "Scenario"), 
 			direction="long")
 	names(data)[names(data)=="value"] <- "Value"

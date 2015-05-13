@@ -3,7 +3,8 @@
 \alias{input_csv_param_initialAllocation}
 \title{Reads aft allocation from CSV data for potentially multiple regions}
 \usage{
-input_csv_param_initialAllocation(simp, aftColumn = "LandUseIndex")
+input_csv_param_initialAllocation(simp, aftColumn = "LandUseIndex",
+  filename = paste(simp$sim$regions, "-Cell.csv", sep = ""))
 }
 \arguments{
 \item{simp}{SIMulation Properties}

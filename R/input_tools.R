@@ -20,9 +20,6 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 								if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
 											simp$sim$regionalisation, simp$sim$scenario, sep="/"), sep="/")
 					},
-					if (datatype %in% c("allocation")) {
-						"allocation"
-					},
 					sep="/")
 }
 #' Determines the model output folder(s) for the given \eqn{simp}.
@@ -38,9 +35,10 @@ input_tools_getModelOutputDir <- function(simp) {
 	result = do.call(paste, c(expand.grid(simp$dirs$output$simulation,
 							simp$sim$world,
 							if(!is.null(simp$sim$regionalisation)) simp$sim$regionalisation else "",
-							simp$sim$scenario,
-							simp$sim$runids,
-							if(!is.null(simp$sim$regions) & simp$sim$hasregiondir) simp$sim$regions else rep("", times=length(simp$sim$regions))), sep="/"))
+							if(!is.null(simp$sim$scenario)) simp$sim$scenario else "",
+							if(!is.null(simp$sim$runids)) simp$sim$runids else "",
+							if(!is.null(simp$sim$regions) & simp$sim$hasregiondir) simp$sim$regions else 
+										rep("", times=max(1,length(simp$sim$regions)))), sep="/"))
 	
 	if (length(result) == 0) {
 		R.oo::throw.default(paste("No output dir(s) constructed. Check simp parameters\n\t", 
@@ -75,8 +73,8 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 		datatype = NULL,
 		dataname = NULL,
 		extension = NULL,
-		starttick = 0,
-		endtick = simp$tech$maxtick, 
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1) {
 	# pattern = NULL
 	
@@ -148,15 +146,15 @@ input_tools_getModelOutputFilenames <- function(simp,
 		extension = NULL,
 		returnfileinfo = TRUE,
 		pertick = FALSE,
-		starttick = 0,
-		endtick = simp$tech$maxtick, 
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1) {
 	
 	# generate file info matrix by combining various vectors:
 	fileinfogrid <- c(expand.grid(				
-					Scenario = simp$sim$scenario,
-					Runid = simp$sim$runids,
-					Region = simp$sim$regions))
+					Scenario = 	if (is.null(simp$sim$scenario)) "" else simp$sim$scenario,
+					Runid = 	if (is.null(simp$sim$runids)) "" else simp$sim$runids,
+					Region = 	if (is.null(simp$sim$regions)) "" else simp$sim$regions))
 	
 	# attach filename:
 	# Folder = filename need to be concatenated here because of lapply when pertick == FALSE (difficulties for vector of folders)

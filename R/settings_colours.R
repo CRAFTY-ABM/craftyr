@@ -19,10 +19,11 @@ settings_colours_getAftColours <- function() {
 #' @author Sascha Holzhauer
 #' @export
 settings_colours_getServiceColours <- function() {
-	aftColours <- c("-1" = "white",
+	serviceColours <- c("-1" = "white",
 			"Meat" 			= "indianred1",
 			"Cereal" 	 	= "orange1",
 			"Conservation" 	= "royalblue2",
+			"Recreation" 	= "royalblue2",
 			"Timber" 		= "green4",
 			"Biofuel" 		= "darkviolet")
 }

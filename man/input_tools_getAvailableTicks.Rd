@@ -8,8 +8,10 @@ If extension is not given, any extension is considered. If datatype and dataname
 not given, the according parts of the filename is assumed not to exist (also the associated '-').}
 \usage{
 input_tools_getAvailableTicks(simp, dir, pattern = NULL, datatype = NULL,
-  dataname = NULL, extension = NULL, starttick = 0,
-  endtick = simp$tech$maxtick, tickinterval = 1)
+  dataname = NULL, extension = NULL, starttick = if
+  (!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+  endtick = if (!is.null(simp$sim$endtick)) simp$sim$endtick else
+  simp$tech$maxtick, tickinterval = 1)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

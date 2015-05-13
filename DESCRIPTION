@@ -1,8 +1,8 @@
 Package: craftyr
 Type: Package
 Title: Processing CRAFTY model output
-Version: 0.1.9
-Date: 2015-04-22
+Version: 0.2.0
+Date: 2015-05-13
 Authors@R: c(person("Sascha", "Holzhauer", role = c("aut", "cre"), email =
     "Sascha.Holzhauer@ed.ac.uk"), person("Calum", "Brown", email =
     "Calum.Brown@ed.ac.uk", role = "aut"))
@@ -23,14 +23,16 @@ Imports:
     R.oo,
     raster,
     RColorBrewer,
-    reshape,
+    reshape2,
     rmarkdown,
     shbasic,
     sp,
-    stringr
+    stringr,
+    tools
 License: GPL-3
 VignetteBuilder: knitr
 Suggests:
     knitr,
+    readODS,
     sqldf
 LazyData: true
