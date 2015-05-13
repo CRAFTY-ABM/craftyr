@@ -39,7 +39,7 @@ hl_regions_aftcomposition <- function(simp, dataname = "csv_cell_aggregated", fa
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_regions_demandandsupply <- function(simp, runid = 0, dataname = "csv_cell_aggregated",
+hl_regions_demandandsupply <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
 		facet_ncol = 5) {
 	
 	convert_aggregate_demand(simp)

@@ -22,8 +22,8 @@
 #' @export
 input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = NULL, pertick = FALSE, 
 		extension = "csv",
-		starttick = 0,
-		endtick = simp$tech$maxtick, 
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1, 
 		attachfileinfo = TRUE,
 		splitfileinfo = FALSE,
@@ -59,9 +59,17 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 	
 	if (!is.null(columns)) {
 		# assumes that fileinfos structure is the same for all list elements!
-		data <- lapply(data, function(x) x[, c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y), columns, 
+		
+		data <- tryCatch({lapply(data, function(x) x[, c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y), columns, 
 									if (attachfileinfo) 
 						colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])])
+			}, error = function(e) {
+				futile.logger::flog.error("Undefined columns requested from CSV data: %s", 
+						paste(c(simp$csv$cname_x, simp$csv$cname_y), columns, if (attachfileinfo) 
+									colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)], 
+						collapse="|", sep="|"),
+				name="crafty.input.csv")
+			})
 	}
 			
 	if (attachfileinfo & splitfileinfo) data <- split(data, data[,names(fileinfos)])

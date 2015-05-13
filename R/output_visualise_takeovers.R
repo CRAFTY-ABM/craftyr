@@ -14,8 +14,8 @@
 output_visualise_takeovers <- function(simp,
 		data,
 		startpopulation = NULL,
-		starttick = 0,
-		endtick = simp$tech$maxtick, 
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1,
 		type_of_arrow = "grid",
 		transitionthreshold = 0) {
@@ -112,20 +112,20 @@ output_visualise_takeovers <- function(simp,
 #' @export
 output_visualise_aftFluctuations <- function(simp,
 		data,
-		starttick = 0,
-		endtick = simp$tech$maxtick, 
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1,
 		title = "AFT Fluctuations",
 		filename = title) {
 	
 	df <- data[data$Tick == 2010,]
-	fluctuations <- ddply(data, Runid~Tick, function(df) {
+	fluctuations <- plyr::ddply(data, Runid~Tick, function(df) {
 				m <- df[,simp$mdata$aftNames]
 				netto <- colSums(m) - rowSums(m)
 				data.frame(AFT = names(netto), sum = netto)
 			})
 	
-	fluctuations <- fluctuations[fluctuations$Tick >= starttick & fluctuations$Tick <= simp$tech$maxtick,]
+	fluctuations <- fluctuations[fluctuations$Tick >= starttick & fluctuations$Tick <= endtick,]
 	# replace AFT names by AFT serial ids (for correct colours)
 	aftNumbers <- names(simp$mdata$aftNames)
 	names(aftNumbers) <- simp$mdata$aftNames

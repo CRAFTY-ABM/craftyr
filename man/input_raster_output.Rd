@@ -3,8 +3,10 @@
 \alias{input_raster_output}
 \title{Get list (scenarios/regions/runids) of lists (ticks) of raster data from files whose source is taken from simp.}
 \usage{
-input_raster_output(simp, datatype = NULL, dataname, starttick = 0,
-  endtick = simp$tech$maxtick, tickinterval = 1, encapsefileinfo = TRUE)
+input_raster_output(simp, datatype = NULL, dataname, starttick = if
+  (!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+  endtick = if (!is.null(simp$sim$endtick)) simp$sim$endtick else
+  simp$tech$maxtick, tickinterval = 1, encapsefileinfo = TRUE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

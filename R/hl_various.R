@@ -8,7 +8,7 @@
 hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, "MarginalUtilities.csv", sep="/"),
 		storerdata = TRUE) {
 	utilities = read.csv(filename, colClasses = "numeric")
-	csv_MarginalUtilitites_melt = reshape::melt(utilities, variable_name="Service", 
+	csv_MarginalUtilitites_melt = reshape2::melt(utilities, variable.name="Service", 
 			id.vars= c("Year"), 
 			direction="long")
 	colnames(csv_MarginalUtilitites_melt)[colnames(csv_MarginalUtilitites_melt) == "Year"] <- "Tick"
@@ -32,8 +32,18 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 #' @author Sascha Holzhauer
 #' @export
 hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
-	runinfo <- read.csv(simp$dirs$output$runinfo, skip = 1)
-	rinfo <- runinfo[runinfo$Version == simp$sim$version,]
+	if (tools::file_ext(filename) == "ods") {
+		require(readODS)
+		runinfo <- read.ods(filename)[[1]][,1:simp$tech$runinfocolnumber]
+		colnames(runinfo) <- runinfo[2,]
+		runinfo <- runinfo[-c(1,2),]
+		rinfo <- runinfo[runinfo["Version"] == simp$sim$version, ]
+	} else if(tools::file_ext(filename) == "csv") {
+		runinfo <- read.csv(filename, skip = 1)
+		rinfo <- runinfo[runinfo$Version == simp$sim$version,]
+	} else {
+		Roo::throw.default("File extension ", tools::file_ext(filename)," not supported!")
+	}
 	
 	if (length(rinfo) == 0) {
 		Roo::throw.default("Runinfo table ", filename," does not contain a row for version " + 

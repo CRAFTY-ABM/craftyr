@@ -1,6 +1,6 @@
-#' AFT map for 2010 and 2040 with differences
+#' AFT map for 2010 and 2040 with differences from stored CSV data
 #' @param simp 
-#' @param dataname 
+#' @param dataname name of stored CSV LandUseIndex data
 #' @return map plot
 #' 
 #' @author Sascha Holzhauer

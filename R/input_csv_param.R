@@ -7,8 +7,7 @@
 #' @export
 input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 	filenames <- paste(input_tools_getModelInputDir(simp, datatype="capitals"), '/',
-			if(!is.null(simp$sim$regionalisation)) paste(simp$sim$regionalisation, "_", sep=""),  
-			simp$sim$scenario, "_",
+			if(!is.null(simp$sim$regionalisation)) paste(simp$sim$regionalisation, "_", sep=""),
 			simp$sim$regions, "_",
 			"Capitals.csv", sep="")
 	lapply(filenames, shbasic::sh.checkFilename)
@@ -22,12 +21,13 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_csv_param_initialAllocation <- function(simp, aftColumn = "LandUseIndex") {
-	filenames <- paste(input_tools_getModelInputDir(simp, "allocation"), '/',
+input_csv_param_initialAllocation <- function(simp, aftColumn = "LandUseIndex", 
+		filename = paste(simp$sim$regions, "-Cell.csv", sep="")) {
+	filenames <- paste(simp$dirs$alloc, '/',
 			if(!is.null(simp$sim$allocversion)) paste(simp$sim$allocversion, "/", sep=""),
 			simp$sim$worldname, "/",
 			if(!is.null(simp$sim$regionalisation)) paste(simp$sim$regionalisation, "/", sep=""),
-			simp$sim$regions, "-Cell.csv",
+			filename,
 			sep="")
 	lapply(filenames, shbasic::sh.checkFilename)
 	capitalData <- lapply(filenames, utils::read.csv)

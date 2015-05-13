@@ -63,6 +63,15 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 				axis.title = ggplot2::element_blank())
 	}
 	
+	# ggplot throws an error if any facet consists only of NAs.
+	d <- plyr::ddply(d, "ID", function(df) {
+				if (all(is.na(df$Values))) {
+					df[df$X==1 & df$Y==1, "Values"] <- levels(df$Values)[1]
+				}
+				df
+			})
+	
+	
 	p1 <- ggplot2::ggplot()+
 			ggplot2::layer(geom="raster", data=d, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
@@ -107,7 +116,8 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 		for (l in rasters) {
 			rasterName <- names(l)
 			
-			simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", outerListName, sep="/"), filename = rasterName)
+			simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", outerListName, sep="/"), 
+					filename = rasterName)
 			
 			s <- data.frame(raster::rasterToPoints(l), id = names(l))
 			colnames(s) <- c("X", "Y", "Values", "ID")
@@ -123,6 +133,11 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 						if (! is.null(legenditemnames)) labels = legenditemnames)
 			}
 	
+			# ggplot throws an error if any facet consists only of NAs.
+			if (all(is.na(s$Values))) {
+				s[s$X==1 & s$Y==1, "Values"] <- levels(s$Values)[1]
+			}
+			
 			p1 <- ggplot2::ggplot()+
 				ggplot2::layer(geom="raster", data=s, mapping=ggplot2::aes(X,Y,fill=Values)) +
 				scaleFillElem +

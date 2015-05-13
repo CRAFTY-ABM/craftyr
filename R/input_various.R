@@ -7,7 +7,7 @@
 #' @export
 input_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, "MarginalUtilities.csv", sep="/")) {
 	utilities = read.csv(filename, colClasses = "numeric")
-	csv_MarginalUtilitites_melt = reshape::melt(utilities, variable_name="Service", 
+	csv_MarginalUtilitites_melt = reshape2::melt(utilities, variable.name="Service", 
 			id.vars= c("Year"), 
 			direction="long")
 	colnames(csv_MarginalUtilitites_melt)[colnames(csv_MarginalUtilitites_melt) == "Year"] <- "Tick"

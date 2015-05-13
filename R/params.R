@@ -15,12 +15,20 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	if (!exists("defsimp")) defsimp <- list()
 	defsimp$sim <- list()
 	defsimp$sim$worldname 				<- "world"
+
 	defsimp$sim$version					<- "version"
-	defsimp$sim$allocversion			<- "allocversion"
+	defsimp$sim$allocversion			<- paste(defsimp$sim$version, "AllocGen", sep="")
+	
+	defsimp$sim$parentf					<- ""
+	defsimp$sim$folder					<- paste("_", defsimp$sim$version, sep="")
+	defsimp$sim$allocf					<- paste("_", defsimp$sim$version, "alloc", sep="")
+	
 	defsimp$sim$scenario				<- "scenario"
 	defsimp$sim$regionalisation			<- "regionalisation"
 	defsimp$sim$regions					<- c("region")
 	defsimp$sim$runids					<- c("0-0")
+	defsimp$sim$starttick				<- 2010
+	defsimp$sim$endtick					<- 2040
 	defsimp$sim$hasregiondir			<- TRUE
 	defsimp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
 											"datatype", "D", "dataname", "D", "tick")
@@ -28,7 +36,11 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	### Directories ################################################################
 	defsimp$dirs <- list()
 	defsimp$dirs$project			<- "./"
-	defsimp$dirs$data 				<- paste(defsimp$dirs$project, "data/", sep="")
+	
+	defsimp$dirs$data 				<- paste(defsimp$dirs$project, "data/", defsimp$sim$parentf,"/", 
+												defsimp$sim$folder	, sep="")
+	defsimp$dirs$alloc				<- paste(defsimp$dirs$data, defsimp$sim$allocf, sep="/")
+	
 	defsimp$dirs$outputdir			<- paste(defsimp$dirs$project, "output/version/", sep="")
 	
 	defsimp$dirs$output <- list()
@@ -38,6 +50,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$dirs$output$figures		<- paste(defsimp$dirs$outputdir, "figures/", sep="")
 	defsimp$dirs$output$reports		<- paste(defsimp$dirs$outputdir, "reports/", sep="")
 	defsimp$dirs$output$runinfo		<- paste(defsimp$dirs$outputdir, "../runinfo/RunInfo.csv", sep="")
+	
 	
 	### CSV Column Names ###########################################################
 	defsimp$csv <- list()
@@ -63,6 +76,12 @@ param_mergeDefaultSimp <- function(simp = list()) {
 			"Service.Recreation"="Conservation", "Service.Timber"="Timber", "Recreation"="Conservation",
 			"Meat"="Meat", "Cereal"="Cereal", 
 			"Conservation"="Conservation", "Timber"="Timber")
+	
+	### Submodel Settings ###########################################################
+	
+	simp$submodels <- list()
+	simp$submodels$comp <- list()
+	simp$submodels$comp$cfuncs <- c()
 	
 	### Figure Settings ###########################################################
 	defsimp$fig <- list()
@@ -92,6 +111,9 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	### Technical Settings ###########################################################
 	defsimp$tech <- list()
 	defsimp$tech$maxtick <- 3000
+	defsimp$tech$mintick <- 0
+	
+	defsimp$tech$runinfocolnumber <- 36
 	
 	### Debug Settings ############################################################
 	defsimp$debug <- list()
