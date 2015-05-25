@@ -1,4 +1,4 @@
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  ###############################################################################
 #  # Machine=specific SIMP definition
 #  # NOTE: Changes in super-level parameters that are used to derive further
@@ -26,7 +26,7 @@
 #  simp$dirs$simp				<- paste(simp$dirs$project, "./config/R/", sep="")
 #  [...]
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  ################################################################
 #  # General SIMulation Properties:
 #  ################################################################
@@ -38,31 +38,22 @@
 #  simp$sim$scenario				<- "Scenario"
 #  [...]
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  futile.logger::flog.threshold(futile.logger::DEBUG, name='crafty')
 #  futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  futile.logger::flog.appender(appender.file(filename), name='test.logger')
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  csv_LandUseIndex_rbinded <- data
 #  input_tools_save(simp, "csv_LandUseIndex_rbinded")
 #  rm (csv_LandUseIndex_rbinded)
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  input_tools_load(simp, "csv_LandUseIndex_rbinded")
 
-## ----, eval=TRUE---------------------------------------------------------
-#source("../demo/simp-machine.R")
-## read capital data from CSV into raster
-#data <- input_csv_param_capitals(simp)
-#rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
-#names(rasters) <- "RegionA"
-#visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
-#		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
-
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  data(package="craftyr")
 #  source("../demo/simp-machine.R")
 #  simp$fig$init(simp, filename = "example/hist_aft.png")
@@ -70,6 +61,6 @@
 #  dev.off()
 #  
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  Error in if (simp$fig$plottitle > 0) { : argument is of length zero
 

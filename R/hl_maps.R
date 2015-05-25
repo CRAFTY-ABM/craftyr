@@ -6,7 +6,7 @@
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
-		firsttick = 2010, secondtick = 2040) {
+		firsttick = 2010, secondtick = 2040, ncol = 1) {
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
 	
@@ -43,7 +43,7 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	
 	visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
 			title = "EU-Hetero", legendtitle = "AFTs",
-			factorial= TRUE, omitaxisticks = TRUE, ncol = 1,
+			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
 			legenditemnames = simp$mdata$aftNames, coloursetname="AFT")
 }
 #' AFT map for 2010 and 2040 with differences (placed horicontally) for multiple Runids

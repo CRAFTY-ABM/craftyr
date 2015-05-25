@@ -1,4 +1,4 @@
-## ----, eval=TRUE, results="hide"-----------------------------------------
+## ---- eval=TRUE, results="hide"------------------------------------------
 library(craftyr)
 simp <- param_getExamplesSimp()
 raster_landUseIndex <- input_raster_output(simp,
@@ -8,10 +8,10 @@ raster_landUseIndex <- input_raster_output(simp,
 names(raster_landUseIndex) <- simp$sim$rundesc
 input_tools_save(simp, "raster_landUseIndex")
 
-## ----, eval=TRUE, results="hide"-----------------------------------------
+## ---- eval=TRUE, results="hide"------------------------------------------
 input_tools_load(simp, "raster_landUseIndex")
 
-## ----, eval=TRUE, fig.width=7--------------------------------------------
+## ---- eval=TRUE, fig.width=7---------------------------------------------
 landUseIndexData <- convert_raster_getAftNumbers(raster_landUseIndex)
 landUseIndexData$AFT <- factor(landUseIndexData$AFT)
 visualise_lines(simp, landUseIndexData, "Value", title = "Total AFT composition",

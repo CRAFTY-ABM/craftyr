@@ -2,7 +2,9 @@
 title: "Using raster data with craftyr"
 author: "Sascha Holzhauer"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Using raster data with craftyr}
   %\VignetteEngine{knitr::rmarkdown}

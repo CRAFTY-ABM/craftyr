@@ -32,6 +32,10 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 		Roo::throw.default("Parameter celldata must be a data.frame or other list!")
 	}
 	
+	if(is.data.frame(celldata)) {
+		celldata <- list(celldata)
+	}
+	
 	if(is.null(names(celldata))) {
 		warning("Assign names to elements of list! Using letters...")
 		names(celldata) <- letters[1:length(celldata)]

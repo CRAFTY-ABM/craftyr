@@ -6,10 +6,10 @@
 #' @author Sascha Holzhauer
 #' @export
 input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
-	filenames <- paste(input_tools_getModelInputDir(simp, datatype="capitals"), '/',
-			if(!is.null(simp$sim$regionalisation)) paste(simp$sim$regionalisation, "_", sep=""),
-			simp$sim$regions, "_",
-			"Capitals.csv", sep="")
+	filenames <- input_tools_getModelOutputFilenames(simp, datatype="Capitals", 
+			folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
+			pertick = FALSE, extension = "csv", returnfileinfo = FALSE)
+	
 	lapply(filenames, shbasic::sh.checkFilename)
 	capitalData <- lapply(filenames, utils::read.csv)
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, capitals)])
@@ -59,4 +59,38 @@ input_csv_param_demand <- function(simp) {
 				result$filename = filename
 				result
 			})
+}
+#' Reads productivities for each capital and each service for the given aft
+#' @param simp SIMulation Properties
+#' @param aft
+#' @return data.frame containing productivities  
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_csv_param_productivities <- function(simp, aft, filenameprefix = "AftProduction_",
+		filenamepostfix = "_multi_medium") {
+	filename <- paste(simp$dirs$param$getparamdir(simp, datatype="productivities"), "/", aft, 
+			"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
+	
+	shbasic::sh.checkFilename(filename)
+	capitalData <- utils::read.csv(filename)
+	capitalData
+}
+#' Read agent specifc parameters
+#' @param simp 
+#' @param aft 
+#' @param filenameprefix 
+#' @param filenamepostfix 
+#' @return agent param data
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_csv_param_agents <- function(simp, aft, filenameprefix = "AftParams_",
+		filenamepostfix = "") {
+	filename <- paste(simp$dirs$param$getparamdir(simp, datatype="agentparams"), 
+			"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
+	
+	shbasic::sh.checkFilename(filename)
+	paramData <- utils::read.csv(filename)
+	paramData
 }

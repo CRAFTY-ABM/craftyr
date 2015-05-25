@@ -19,6 +19,12 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 						paste("worlds", simp$sim$worldname,
 								if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
 											simp$sim$regionalisation, simp$sim$scenario, sep="/"), sep="/")
+					} else if (datatype %in% c("agentparams")) {
+						paste(simp$sim$folder, "worlds", simp$sim$worldname, sep="/")
+					} else if (datatype %in% c("productivities")) {
+						paste(simp$sim$folder, "production", sep="/")
+					} else if (datatype %in% c("competition")) {
+						paste(simp$sim$folder	, "competition", sep="/")
 					},
 					sep="/")
 }
@@ -204,13 +210,13 @@ input_tools_getModelOutputFilenames <- function(simp,
 	if (returnfileinfo) {
 		return = fileinfogrid
 	} else {
-		return = fileinfogrid$Filename
+		return = do.call(cbind, fileinfogrid)$Filename
 	}
 	return
 }
 input_tools_getFilenameListRepetitions <- function(simp, 
-		datatype,
-		dataname,
+		datatype = "",
+		dataname = "",
 		folders,
 		considertick = TRUE) {
 	# TODO check & test
@@ -241,7 +247,7 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 	if (any(unlist(lapply(l, is.null)))) {
 		futile.logger::flog.warn("simp$sim$filepartorder contains an element which is not defined (%s).
 				Removing that element and preceeding one (assuming it's a separator).",
-				names(l)[which(unlist(lapply(l, is.null))==TRUE)],
+				order[which(unlist(lapply(l, is.null))==TRUE)],
 				name="crafty.input.tools")
 		
 		l <- l[-c(which(unlist(lapply(l, is.null))==TRUE), which(unlist(lapply(l, is.null))==TRUE) - 1)]
