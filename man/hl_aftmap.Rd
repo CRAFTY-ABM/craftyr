@@ -4,7 +4,7 @@
 \title{AFT map for 2010 and 2040 with differences from stored CSV data}
 \usage{
 hl_aftmap(simp, dataname = "csv_LandUseIndex_rbinded", firsttick = 2010,
-  secondtick = 2040)
+  secondtick = 2040, ncol = 1)
 }
 \arguments{
 \item{simp}{}

@@ -1,7 +1,7 @@
 Package: craftyr
 Type: Package
 Title: Processing CRAFTY model output
-Version: 0.2.1
+Version: 0.2.2
 Date: 2015-05-25
 Authors@R: c(person("Sascha", "Holzhauer", role = c("aut", "cre"), email =
     "Sascha.Holzhauer@ed.ac.uk"), person("Calum", "Brown", email =
@@ -28,13 +28,13 @@ Imports:
     shbasic,
     sp,
     stringr,
-    tikzDevice,
     tools,
     XML
 License: GPL-3
 VignetteBuilder: knitr
 Suggests:
     knitr,
+    tikzDevice,
     readODS,
     sqldf
 LazyData: true
