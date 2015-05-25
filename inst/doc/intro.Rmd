@@ -2,7 +2,9 @@
 title: "Introduction to craftyr"
 author: "Sascha Holzhauer"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Introduction to craftyr}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,6 +17,13 @@ The package provides various functions to load data from model output, convert, 
 Therefore, in a chain of production these functions need to be combined. At the same time, there are a number
 of high level functions which integrate the more basic functions but leave less scope for customisation. These
 high level functions start with hl. 
+
+## Directory Structure
+
+The package assumes that you stick to the recommended directory structure for both input and output data.
+See [here](https://www.wiki.ed.ac.uk/display/CRAFTY/Filename+Substitution+and+Recommended+Folder+Structure) for a definition. However, if you need to change that structure, craftyr provides some mean to adjust
+pre-defined values. For instance, you may implement a custom function and assign it to
+simp$dirs$param$getparamdir
 
 ## Parameters
 
@@ -144,20 +153,6 @@ rm (csv_LandUseIndex_rbinded)
 To load an object to the global environment again, just execute
 ```{r, eval=FALSE}
 input_tools_load(simp, "csv_LandUseIndex_rbinded")
-```
-
-# Visualise Input Data
-
-## Capital Data
-
-```{r, eval=TRUE}
-#source("../demo/simp-machine.R")
-## read capital data from CSV into raster
-#data <- input_csv_param_capitals(simp)
-#rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
-#names(rasters) <- "RegionA"
-#visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
-#		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
 ```
 
 ## Using craftyr to Put Custom Plots in the Right Place

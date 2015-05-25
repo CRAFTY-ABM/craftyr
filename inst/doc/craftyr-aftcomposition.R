@@ -1,4 +1,4 @@
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  library(craftyr)
 #  simp <- param_getExamplesSimp()
 #  dataAggregateAFTComposition <- input_csv_data(simp, dataname = NULL, datatype = "AggregateAFTComposition",
@@ -7,7 +7,7 @@
 #  		skipXY = TRUE)
 #  input_tools_save(simp, "dataAggregateAFTComposition")
 
-## ----, eval=FALSE--------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  simp <- param_getDefaultSimp()
 #  input_tools_load(simp, "dataAggregateAFTComposition")
 #  

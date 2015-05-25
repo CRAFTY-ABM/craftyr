@@ -68,7 +68,7 @@ output_visualise_takeovers <- function(simp,
 		# TODO enable the combination of AFTs into groups
 		aftindex <- names(simp$colours$AFT) %in% names(simp$mdata$aftNames)[simp$mdata$aftNames %in% colnames(data)]
 		
-		Gmisc::transitionPlot(transitions,
+		shGmisc::transitionPlot(transitions,
 				cex = 1.2,
 				overlap_add_width = 1.3,
 				type_of_arrow = type_of_arrow, 

@@ -51,6 +51,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$dirs$output$reports		<- paste(defsimp$dirs$outputdir, "reports/", sep="")
 	defsimp$dirs$output$runinfo		<- paste(defsimp$dirs$outputdir, "../runinfo/RunInfo.csv", sep="")
 	
+	defsimp$dirs$param				<- list()
+	defsimp$dirs$param$getparamdir 	<- input_tools_getModelInputDir
 	
 	### CSV Column Names ###########################################################
 	defsimp$csv <- list()
@@ -152,6 +154,8 @@ param_getExamplesSimp <- function() {
 	simp$dirs$output$raster		<- paste(simp$dirs$outputdir, "/raster/", sep="") 
 	simp$dirs$output$figures	<- paste(simp$dirs$outputdir, "/figures/", sep="")
 	simp$dirs$output$reports	<- paste(simp$dirs$outputdir, "/reports/", sep="")
+	
+	simp$dirs$data				<- system.file("extdata", "data/version", package = "craftyr")
 	
 	simp$fig$init <- function(simp, outdir, filename) {}
 	simp$fig$close<- function() {}
