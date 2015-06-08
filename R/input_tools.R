@@ -110,7 +110,7 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 			patternRegex,
 			if (!is.null(extension)) extension else "",
 			paste("\t", files, collapse = "\n"),
-			name="crafty.input.tools")
+			name="craftyr.input.tools")
 	
 	
 	ticks <- as.numeric(sub(paste(patternPost, ".", if (!is.null(extension)) extension else "*", sep=""), "", 
@@ -248,7 +248,7 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 		futile.logger::flog.warn("simp$sim$filepartorder contains an element which is not defined (%s).
 				Removing that element and preceeding one (assuming it's a separator).",
 				order[which(unlist(lapply(l, is.null))==TRUE)],
-				name="crafty.input.tools")
+				name="craftyr.input.tools")
 		
 		l <- l[-c(which(unlist(lapply(l, is.null))==TRUE), which(unlist(lapply(l, is.null))==TRUE) - 1)]
 	}
@@ -286,7 +286,7 @@ input_tools_save <- function(simp, object) {
 				object,
 				paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
 					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),
-				name = "crafty.input.tools")
+				name = "craftyr.input.tools")
 	
 	shbasic::sh.ensurePath(paste(simp$dirs$output$rdata, simp$sim$id, "/", sep=""))
 	save(list=object, file = paste(simp$dirs$output$rdata, simp$sim$id, "/", object, "_", 
@@ -316,7 +316,7 @@ input_tools_load <- function(simp, objectName,...) {
 			objectName,
 			paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
 					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),
-			name = "crafty.input.tools")
+			name = "craftyr.input.tools")
 	
 	load(file = paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
 					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),

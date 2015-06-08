@@ -24,7 +24,7 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 		theme = visualisation_raster_nobackground) {
 	
 	futile.logger::flog.info("Print raster data...",
-			name="crafty.visualise.raster")
+			name="craftyr.visualise.raster")
 	
 	if(is.data.frame(inforasterdata)) {
 		inforasterdata <- list("Something" = inforasterdata)

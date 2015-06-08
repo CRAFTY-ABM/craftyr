@@ -51,7 +51,7 @@ input_csv_param_demand <- function(simp) {
 									order = simp$sim$filepartorder_demands), stringsAsFactors = FALSE), ".csv", sep=""))
 	futile.logger::flog.debug("Filenames for collecting demand: %s",
 			paste(filenames, collapse="\n "),
-			name="crafty.input.csv.param")
+			name="craftyr.input.csv.param")
 	
 	lapply(filenames, shbasic::sh.checkFilename)
 	demandData <- lapply(filenames, function(filename) {

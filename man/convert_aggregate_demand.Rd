@@ -4,7 +4,8 @@
 \title{Aggregate and store demand}
 \usage{
 convert_aggregate_demand(simp, checkexists = TRUE,
-  demanddataname = "csv_aggregated_demand")
+  demanddataname = "csv_aggregated_demand",
+  sourcedataname = "dataAggregateSupplyDemand")
 }
 \arguments{
 \item{simp}{}
@@ -17,7 +18,8 @@ convert_aggregate_demand(simp, checkexists = TRUE,
 -
 }
 \description{
-Aggregate and store demand
+Tries to load demand from stored rData (usually from separate supply and demand CSV outputs).
+If rData not present at \code{sourcedataname} it uses param data.
 }
 \author{
 Sascha Holzhauer

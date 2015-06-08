@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-05-25" />
+<meta name="date" content="2015-06-08" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-05-25</em></h4>
+<h4 class="date"><em>2015-06-08</em></h4>
 </div>
 
 <div id="TOC">
@@ -69,6 +69,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#handling-data">Handling Data</a><ul>
 <li><a href="#storing-data">Storing Data</a></li>
 <li><a href="#using-craftyr-to-put-custom-plots-in-the-right-place">Using craftyr to Put Custom Plots in the Right Place</a></li>
+<li><a href="#comparing-data">Comparing Data</a></li>
 </ul></li>
 <li><a href="#troubleshooting">Troubleshooting</a><ul>
 <li><a href="#error-messages">Error Messages</a></li>
@@ -172,6 +173,25 @@ futile.logger::<span class="kw">flog.threshold</span>(futile.logger::TRACE, <spa
 simp$fig$<span class="kw">init</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;example/hist_aft.png&quot;</span>)
 <span class="kw">hist</span>(cellData$LandUseIndex, <span class="dt">breaks=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>)
 <span class="kw">dev.off</span>()</code></pre>
+</div>
+<div id="comparing-data" class="section level2">
+<h2>Comparing Data</h2>
+<p>The generic way of comparing data of several sources, i.e. combining the data to visualise in one plot, is the following:</p>
+<ol style="list-style-type: decimal">
+<li>For each data set to compare
+<ul>
+<li>Load data</li>
+<li>Edit Runid</li>
+</ul></li>
+<li>Combine data</li>
+<li>Save data with a new simp (new id/new output folder)</li>
+<li>Use the new dataname with the new simp (includes the new id and folder) to apply a function as normal</li>
+</ol>
+<p>However, there a few high level functions that take a list of simp configurations and do not require the storage of combined data:</p>
+<ul>
+<li>hl_comp_aggregate_aftcompositions</li>
+<li>hl_comp_cell_aftcomposition</li>
+</ul>
 </div>
 </div>
 <div id="troubleshooting" class="section level1">

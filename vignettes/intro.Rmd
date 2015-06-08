@@ -165,6 +165,21 @@ dev.off()
 
 ```
 
+## Comparing Data
+
+The generic way of comparing data of several sources, i.e. combining the data to visualise in one plot, is the following:
+
+1. For each data set to compare
+	+ Load data
+	+ Edit Runid
+2. Combine data
+3. Save data with a new simp (new id/new output folder)
+4. Use the new dataname with the new simp (includes the new id and folder) to apply a function as normal
+
+However, there a few high level functions that take a list of simp configurations and do not require the storage of combined data:
+
+* hl_comp_aggregate_aftcompositions
+* hl_comp_cell_aftcomposition
 
 # Troubleshooting
 

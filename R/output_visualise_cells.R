@@ -26,7 +26,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 		theme = visualisation_raster_legendonlytheme) {
 	
 	futile.logger::flog.debug("Print cell data...",
-			name="crafty.visualise.cells")
+			name="craftyr.visualise.cells")
 	
 	if(!is.list(celldata)) {
 		Roo::throw.default("Parameter celldata must be a data.frame or other list!")
@@ -116,7 +116,7 @@ visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", val
 		coloursetname=simp$colours$defaultset, ggplotaddon = NULL) {
 	
 	futile.logger::flog.debug("Print cell data...",
-			name="crafty.visualise.cells")
+			name="craftyr.visualise.cells")
 	
 	if (is.null(celldata)) {
 		Roo::throw.default("celldata is null!")

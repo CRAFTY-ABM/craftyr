@@ -4,7 +4,7 @@
 #' @author Sascha Holzhauer
 #' @export
 settings_colours_getAftColours <- function() {
-	aftColours <- c("-1" = "white",
+	aftColours <- c("-1" = "black",
 					"0" = "orange1",
 					"1" = "lightgoldenrod",
 					"2" = "indianred4",
@@ -19,7 +19,7 @@ settings_colours_getAftColours <- function() {
 #' @author Sascha Holzhauer
 #' @export
 settings_colours_getServiceColours <- function() {
-	serviceColours <- c("-1" = "white",
+	serviceColours <- c("-1" = "black",
 			"Meat" 			= "indianred1",
 			"Cereal" 	 	= "orange1",
 			"Conservation" 	= "royalblue2",

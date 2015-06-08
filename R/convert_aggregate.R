@@ -17,6 +17,10 @@ convert_aggregate_meltsupplydemand <- function(simp, data) {
 	data
 }
 #' Aggregate and store demand
+#' 
+#' Tries to load demand from stored rData (usually from separate supply and demand CSV outputs).
+#' If rData not present at \code{sourcedataname} it uses param data.
+#' 
 #' @param simp 
 #' @param checkexists 
 #' @param demanddataname 
@@ -25,18 +29,36 @@ convert_aggregate_meltsupplydemand <- function(simp, data) {
 #' @author Sascha Holzhauer
 #' @export
 convert_aggregate_demand <- function(simp, checkexists = TRUE,
-		demanddataname = "csv_aggregated_demand") {
-	if (!input_tools_checkexists(simp, demanddataname)) {
-		simp$sim$filepartorder_demands <- c("regionalisation", "U", "scenario", "U", "datatype", "U", "regions")
-		demand <- input_csv_param_demand(simp)
-		demand <- lapply(demand, function(x) {
-					x$Region <- substr(x$filename[1],
-							nchar(x$filename[1])-5,nchar(x$filename[1])-4)
-					x$filename <- NULL
-					x
-				})
-		demand <- do.call(rbind, demand)
-		colnames(demand)[which(colnames(demand)=="Year")] <- "Tick"
+		demanddataname = "csv_aggregated_demand", sourcedataname = "dataAggregateSupplyDemand") {
+	if (!checkexists | !input_tools_checkexists(simp, demanddataname)) {
+		# check for supply data as rData
+		if (input_tools_checkexists(simp, sourcedataname)) {
+			futile.logger::flog.info("Using rData (%s)",
+					sourcedataname,
+					name = "craftyr.convert.aggregate.demand")
+			
+			input_tools_load(simp, sourcedataname)
+			demand <- get(sourcedataname)
+			# exclude supply data:
+			demand <- demand[, grepl("Demand", colnames(demand)) | colnames(demand) %in% c("Region", "Tick")]
+			# adjust demand colnames:
+			colnames(demand) <- gsub("Demand.", "", colnames(demand))
+		} else {
+			futile.logger::flog.info("Using param data",
+					name = "craftyr.convert.aggregate.demand")
+			
+			simp$sim$filepartorder_demands <- c("regionalisation", "U", "scenario", "U", "datatype", "U", "regions")
+			demand <- input_csv_param_demand(simp)
+			demand <- lapply(demand, function(x) {
+						x$Region <- substr(x$filename[1],
+								nchar(x$filename[1])-5,nchar(x$filename[1])-4)
+						x$filename <- NULL
+						x
+					})
+			demand <- do.call(rbind, demand)
+			colnames(demand)[which(colnames(demand)=="Year")] <- "Tick"
+		}
+		
 		demand <- reshape2::melt(demand, id.vars=c("Region", "Tick"))
 		colnames(demand)[which(colnames(demand)=="value")] <- "Demand"
 		demand$variable <- as.factor(simp$mdata$conversion$services[as.character(demand$variable)])
@@ -44,23 +66,46 @@ convert_aggregate_demand <- function(simp, checkexists = TRUE,
 		input_tools_save(simp, demanddataname)
 	}
 }
-#' Aggregate and store supply
+#' Aggregate and store supply data
+#' 
+#' Tries to load supply from stored rData (usually from separate supply and demand CSV outputs).
+#' If rData not present at \code{sourcedataname} it uses cell data.
+#' 
 #' @param simp 
-#' @param dataname 
+#' @param celldataname aggregated cell CSV data
 #' @param checkexists 
-#' @param demanddataname 
+#' @param supplydataname 
 #' @return -
 #' 
 #' @author Sascha Holzhauer
 #' @export
-convert_aggregate_supply <- function(simp, dataname = "csv_cell_aggregated", checkexists = TRUE,
-		supplydataname = "csv_aggregated_supply") {
+convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated", checkexists = TRUE,
+		supplydataname = "csv_aggregated_supply", sourcedataname = "dataAggregateSupplyDemand") {
 	if (!input_tools_checkexists(simp, supplydataname)) {
-		input_tools_load(simp, dataname)
-		data <- get(dataname)
-		
-		supply <- data[, colnames(data) %in% c("Tick", "Service.Meat", "Service.Cereal", "Service.Recreation",
-						"Service.Timber", "Runid", "Region")]
+		# check for supply data as rData
+		if (input_tools_checkexists(simp, sourcedataname)) {
+			futile.logger::flog.info("Using rData (%s)",
+					sourcedataname,
+					name = "craftyr.convert.aggregate.supply")
+			
+			input_tools_load(simp, sourcedataname)
+			data <- get(sourcedataname)
+			
+			# exclude supply data:
+			supply <- data[, grepl("ServiceSupply", colnames(data)) | colnames(data) %in% c("Region", "Tick", "Runid")]
+			# adjust demand colnames:
+			colnames(supply) <- gsub("Supply", "", colnames(supply))
+			
+		} else {
+			futile.logger::flog.info("Using cellData (%s)",
+					celldataname,
+					name = "craftyr.convert.aggregate.supply")
+			
+			input_tools_load(simp, dataname)
+			data <- get(dataname)
+			supply <- data[, colnames(data) %in% c("Tick", "Service.Meat", "Service.Cereal", "Service.Recreation",
+							"Service.Timber", "Runid", "Region")]
+		}
 		
 		supply <- reshape2::melt(supply, id.vars=c("Runid", "Tick", "Region"))
 		supply$variable <- simp$mdata$conversion$services[supply$variable]
