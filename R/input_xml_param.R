@@ -22,6 +22,6 @@ input_xml_param_competition <- function(simp, filename = "Competition_linear") {
 
 get_function <- function(data) {
 	if (data["curve.class"] %in% "com.moseph.modelutils.curve.LinearFunction") {
-		return(function(x) {x*as.numeric(data["curve.a"]) + as.numeric(data["curve.b"])})
+		return(function(x) {x*as.numeric(data["curve.b"]) + as.numeric(data["curve.a"])})
 	}
 }

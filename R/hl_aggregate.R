@@ -76,7 +76,7 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 #' @export
 hl_demandsupply <- function(simp, runid=0, dataname = "csv_cell_aggregated") {
 	convert_aggregate_demand(simp)
-	convert_aggregate_supply(simp, dataname = dataname)
+	convert_aggregate_supply(simp, celldataname = dataname)
 	
 	input_tools_load(simp, "csv_aggregated_demand")
 	input_tools_load(simp, "csv_aggregated_supply")

@@ -8,7 +8,7 @@
 #' @author Sascha Holzhauer
 #' @export
 output_visualise_initFigure <- function(simp, outdir = simp$dirs$output$figures, filename, ensurePath = TRUE) {
-
+	
 	if (is.null(filename)) {
 		R.oo::throw.default("Filename may not be NULL!")
 	}
@@ -31,7 +31,11 @@ output_visualise_initFigure <- function(simp, outdir = simp$dirs$output$figures,
 		outputformat <- simp$fig$outputformat
 	}
 	
-	print(paste("Output figure file: ", outdir, '/', filename , ".", outputformat, sep=""))
+	futile.logger::flog.info("Output figure file: %s/%s.%s", 
+			outdir,
+			filename,
+			outputformat,
+			name = "craftyr.visualise.init")
 	
 	if (ensurePath) {
 		shbasic::sh.ensurePath(outdir)
@@ -47,7 +51,7 @@ output_visualise_initFigure <- function(simp, outdir = simp$dirs$output$figures,
 		numLines = simp$fig$numlines
 	} else {
 		if (!is.null(simp$fig$numcols)) {
-			numLines = numFigs / simp$fig$numcols
+			numLines = ceiling(numFigs / simp$fig$numcols)
 		} else {
 			numLines = numFigs
 		}
@@ -59,7 +63,13 @@ output_visualise_initFigure <- function(simp, outdir = simp$dirs$output$figures,
 		numCols = 1
 	}
 	
-		
+	futile.logger::flog.debug("Height: %f (num lines: %.1f)\nWidth:%f (number of column: %.1f)",
+			simp$fig$height * simp$fig$resfactor * numLines,
+			numLines,
+			simp$fig$width * simp$fig$resfactor * numCols,
+			numCols,
+			name = "craftyr.visualise.init")
+
 	if (outputformat == "png") {
 		grDevices::png(file=paste(outdir, '/', filename,".png",sep=""),
 				height = simp$fig$height * simp$fig$resfactor * numLines,

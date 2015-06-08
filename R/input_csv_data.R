@@ -35,7 +35,7 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 	
 	futile.logger::flog.debug("File infos: \n%s", 
 			paste(do.call(rbind, fileinfos)$Filename, collapse="\n"),
-			name="crafty.input.csv")
+			name="craftyr.input.csv")
 	
 	data <- lapply(fileinfos, function(item) {
 				result <- plyr::ddply(item, "Filename", function(df) {
@@ -68,7 +68,7 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 						paste(c(simp$csv$cname_x, simp$csv$cname_y), columns, if (attachfileinfo) 
 									colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)], 
 						collapse="|", sep="|"),
-				name="crafty.input.csv")
+				name="craftyr.input.csv")
 			})
 	}
 			

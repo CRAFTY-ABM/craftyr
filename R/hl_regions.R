@@ -43,7 +43,7 @@ hl_regions_demandandsupply <- function(simp, runid = simp$sim$runids[1], datanam
 		facet_ncol = 5) {
 	
 	convert_aggregate_demand(simp)
-	convert_aggregate_supply(simp, dataname = dataname)
+	convert_aggregate_supply(simp, celldataname = dataname)
 	
 	input_tools_load(simp, "csv_aggregated_demand")
 	input_tools_load(simp, "csv_aggregated_supply")
