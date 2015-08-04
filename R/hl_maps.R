@@ -103,7 +103,7 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1,
-		starttick = 2010, endtick = 2040, ncol = 1, ggplotaddon = NULL) {
+		starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL) {
 
 #	# <--- test data:
 #	simp$sim$worldname 			<- "world"
@@ -165,7 +165,7 @@ hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selec
 	simp$colours$changes <- c("-100" = "red", "100" = "green", "5" = "white")
 	
 	visualise_cells_printPlots(simp, resultcells, idcolumn = "ID",
-			title = "EU-Hetero", legendtitle = "AFTs",
+			title = title, legendtitle = "AFTs",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
 			legenditemnames = c("-100" = "removed", "100" = "added"), coloursetname="changes",
 			ggplotaddon = ggplotaddon)
