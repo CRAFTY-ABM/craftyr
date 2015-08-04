@@ -102,8 +102,9 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1,
-		starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL) {
+hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1, regions = simp$sim$regions,
+		starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
+		addcountryshapes = FALSE) {
 
 #	# <--- test data:
 #	simp$sim$worldname 			<- "world"
@@ -127,6 +128,8 @@ hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selec
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
 
+	cdata <- cdata[cdata$Region %in% regions, ]
+	
 	cdata$Region <- NULL
 	cdata$Scenario <- NULL
 
@@ -155,18 +158,22 @@ hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selec
 	for (i in 2:length(names(cdata))) {
 		diffcells <- cdata[[1]]
 		diffcells$LandUseIndex <- NA
-		diffcells$LandUseIndex <- cdata[[i - 1]]$LandUseIndex - cdata[[i]]$LandUseIndex
-		diffcells$LandUseIndex[diffcells$LandUseIndex == 0] <- 5
+		diffcells$LandUseIndex <- cdata[[i]]$LandUseIndex - cdata[[i - 1]]$LandUseIndex
+		diffcells$LandUseIndex[diffcells$LandUseIndex == 0] <- 50
 		diffcells <- list(diffcells)
 		names(diffcells) <- paste(names(cdata[i - 1]), "/", names(cdata[i])) 
 		resultcells <- c(resultcells, diffcells)
 	}
 	
-	simp$colours$changes <- c("-100" = "red", "100" = "green", "5" = "white")
+	simp$colours$changes <- c("-100" = "red", "100" = "green", "50" = "white")
 	
+	countryshapeelem = NULL
+	if(addcountryshapes) {
+		countryshapeelem <- input_shapes_countries(simp, countries2show = regions)
+	}
 	visualise_cells_printPlots(simp, resultcells, idcolumn = "ID",
 			title = title, legendtitle = "AFTs",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
-			legenditemnames = c("-100" = "removed", "100" = "added"), coloursetname="changes",
-			ggplotaddon = ggplotaddon)
+			legenditemnames = c("-100" = "removed", "100" = "added", "50" = ""), coloursetname="changes",
+			ggplotaddon = list(ggplotaddon, countryshapeelem, ggplot2::coord_equal()))
 }
