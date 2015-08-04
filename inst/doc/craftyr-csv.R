@@ -26,6 +26,15 @@ input_tools_save(simp, "csv_LandUseIndex_split")
 #  input_tools_save(simp, "csv_LandUseIndex_split")
 #  rm(list(csv_LandUseIndex_split, cdata)
 
+## ---- eval=FALSE---------------------------------------------------------
+#  library(craftyr)
+#  simp <- param_getExamplesSimp()
+#  dataAggregateAFTComposition <- input_csv_data(simp, dataname = NULL, datatype = "AggregateAFTComposition",
+#  		pertick = FALSE,
+#  		bindrows = TRUE,
+#  		skipXY = TRUE)
+#  input_tools_save(simp, "dataAggregateAFTComposition")
+
 ## ---- eval=TRUE, results="hide"------------------------------------------
 library(craftyr)
 simp <- param_getExamplesSimp()
@@ -92,6 +101,31 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 		alpha=0.7)
 
 
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  simp1 <- simp
+#  simp1$sim$shortid <- "G9/C4"
+#  simp2 <- simp
+#  simp2$sim$shortid <- "G10/C5"
+#  hl_comp_cell_aftcomposition(simp, simps = list(simp1, simp2), dataname = "csv_cell_aggregated")
+
+## ---- eval=FALSE---------------------------------------------------------
+#  simp <- param_getDefaultSimp()
+#  input_tools_load(simp, "dataAggregateAFTComposition")
+#  
+#  data <-reshape2::melt(dataAggregateAFTComposition, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), direction="long")
+#  data$value <- as.numeric(levels(data$value)[data$value])
+#  d <- aggregate(subset(data, select=c("value")), by = list(Agent = data$Agent, Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), "mean", na.rm = TRUE)
+#  
+#  # substitute AFT names by AFT ID
+#  aftNumbers <- names(simp$mdata$aftNames)
+#  names(aftNumbers) <- simp$mdata$aftNames
+#  d$AFT <- aftNumbers[as.character(d$AFT)]
+#  
+#  visualise_lines(simp, d, "value", title = "AftCompositionInvalid",
+#  		colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+#  		filename = "AftCompositionInvalid",
+#  		alpha=0.7)
+
 ## ---- eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 library(craftyr)
 library(reshape2)
@@ -100,7 +134,7 @@ input_tools_load(simp, "csv_aggregateServiceDemand")
 
 data <- convert_aggregate_meltsupplydemand(simp, csv_aggregateServiceDemand)
 
-# aggregate regions:
+#### Aggregate regions:
 data <- aggregate(subset(data, select=c("Value")),
 		by = list(ID = data[,"Runid"],
 				Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
@@ -126,4 +160,10 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_marginalutilities(simp)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_hl_landindiceskey_csv(simp)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_aggregate_demandsupply_csv(simp)
 

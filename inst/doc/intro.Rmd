@@ -11,6 +11,7 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
+
 # Concept
 
 The package provides various functions to load data from model output, convert, and finally visualise it.
@@ -23,7 +24,7 @@ high level functions start with hl.
 The package assumes that you stick to the recommended directory structure for both input and output data.
 See [here](https://www.wiki.ed.ac.uk/display/CRAFTY/Filename+Substitution+and+Recommended+Folder+Structure) for a definition. However, if you need to change that structure, craftyr provides some mean to adjust
 pre-defined values. For instance, you may implement a custom function and assign it to
-simp$dirs$param$getparamdir
+`simp$dirs$param$getparamdir`.
 
 ## Parameters
 
