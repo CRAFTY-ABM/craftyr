@@ -37,5 +37,5 @@ if (full) {
 
 
 ## prepare data objects
-cellData <- read.csv("./inst/extdata/NEEDS ADAPTATION/Scenario-0-0-Region-Cell-2010.csv")
-save(cellData, file="./data/cellData.rda")
+#cellData <- read.csv("./inst/extdata/NEEDS ADAPTATION/Scenario-0-0-Region-Cell-2010.csv")
+#save(cellData, file="./data/cellData.rda")

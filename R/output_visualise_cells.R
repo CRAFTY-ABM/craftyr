@@ -60,7 +60,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 	simp$fig$numcols <- ncol
 	simp$fig$numfigs <- length(unique(celldata$ID))
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", sep="/"), 
-			filename = output_tools_getDefaultFilename(simp, postfix = paste(title, filenamepostfix, sep="-")))
+			filename = output_tools_getDefaultFilename(simp, postfix = filenamepostfix))
 
 	scaleFillElem <- ggplot2::scale_fill_gradientn(name=legendtitle, colours = simp$colours$binarycolours)
 	if (factorial) {
@@ -84,16 +84,17 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 				df
 			})
 	
+	
 	p1 <- ggplot2::ggplot()+
+			ggplotaddon +
 			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
-			(if (title != "") ggplot2::labs(title = title)) + 
-			theme() +
+			(if (title != "") ggplot2::labs(title = title)) +  
+			ggplot2::theme() +
 			scaleFillElem +
 			omitaxistickselem +
-			ggplot2::coord_equal(ratio=1) +
-			ggplotaddon
+			ggplot2::coord_equal(ratio=1)
 	print(p1)
 	simp$fig$close()
 }
