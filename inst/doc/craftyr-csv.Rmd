@@ -13,10 +13,10 @@ vignette: >
 
 # Input (read) CSV Data
 
-## Features
+## (Overall) Features
 
-	* Limit considered ticks by starttick, endtick, and interval
-	* Read CSV files of multiple regions at once
+- Limit considered ticks by starttick, endtick, and interval
+- Read CSV files of multiple regions at once
 
 ## Source: Regional CSV data (CellTable)
 
@@ -50,6 +50,18 @@ cdata <- lapply(cdata, function(x) {x$Tick <- NULL; x})
 csv_LandUseIndex_split <- cadata
 input_tools_save(simp, "csv_LandUseIndex_split")
 rm(list(csv_LandUseIndex_split, cdata)
+```
+
+## Source: Aggregated AFT Composition
+
+```{r, eval=FALSE}
+library(craftyr)
+simp <- param_getExamplesSimp()
+dataAggregateAFTComposition <- input_csv_data(simp, dataname = NULL, datatype = "AggregateAFTComposition",
+		pertick = FALSE,
+		bindrows = TRUE,
+		skipXY = TRUE)
+input_tools_save(simp, "dataAggregateAFTComposition")
 ```
 
 ## Source: Aggregated Demand and Supply Data (AggregateDemandSupplyCSVOutputter)
@@ -114,7 +126,9 @@ visualise_cells_printRawPlots(simp, csv_LandUseIndex_split,
 
 ## Aggregate Data
 
-### AFT Composition as Timeline
+### From Cell Level Data
+
+#### AFT Composition as Timeline
 ```{r, eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"}
 library(craftyr)
 simp <- param_getExamplesSimp()
@@ -142,7 +156,39 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 
 ```
 
-### Aggregated Demand and Supply Data
+High level:
+```{r, eval=FALSE, results="hide"}
+simp1 <- simp
+simp1$sim$shortid <- "G9/C4"
+simp2 <- simp
+simp2$sim$shortid <- "G10/C5"
+hl_comp_cell_aftcomposition(simp, simps = list(simp1, simp2), dataname = "csv_cell_aggregated")
+```
+
+### From Aggregated (Region Level) Data
+
+#### AFT Composition as Timeline
+
+```{r, eval=FALSE}
+simp <- param_getDefaultSimp()
+input_tools_load(simp, "dataAggregateAFTComposition")
+
+data <-reshape2::melt(dataAggregateAFTComposition, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), direction="long")
+data$value <- as.numeric(levels(data$value)[data$value])
+d <- aggregate(subset(data, select=c("value")), by = list(Agent = data$Agent, Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), "mean", na.rm = TRUE)
+
+# substitute AFT names by AFT ID
+aftNumbers <- names(simp$mdata$aftNames)
+names(aftNumbers) <- simp$mdata$aftNames
+d$AFT <- aftNumbers[as.character(d$AFT)]
+
+visualise_lines(simp, d, "value", title = "AftCompositionInvalid",
+		colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+		filename = "AftCompositionInvalid",
+		alpha=0.7)
+```
+
+#### Aggregated Demand and Supply Data
 ```{r, eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"}
 library(craftyr)
 library(reshape2)
@@ -151,7 +197,7 @@ input_tools_load(simp, "csv_aggregateServiceDemand")
 
 data <- convert_aggregate_meltsupplydemand(simp, csv_aggregateServiceDemand)
 
-# aggregate regions:
+#### Aggregate regions:
 data <- aggregate(subset(data, select=c("Value")),
 		by = list(ID = data[,"Runid"],
 				Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
@@ -171,7 +217,7 @@ High level:
 hl_aggregate_demandsupply(simp)
 ```
 
-### Marginal Utilities
+#### Marginal Utilities
 TODO
 ```{r, eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"}
 input_tools_load(simp, "csv_MarginalUtilitites_melt")
@@ -185,4 +231,18 @@ High level:
 hl_marginalutilities(simp)
 ```
 
-### Total Productivity
+#### Total Productivity
+
+#  Output (write) CSV Data
+
+## Generate LandUseIndex key
+```{r, eval=FALSE, results="hide"}
+hl_hl_landindiceskey_csv(simp)
+```
+
+## Aggregate demand and supply
+Aggregates demand and supply for all regions per tick and stores data as CSV file.
+```{r, eval=FALSE, results="hide"}
+hl_aggregate_demandsupply_csv(simp)
+```
+

@@ -59,8 +59,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$csv$cname_region 		<- "Region"
 	defsimp$csv$cname_tick 			<- "Tick"
 	defsimp$csv$cname_aft 			<- "Agent"
-	defsimp$csv$cname_x				<- "Y"
-	defsimp$csv$cname_y				<- "X"
+	defsimp$csv$cname_x				<- "X"
+	defsimp$csv$cname_y				<- "Y"
 	
 	### Model Data ################################################################
 	

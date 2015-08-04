@@ -23,7 +23,8 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 			filename = paste("MarginalUtilities", sep=""),
 			alpha=0.7)
 }
-#' Print LaTeX table including run information for the version in simp$sim$version.
+#' Print LaTeX table including run information for the version in \code{simp$sim$version} and
+#' the '1st Run ID' in \code{simp$sim$runids[1]}.
 #' @param simp 
 #' @param filename 
 #' @param rows
@@ -37,7 +38,8 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 		runinfo <- read.ods(filename)[[1]][,1:simp$tech$runinfocolnumber]
 		colnames(runinfo) <- runinfo[2,]
 		runinfo <- runinfo[-c(1,2),]
-		rinfo <- runinfo[runinfo["Version"] == simp$sim$version, ]
+		rinfo <- runinfo[runinfo["Version"] == simp$sim$version & 
+						runinfo["1st Run ID"] == simp$sim$runids[1], ]
 	} else if(tools::file_ext(filename) == "csv") {
 		runinfo <- read.csv(filename, skip = 1)
 		rinfo <- runinfo[runinfo$Version == simp$sim$version,]
@@ -61,4 +63,23 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 	
 	print(table, sanitize.colnames.function = identity,
 			sanitize.rownames.function = identity)
+}
+#' Generates AFT key as CSV with columns 'Index' and 'LandUse'
+#' 
+#' @param simp  
+#' \begin{itemize}
+#' 	\item \code{simp$mdata$aftNames}
+#'  \item \code{simp$dirs$output$data}
+#'	\end{itemize}
+#' 
+#' @return csv file
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_landindiceskey_csv <- function(simp) {
+	filename <- sprintf("%s/LandUseIndicesKey.csv",
+			simp$dirs$output$data)
+	data <- data.frame("Index" = names(simp$mdata$aftNames), "LandUse" = simp$mdata$aftNames)
+	shbasic::sh.ensurePath(filename, stripFilename = TRUE)
+	write.csv(data, file = filename, row.names = FALSE)
 }

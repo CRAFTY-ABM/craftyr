@@ -66,8 +66,8 @@ settings_colours_getColors <- function(number, dim=1) {
 #' @author Sascha Holzhauer
 #' @export
 settings_colours_getColorSet <- function(simp, number=9, set="Set1") {
-	if (set=="AFT") {
-		colors = simp$colours$AFT
+	if (set %in% names(simp$colours)) {
+		colors = simp$colours[[set]]
 	} else if (set=="AFT") {
 		colors = settings_colours_getAftColours()
 	} else if (set=="Mixed100") {

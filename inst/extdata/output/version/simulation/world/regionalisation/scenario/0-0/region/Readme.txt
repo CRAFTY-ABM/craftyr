@@ -1,0 +1,1 @@
+Test output originates from CRAFTY_TestTrunk, Region3!

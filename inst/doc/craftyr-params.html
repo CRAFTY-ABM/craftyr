@@ -10,9 +10,9 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-06-14" />
+<meta name="date" content="2015-08-04" />
 
-<title>Using AFT composition CSV data with craftyr</title>
+<title>Visualising parameter data with craftyr</title>
 
 
 
@@ -52,62 +52,55 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 
 <div id="header">
-<h1 class="title">Using AFT composition CSV data with craftyr</h1>
+<h1 class="title">Visualising parameter data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-06-14</em></h4>
+<h4 class="date"><em>2015-08-04</em></h4>
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#input-read-aft-composition-csv-data">Input (read) AFT composition CSV Data</a><ul>
 <li><a href="#features">Features</a></li>
-<li><a href="#source-regional-csv-data">Source: Regional CSV data</a></li>
-</ul></li>
-<li><a href="#visualise-csv-data">Visualise CSV Data</a><ul>
-<li><a href="#timeline-figure">Timeline Figure</a></li>
-</ul></li>
+<li><a href="#capital-data">Capital Data</a></li>
+<li><a href="#competition-functions">Competition Functions</a></li>
 </ul>
 </div>
 
-<div id="input-read-aft-composition-csv-data" class="section level1">
-<h1>Input (read) AFT composition CSV Data</h1>
-<div id="features" class="section level2">
-<h2>Features</h2>
-<pre><code>* Limit considered ticks by starttick, endtick, and interval
-* Read CSV files of multiple regions at once</code></pre>
+<div id="features" class="section level1">
+<h1>Features</h1>
+<pre><code>* Read and print agent productivity tables
+* Read and plot competition functions</code></pre>
 </div>
-<div id="source-regional-csv-data" class="section level2">
-<h2>Source: Regional CSV data</h2>
+<div id="capital-data" class="section level1">
+<h1>Capital Data</h1>
+<p>Via rasters:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#source(&quot;../demo/simp-machine.R&quot;)</span>
+## read capital data from CSV into raster
+<span class="co">#data &lt;- input_csv_param_capitals(simp)</span>
+<span class="co">#rasters &lt;- convert_2raster(simp, data, layers = simp$mdata$capitals)</span>
+<span class="co">#names(rasters) &lt;- &quot;RegionA&quot;</span>
+<span class="co">#visualise_raster_printRawPlots(simp, rasters, legendtitle = &quot;Capitals Example&quot;, </span>
+<span class="co">#       factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id=&quot;None&quot;)</span></code></pre>
+<p>CSV data directly: TODO</p>
+<pre class="sourceCode r"><code class="sourceCode r">simp$sim$filepartorder &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>)
+capitaldata &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals</span>(simp)
+capitaldata &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>(capitaldata, <span class="dt">id.vars =</span> <span class="kw">c</span>(simp$csv$cname_x, simp$csv$cname_y),
+    <span class="dt">variable.name =</span> <span class="st">&quot;Capital&quot;</span>, <span class="dt">value.name =</span> <span class="st">&quot;Value&quot;</span>)
+<span class="kw">visualise_cells_printPlots</span>(simp, capitaldata, <span class="dt">idcolumn =</span> <span class="st">&quot;Capital&quot;</span>, <span class="dt">valuecolumn =</span> <span class="st">&quot;Value&quot;</span>,
+    <span class="dt">title =</span> <span class="st">&quot;Capitals&quot;</span>, <span class="dt">ncol =</span> <span class="dv">2</span>, 
+    <span class="dt">coloursetname=</span>simp$colours$Capital)</code></pre>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_param_capital_map</span>(simp, <span class="dt">capitals =</span> simp$mdata$capitals, 
+    <span class="dt">filenameorder=</span> <span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>))</code></pre>
+</div>
+<div id="competition-functions" class="section level1">
+<h1>Competition Functions</h1>
+<p>TODO make evaluate</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
-dataAggregateAFTComposition &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;AggregateAFTComposition&quot;</span>,
-        <span class="dt">pertick =</span> <span class="ot">FALSE</span>,
-        <span class="dt">bindrows =</span> <span class="ot">TRUE</span>,
-        <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)
-<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;dataAggregateAFTComposition&quot;</span>)</code></pre>
-</div>
-</div>
-<div id="visualise-csv-data" class="section level1">
-<h1>Visualise CSV Data</h1>
-<div id="timeline-figure" class="section level2">
-<h2>Timeline Figure</h2>
-<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getDefaultSimp</span>()
-<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;dataAggregateAFTComposition&quot;</span>)
-
-data &lt;-reshape2::<span class="kw">melt</span>(dataAggregateAFTComposition, <span class="dt">variable.name=</span><span class="st">&quot;Agent&quot;</span>, <span class="dt">id.vars=</span> <span class="kw">c</span>(<span class="st">&quot;Region&quot;</span>, <span class="st">&quot;Tick&quot;</span>, <span class="st">&quot;Runid&quot;</span>, <span class="st">&quot;Scenario&quot;</span>), <span class="dt">direction=</span><span class="st">&quot;long&quot;</span>)
-data$value &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">levels</span>(data$value)[data$value])
-d &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(data, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;value&quot;</span>)), <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">Agent =</span> data$Agent, <span class="dt">Tick=</span> data$Tick, <span class="dt">Runid=</span>data$Runid, <span class="dt">Scenario=</span>data$Scenario), <span class="st">&quot;mean&quot;</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
-
-<span class="co"># substitute AFT names by AFT ID</span>
-aftNumbers &lt;-<span class="st"> </span><span class="kw">names</span>(simp$mdata$aftNames)
-<span class="kw">names</span>(aftNumbers) &lt;-<span class="st"> </span>simp$mdata$aftNames
-d$AFT &lt;-<span class="st"> </span>aftNumbers[<span class="kw">as.character</span>(d$AFT)]
-
-<span class="kw">visualise_lines</span>(simp, d, <span class="st">&quot;value&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;AftCompositionInvalid&quot;</span>,
-        <span class="dt">colour_column =</span> <span class="st">&quot;AFT&quot;</span>, <span class="dt">colour_legenditemnames =</span> simp$mdata$aftNames,
-        <span class="dt">filename =</span> <span class="st">&quot;AftCompositionInvalid&quot;</span>,
-        <span class="dt">alpha=</span><span class="fl">0.7</span>)</code></pre>
-</div>
+functions &lt;-<span class="st"> </span><span class="kw">input_xml_param_competition</span>(simp, <span class="dt">filename =</span>  <span class="st">&quot;Competition_linear&quot;</span>)
+<span class="kw">visualise_competition_funcs</span>(simp, functions)</code></pre>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_printCompetitionFunctions</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;Competition_linear&quot;</span>)</code></pre>
 </div>
 
 
