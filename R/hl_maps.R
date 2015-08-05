@@ -106,27 +106,27 @@ hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selec
 		starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
 		addcountryshapes = FALSE, plotunchanged = TRUE) {
 
-	# <--- test data:
-	simp$sim$worldname 			<- "world"
-	simp$sim$scenario			<- "scenario"
-	simp$sim$regionalisation	<- "regionalisation"
-	simp$sim$regions			<- c("region")
-	simp$sim$runids				<- c("0-0")
-	simp$sim$hasregiondir			<- TRUE
-	simp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
-			"datatype", "D", "dataname", "D", "tick")
-	
-	simp$dirs$output$rdata		<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/rData/"
-	simp$dirs$output$simulation	<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/simulation/"
-	
-	starttick = 2000
-	endtick = 2020
-	
-	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
-			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
-			attachfileinfo = TRUE, bindrows = TRUE)
-	rownames(cdata) <- NULL
-	### test data --->
+#	# <--- test data:
+#	simp$sim$worldname 			<- "world"
+#	simp$sim$scenario			<- "scenario"
+#	simp$sim$regionalisation	<- "regionalisation"
+#	simp$sim$regions			<- c("region")
+#	simp$sim$runids				<- c("0-0")
+#	simp$sim$hasregiondir			<- TRUE
+#	simp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
+#			"datatype", "D", "dataname", "D", "tick")
+#	
+#	simp$dirs$output$rdata		<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/rData/"
+#	simp$dirs$output$simulation	<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/simulation/"
+#	
+#	starttick = 2000
+#	endtick = 2020
+#	
+#	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+#			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
+#			attachfileinfo = TRUE, bindrows = TRUE)
+#	rownames(cdata) <- NULL
+#	### test data --->
 	
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
