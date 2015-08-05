@@ -91,7 +91,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
 			(if (title != "") ggplot2::labs(title = title)) +  
-			ggplot2::theme() +
+			theme() +
 			scaleFillElem +
 			omitaxistickselem +
 			ggplot2::coord_equal(ratio=1)

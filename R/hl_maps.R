@@ -104,26 +104,29 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 #' @export
 hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1, regions = simp$sim$regions,
 		starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
-		addcountryshapes = FALSE) {
+		addcountryshapes = FALSE, plotunchanged = TRUE) {
 
-#	# <--- test data:
-#	simp$sim$worldname 			<- "world"
-#	simp$sim$scenario			<- "scenario"
-#	simp$sim$regionalisation	<- "regionalisation"
-#	simp$sim$regions			<- c("region")
-#	simp$sim$runids				<- c("0-0")
-#	simp$sim$hasregiondir			<- TRUE
-#	simp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
-#			"datatype", "D", "dataname", "D", "tick")
-#	
-#	simp$dirs$output$rdata		<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/rData/"
-#	simp$dirs$output$simulation	<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/simulation/"
-#	
-#	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
-#			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
-#			attachfileinfo = TRUE, bindrows = TRUE)
-#	rownames(cdata) <- NULL
-#	### test data --->
+	# <--- test data:
+	simp$sim$worldname 			<- "world"
+	simp$sim$scenario			<- "scenario"
+	simp$sim$regionalisation	<- "regionalisation"
+	simp$sim$regions			<- c("region")
+	simp$sim$runids				<- c("0-0")
+	simp$sim$hasregiondir			<- TRUE
+	simp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
+			"datatype", "D", "dataname", "D", "tick")
+	
+	simp$dirs$output$rdata		<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/rData/"
+	simp$dirs$output$simulation	<- "C:/Data/LURG/workspace/craftyr/inst/extdata/output/version/simulation/"
+	
+	starttick = 2000
+	endtick = 2020
+	
+	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
+			attachfileinfo = TRUE, bindrows = TRUE)
+	rownames(cdata) <- NULL
+	### test data --->
 	
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
@@ -158,14 +161,18 @@ hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selec
 	for (i in 2:length(names(cdata))) {
 		diffcells <- cdata[[1]]
 		diffcells$LandUseIndex <- NA
-		diffcells$LandUseIndex <- cdata[[i]]$LandUseIndex - cdata[[i - 1]]$LandUseIndex
-		diffcells$LandUseIndex[diffcells$LandUseIndex == 0] <- 50
+		indices <- cdata[[i]]$LandUseIndex != 0 | cdata[[i-1]]$LandUseIndex != 0
+		diffcells$LandUseIndex[indices] <- (cdata[[i]]$LandUseIndex - cdata[[i - 1]]$LandUseIndex)[indices]
+		
+		diffcells$LandUseIndex[diffcells$LandUseIndex == 0] <- if (plotunchanged) 50 else 99
+		diffcells$LandUseIndex[is.na(diffcells$LandUseIndex)] <- 99
+		
 		diffcells <- list(diffcells)
 		names(diffcells) <- paste(names(cdata[i - 1]), "/", names(cdata[i])) 
 		resultcells <- c(resultcells, diffcells)
 	}
 	
-	simp$colours$changes <- c("-100" = "red", "100" = "green", "50" = "white")
+	simp$colours$changes <- c("-100" = "red", "100" = "green", "50" = "black", "99" = "white")
 	
 	countryshapeelem = NULL
 	if(addcountryshapes) {
@@ -174,6 +181,7 @@ hl_aftmap_changes <- function(simp, dataname = "csv_LandUseIndex_rbinded", selec
 	visualise_cells_printPlots(simp, resultcells, idcolumn = "ID",
 			title = title, legendtitle = "AFTs",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
-			legenditemnames = c("-100" = "removed", "100" = "added", "50" = ""), coloursetname="changes",
+			legenditemnames = c("-100" = "removed", "100" = "added", "50" = "remaining", "99" = "other"), 
+			coloursetname="changes",
 			ggplotaddon = list(ggplotaddon, countryshapeelem, ggplot2::coord_equal()))
 }
