@@ -164,6 +164,8 @@ param_getExamplesSimp <- function() {
 				"Service1" 		= "indianred1",
 				"Service2" 	 	= "orange1",
 				"Service3" 		= "royalblue2")
+		
+	simp$mdata$aftNames <- c("-1" = "Unmanaged", "1" = "AT1", "2" = "AT2", "3" = "AT3")
 	
 	simp$sim$id <- "Example"
 	simp

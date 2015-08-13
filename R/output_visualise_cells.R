@@ -42,7 +42,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 	}
 	
 	listlen <- length(celldata)
-
+	
 	celldata <- mapply(function(infoCellDataVector, listname) {
 				s <- data.frame(
 						X = infoCellDataVector[simp$csv$cname_x],
@@ -83,18 +83,18 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 				}
 				df
 			})
-	
+	#ggplotaddon <- countryshapeelem
 	
 	p1 <- ggplot2::ggplot()+
-			ggplotaddon +
 			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
-			(if (title != "") ggplot2::labs(title = title)) +  
+			(if (title != "") ggplot2::labs(title = title)) +
 			theme() +
 			scaleFillElem +
 			omitaxistickselem +
-			ggplot2::coord_equal(ratio=1)
+			ggplot2::coord_equal(ratio=1) +
+			ggplotaddon
 	print(p1)
 	simp$fig$close()
 }
