@@ -11,6 +11,9 @@ csv_LandUseIndex_split <- cdata
 input_tools_save(simp, "csv_LandUseIndex_split")
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_store_csvcelldata(simp, dataname = "csv_LandUseIndex", tickinterval = 10)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
 #  cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", colums = "LandUseIndex",
 #  		pertick = TRUE, starttick = 2010, endtick = 2040, tickinterval = 30, attachfileinfo = TRUE)
 #  
@@ -25,6 +28,33 @@ input_tools_save(simp, "csv_LandUseIndex_split")
 #  csv_LandUseIndex_split <- cadata
 #  input_tools_save(simp, "csv_LandUseIndex_split")
 #  rm(list(csv_LandUseIndex_split, cdata)
+
+## ---- eval=TRUE, results="hide"------------------------------------------
+aggregationFunction <- function(simp, data) {
+	library(plyr) # because '.' function cannot be addressed
+	plyr::ddply(data, .(Runid, Region, Tick, LandUseIndex), .fun=function(df) {
+				df$Counter <- 1
+				with(df, data.frame(
+								Runid				= unique(Runid),
+								Region				= unique(Region),
+								Tick				= mean(Tick),
+								LandUseIndex		= mean(LandUseIndex),
+								AFT					= sum(Counter),
+								Service.Service1	= sum(Service.Service1), 
+								Service.Service2	= sum(Service.Service2),
+								Service.Service3 	= sum(Service.Service3),
+								Capital.Cap1		= sum(Capital.Cap1)) )
+			})
+}
+
+csv_cell_aggregated <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = c("Service.Service1", "Service.Service2",
+				"Service.Service3", "Capital.Cap1", "LandUseIndex", "AFT"), pertick = TRUE,
+		starttick = 2000, endtick = 2020, tickinterval = 10,
+		attachfileinfo = TRUE, bindrows = TRUE,
+		aggregationFunction = aggregationFunction,
+		skipXY = TRUE)
+rownames(csv_cell_aggregated) <- NULL
+input_tools_save(simp, "csv_cell_aggregated")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  library(craftyr)
@@ -41,6 +71,14 @@ simp <- param_getExamplesSimp()
 csv_aggregateServiceDemand <- input_csv_data(simp, dataname = NULL, datatype = "AggregateServiceDemand",
 		pertick = FALSE, bindrows = TRUE)
 input_tools_save(simp, "csv_aggregateServiceDemand")
+
+## ---- eval=TRUE, results="hide"------------------------------------------
+library(craftyr)
+simp <- param_getExamplesSimp()
+csv_aggregateTakeOvers <- input_csv_data(simp, dataname = NULL, datatype = "TakeOvers", pertick = FALSE,
+		bindrows = TRUE,
+		skipXY = TRUE)
+input_tools_save(simp, "csv_aggregateTakeOvers")
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  library(craftyr)
@@ -134,7 +172,7 @@ input_tools_load(simp, "csv_aggregateServiceDemand")
 
 data <- convert_aggregate_meltsupplydemand(simp, csv_aggregateServiceDemand)
 
-#### Aggregate regions:
+# Aggregate regions:
 data <- aggregate(subset(data, select=c("Value")),
 		by = list(ID = data[,"Runid"],
 				Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
@@ -150,6 +188,45 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_aggregate_demandsupply(simp)
+
+## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
+#  # TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
+#  library(craftyr)
+#  library(reshape2)
+#  simp <- param_getExamplesSimp()
+#  input_tools_load(simp, "csv_aggregateTakeOvers")
+#  input_tools_load(simp, "csv_cell_aggregated")
+#  	
+#  startPopulation <- data.frame(names(simp$mdata$aftNames), 0)
+#  names(startPopulation) <- c("Agent", "AFT")
+#  sp <- aggregate(subset(csv_cell_aggregated, select=c("AFT"),
+#  		subset = csv_cell_aggregated$Tick==2000 && csv_cell_aggregated$Runid == "0-0"),
+#  		by = list(Agent = csv_cell_aggregated[csv_cell_aggregated$Tick == 2000 &&
+#  					csv_cell_aggregated$Runid == "0-0","LandUseIndex"]), FUN=sum)
+#  startPopulation[startPopulation$Agent %in% sp$Agent,"AFT"] <- sp$AFT
+#  startPopulation$Agent <- simp$mdata$aftNames[as.character(startPopulation$Agent)]
+#  	
+#  simp$mdata$aftNames <- simp$mdata$aftNames[-1]
+#  dat <- aggregate(subset(csv_aggregateTakeOvers, select=simp$mdata$aftNames), by = list(
+#  		Tick=csv_aggregateTakeOvers[, "Tick"],
+#  		Runid=csv_aggregateTakeOvers[, "Runid"],
+#  		AFT=csv_aggregateTakeOvers[,"AFT"]),
+#  		FUN=sum)
+#  
+#  startPopulation <- startPopulation[match(simp$mdata$aftNames, startPopulation$Agent),]
+#  colnames(startPopulation)[colnames(startPopulation) == "AFT"] <- "Number"
+#  	
+#  output_visualise_takeovers(simp,
+#  		data = dat,
+#  		startpopulation = startPopulation,
+#  		starttick = 2000,
+#  		endtick = 2020,
+#  		tickinterval= 1,
+#  		type_of_arrow = "simple", #"gradient2sided",
+#  		transitionthreshold = 1)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_takeovers(simp)
 
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 #  input_tools_load(simp, "csv_MarginalUtilitites_melt")

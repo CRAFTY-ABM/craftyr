@@ -118,3 +118,42 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 		input_tools_save(simp, supplydataname)
 	}
 }
+convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded", regions = simp$sim$regions) {
+	# <---- test data
+	simp <- param_getExamplesSimp()
+	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
+			attachfileinfo = TRUE, bindrows = TRUE)
+	rownames(cdata) <- NULL
+	
+	###
+	
+	simp <- param_getExamplesSimp()
+	csv_aggregateTakeOvers <- input_csv_data(simp, dataname = NULL, datatype = "TakeOvers", pertick = FALSE,
+			bindrows = TRUE,
+			skipXY = TRUE)
+	# test data ---->
+	
+	input_tools_load(simp, dataname)
+	cdata <- get(dataname)
+	
+	# TODO aggregate/count changes in land use
+	
+	td <- matrix(c(1,2,1,2, 1,2,2,2, 4,2,2,4, 4,1,5,1), ncol= 4, byrow = TRUE)
+	rle(td[1,])
+	rle(td[4,])
+	
+	afts <- names(simp$mdata$aftNames)
+	
+	transitions <- aft
+	
+	for (tick in 2:length(unique(cdata$Tick))) {
+		ticks = unique(cdata$Tick)[tick:(tick + 1)]
+		sapply(afts, function(x, ticks) sapply(afts, function(x, y, ticks) {
+					cat(x, y, "\n")
+					sum(cdata[cdata$Tick == ticks[1], "LandUseIndex"] == x & 
+									cdata[cdata$Tick == ticks[2], "LandUseIndex"] == y)
+				}, x = x, ticks = ticks), ticks = ticks)
+	}
+	
+}

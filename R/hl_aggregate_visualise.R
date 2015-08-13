@@ -96,7 +96,7 @@ hl_demandsupply <- function(simp, runid=0, dataname = "csv_cell_aggregated") {
 			filename = paste("TotalDemandAndSupply_",simp$sim$rundesc[as.character(runid)], sep=""),
 			alpha=0.7)
 }
-#' Transition plot of AFT take overs
+#' Transition plot of AFT take overs due to giving in
 #' @param simp 
 #' @param runid 
 #' @param dataname 
@@ -145,6 +145,32 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 			tickinterval=tickinterval,
 			type_of_arrow = "gradient2sided",
 			transitionthreshold = 5)
+}
+#' Transition plot of AFT take overs (both due to giving in and giving up)
+#' @param simp 
+#' @param runid 
+#' @param dataname 
+#' @param starttick 
+#' @param tickinterval 
+#' @param endtick 
+#' @param datanametakeovers 
+#' @return transition plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_takeovers_all <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
+		starttick = 2010, tickinterval=5, endtick = 2040,
+		datanametakeovers = "csv_aggregateTakeOver") {
+	
+	
+	dataTakeOvers <- convert_aggregate_takeovers()# TODO)
+	
+	input_tools_save(simp, "dataTakeOversAll")
+	
+	hl_takeovers(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
+			starttick = 2010, tickinterval=5, endtick = 2040,
+			datanametakeovers = "dataTakeOversAll")
+		
 }
 #' AFT take over fluctations as timeline
 #' @param simp 
