@@ -171,33 +171,33 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 		addcountryshapes = FALSE, plotunchanged = TRUE) {
 	
 	# <--- test data:
-	simp <- craftyr::param_getExamplesSimp()
-	starttick = 2000
-	endtick = 2020
-	tick = 2020
-	dataname = "csv_LandUseIndex_rbinded"
-	regions =  simp$sim$regions
-	addcountryshapes = FALSE # TODO configure input_shapes_countries for test data
-	plotunchanged = TRUE
-	
-	simp$sim$runids					<- c("0-0")
-	simp$sim$id <- "Example-0-0"
-	csv_LandUseIndex_rbinded <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
-			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
-			attachfileinfo = TRUE, bindrows = TRUE)
-	rownames(csv_LandUseIndex_rbinded) <- NULL
-	input_tools_save(simp, "csv_LandUseIndex_rbinded")
-	
-	simp$sim$runids					<- c("1-0")
-	simp$sim$id <- "Example-1-0"
-	csv_LandUseIndex_rbinded <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
-			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
-			attachfileinfo = TRUE, bindrows = TRUE)
-	rownames(csv_LandUseIndex_rbinded) <- NULL
-	input_tools_save(simp, "csv_LandUseIndex_rbinded")
-	
-	ids <- c("Example-0-0", "Example-1-0")
-	outdirs <- c(simp$dirs$output$rdata, simp$dirs$output$rdata)
+#	simp <- craftyr::param_getExamplesSimp()
+#	starttick = 2000
+#	endtick = 2020
+#	tick = 2020
+#	dataname = "csv_LandUseIndex_rbinded"
+#	regions =  simp$sim$regions
+#	addcountryshapes = FALSE # TODO configure input_shapes_countries for test data
+#	plotunchanged = TRUE
+#	
+#	simp$sim$runids					<- c("0-0")
+#	simp$sim$id <- "Example-0-0"
+#	csv_LandUseIndex_rbinded <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+#			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
+#			attachfileinfo = TRUE, bindrows = TRUE)
+#	rownames(csv_LandUseIndex_rbinded) <- NULL
+#	input_tools_save(simp, "csv_LandUseIndex_rbinded")
+#	
+#	simp$sim$runids					<- c("1-0")
+#	simp$sim$id <- "Example-1-0"
+#	csv_LandUseIndex_rbinded <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+#			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
+#			attachfileinfo = TRUE, bindrows = TRUE)
+#	rownames(csv_LandUseIndex_rbinded) <- NULL
+#	input_tools_save(simp, "csv_LandUseIndex_rbinded")
+#	
+#	ids <- c("Example-0-0", "Example-1-0")
+#	outdirs <- c(simp$dirs$output$rdata, simp$dirs$output$rdata)
 	### test data --->
 	
 	cdata <- list()
