@@ -24,7 +24,9 @@ input_shapes_countries <- function(simp,
 	#shapes <- rgdal::readOGR(dsn = filename_shapes, "countries")	
 	#shapes <- shapes[countries[match(shapes@data$DN,countries$Number), "Code"] %in% countries2show,]
 	
-	shapes <- rgdal::readOGR(dsn = filename_shapes, tools::file_path_sans_ext(basename(filename_shapes)))	
+	# rgdal does not install on the eddie...
+	#shapes <- rgdal::readOGR(dsn = filename_shapes, tools::file_path_sans_ext(basename(filename_shapes)))
+	shapes <- maptools::readShapePoly(filename_shapes)
 	shapes <- shapes[shapes@data[[countrycodedatacolumn]] %in% countries2show,]
 	
 	## Eurostat (does not work without conversion)
@@ -50,11 +52,11 @@ input_shapes_countries <- function(simp,
 	#shapes.f <- ggplot2::fortify(shapes.etrs.1989.laea) #, region = "ISO2")
 	
 	shapes.f <- ggplot2::fortify(shapes) #, region = "ISO2")
-	shapes.f$long <- (shapes.f$long + 2698874) / 1000
-	shapes.f$lat <- (shapes.f$lat + 1855465) / 1000
+	shapes.f$long <- (shapes.f$long + simp$mdata$conversion$longoffset) / simp$mdata$conversion$divisor
+	shapes.f$lat <- (shapes.f$lat + simp$mdata$conversion$latoffset) / simp$mdata$conversion$divisor
 	
 	g <- ggplot2::geom_path(data=shapes.f, ggplot2::aes(long, lat, group = group), 
-			colour="darkgrey", size = 0.5)
+			colour="darkgrey", size = simp$fig$outlinesize)
 	
 	return(g)
 }
