@@ -24,7 +24,7 @@ Imports:
     raster,
     RColorBrewer,
     reshape2,
-    rgdal,
+    maptools,
     rmarkdown,
     shbasic,
     sp,
