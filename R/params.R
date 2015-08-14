@@ -79,6 +79,10 @@ param_mergeDefaultSimp <- function(simp = list()) {
 			"Meat"="Meat", "Cereal"="Cereal", 
 			"Conservation"="Conservation", "Timber"="Timber")
 	
+	defsimp$mdata$conversion$longoffset <- 2698874
+	defsimp$mdata$conversion$latoffset <- 1855465
+	defsimp$mdata$conversion$divisor <- 1000
+	
 	### Submodel Settings ###########################################################
 	
 	simp$submodels <- list()
@@ -98,6 +102,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$splitfigs		<- FALSE
 	defsimp$fig$plottitle		<- TRUE
 	defsimp$fig$facetlabelsize	<- 12
+	defsimp$fig$outlinesize		<- 0.35
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()
