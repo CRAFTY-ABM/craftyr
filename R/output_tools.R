@@ -13,5 +13,5 @@ output_tools_getDefaultFilename <- function(simp, postfix = "") {
 		  if (length(simp$sim$regions) > 7) "" else
 					  paste("_", simp$sim$regions, collapse = "+", sep=""),
 		  if (postfix != "") "_",
-		  postfix, sep="")
+		  gsub(" ", "_", postfix), sep="")
 }

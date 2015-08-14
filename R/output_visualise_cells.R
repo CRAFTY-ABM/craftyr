@@ -38,7 +38,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 	
 	if(is.null(names(celldata))) {
 		warning("Assign names to elements of list! Using letters...")
-		names(celldata) <- letters[1:length(celldata)]
+		names(celldata) <- paste(letters[1:length(celldata)], ")", sep="")
 	}
 	
 	listlen <- length(celldata)

@@ -30,6 +30,7 @@ if (full) {
 install(pkgsName)
 # devtools::install_bitbucket("geoslurg/craftyr@default")
 # for eddie (use qlogin session!):
+# module load R/3.0.1
 # devtools::install_bitbucket("craftyr", username="geoslurg", ref="default")
 if (full) {
 	browseVignettes("craftyr")
