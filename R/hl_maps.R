@@ -271,5 +271,27 @@ hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggpl
 			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
 			legenditemnames = c("-100" = "removed", "100" = "added", "50" = "remaining", "99" = "other"), 
 			coloursetname="changes",
+			theme = if (simp$fig$plottitle) visualisation_raster_legendandtitle else visualisation_raster_legendonlytheme,
 			ggplotaddon = list(ggplotaddon, countryshapeelem, ggplot2::coord_equal()))
+}
+visualisation_raster_legendandtitle <- function(base_size = 11, base_family = "Helvetica"){
+	library(ggplot2)  # correct (see stack exchange question) for %+replace%
+	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
+			ggplot2::theme(
+					axis.ticks.margin = grid::unit(0, "lines"),
+					panel.background = ggplot2::element_blank(),
+					panel.grid.major = ggplot2::element_blank(),
+					panel.grid.minor = ggplot2::element_blank(),
+					panel.margin = grid::unit(0,"lines"),
+					panel.border = ggplot2::element_blank(),
+					plot.margin = grid::unit(rep(0,4),"lines"),
+					axis.ticks = ggplot2::element_blank(),
+					axis.text.x = ggplot2::element_blank(),
+					axis.text.y = ggplot2::element_blank(),
+					axis.title.x = ggplot2::element_blank(),
+					axis.title.y = ggplot2::element_blank(),
+					axis.line = ggplot2::element_blank(),
+					axis.ticks.length = grid::unit(0,"null"),
+					axis.ticks.margin = grid::unit(0,"null")
+			)
 }
