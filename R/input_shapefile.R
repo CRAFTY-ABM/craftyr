@@ -17,6 +17,8 @@ input_shapes_countries <- function(simp,
 	
 	if (is.null(countries2show)) {
 		countries2show <- countries$ISOcode
+	} else {
+		countries2show <- countries$ISOcode[match(countries2show, countries$Code)]
 	}
 	
 	# Shapes from 2nd tiff raster (works):
