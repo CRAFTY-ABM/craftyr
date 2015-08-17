@@ -56,7 +56,7 @@ input_shapes_countries <- function(simp,
 	shapes.f$lat <- (shapes.f$lat + simp$mdata$conversion$latoffset) / simp$mdata$conversion$divisor
 	
 	g <- ggplot2::geom_path(data=shapes.f, ggplot2::aes(long, lat, group = group), 
-			colour="darkgrey", size = simp$fig$outlinesize)
+			colour="darkgrey", size = simp$fig$outlinesize, alpha = simp$fig$countryshapes$alpha)
 	
 	return(g)
 }
