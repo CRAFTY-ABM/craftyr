@@ -16,7 +16,7 @@ input_shapes_countries <- function(simp,
 					package = "craftyr"))
 	
 	if (is.null(countries2show)) {
-		countries2show <- countries$Code
+		countries2show <- countries$ISOcode
 	}
 	
 	# Shapes from 2nd tiff raster (works):

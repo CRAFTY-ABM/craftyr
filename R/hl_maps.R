@@ -102,9 +102,9 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1, regions = simp$sim$regions,
-		starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
-		addcountryshapes = FALSE, plotunchanged = TRUE) {
+hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1, 
+		regions = simp$sim$regions, starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", 
+		ggplotaddon = NULL, addcountryshapes = FALSE, plotunchanged = TRUE) {
 
 #	# <--- test data:
 #	simp <- param_getExamplesSimp()
