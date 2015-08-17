@@ -231,7 +231,7 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 		
 		hl_aftmap_changes(simp, cdata, ncol = 1, 
 				title = paste(title, "_", paste(simp$mdata$aftNames[aftgroup], collapse="-"), sep=""), 
-				ggplotaddon = NULL, regions = regions,
+				ggplotaddon = ggplotaddon, regions = regions,
 			addcountryshapes = addcountryshapes, plotunchanged = plotunchanged)
 	}
 }
@@ -244,7 +244,8 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, regions = simp$sim$regions,
+hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
+		regions = simp$sim$regions,
 		addcountryshapes = FALSE, plotunchanged = TRUE) {
 	
 	resultcells <- list()
