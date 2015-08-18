@@ -116,6 +116,9 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$colours$binarycolours 	<- c("skyblue1", "black")
 	defsimp$colours$defaultset		<- "Dark2"
 	
+	### Parameter Creation ###########################################################
+	defsimp$paramcreation$startrun	<- -1
+	
 	### Technical Settings ###########################################################
 	defsimp$tech <- list()
 	defsimp$tech$maxtick <- 3000
