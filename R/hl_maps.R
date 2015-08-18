@@ -166,7 +166,7 @@ hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinde
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", ids, outdirs, 
-		selectedAFTGroups = as.list(1:length(simp$mdata$aftNames)), regions = simp$sim$regions,
+		selectedAFTGroups = as.list(as.numeric(names(simp$mdata$aftNames))), regions = simp$sim$regions,
 		tick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
 		addcountryshapes = FALSE, plotunchanged = TRUE) {
 	
@@ -179,6 +179,10 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 #	regions =  simp$sim$regions
 #	addcountryshapes = FALSE # TODO configure input_shapes_countries for test data
 #	plotunchanged = TRUE
+#	selectedAFTGroups = as.list(as.numeric(names(simp$mdata$aftNames)))
+#	title = "AFT-Changes-Test"
+#	ggplotaddon = NULL
+#	ncol = 1
 #	
 #	simp$sim$runids					<- c("0-0")
 #	simp$sim$id <- "Example-0-0"
@@ -198,6 +202,8 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 #	
 #	ids <- c("Example-0-0", "Example-1-0")
 #	outdirs <- c(simp$dirs$output$rdata, simp$dirs$output$rdata)
+#	
+#	simp$fig$init			<- craftyr::output_visualise_initFigure
 	### test data --->
 	
 	cdata <- list()
@@ -221,16 +227,16 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 	cdata <- lapply(cdata, function(x) {x$Tick <- NULL; x})
 	
 	for (aftgroup in selectedAFTGroups) {
-		# aftgroup <- selectedAFTGroups[1]
+		#aftgroup <- selectedAFTGroups[1]
 		aftgroup <- aftgroup[[1]]
-		cdata <- sapply(cdata, function(dat) {
+		cdata_aft <- sapply(cdata, function(dat) {
 					# dat <- cdata[[1]]
 					dat[dat$LandUseIndex %in% aftgroup, "LandUseIndex"]  <- 100
 					dat[!dat$LandUseIndex %in% 100, "LandUseIndex"] <- 0 
 					dat}, simplify=FALSE)
 		
-		hl_aftmap_changes(simp, cdata, ncol = 1, 
-				title = paste(title, "_", paste(simp$mdata$aftNames[aftgroup], collapse="-"), sep=""), 
+		hl_aftmap_changes(simp, cdata_aft, ncol = 1, 
+				title = paste(title, "_", paste(simp$mdata$aftNames[as.character(aftgroup)], collapse="-"), sep=""), 
 				ggplotaddon = ggplotaddon, regions = regions,
 			addcountryshapes = addcountryshapes, plotunchanged = plotunchanged)
 	}
