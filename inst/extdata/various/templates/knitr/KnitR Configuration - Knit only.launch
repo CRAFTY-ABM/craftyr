@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="de.walware.statet.r.launchConfigurationTypes.RweaveTexCreation">
+<stringAttribute key="de.walware.statet.r.debug/DocPreview/Viewer.code" value=""/>
+<stringAttribute key="de.walware.statet.r.debug/Rweave/SweaveProcessing" value="console:require(knitr)&#13;&#10;shbasic::sh.ensurePath(&quot;${source_file_path}&quot;, stripFilename=TRUE)&#13;&#10;knit(input=&quot;${resource_loc:${source_file_path}}&quot;)"/>
+<stringAttribute key="de.walware.statet.r.debug/Rweave/sweave.folder" value="${container_path:${source_file_path}}"/>
+<intAttribute key="de.walware.statet.r.debug/Tex/BuildTex.builderId" value="2"/>
+<stringAttribute key="de.walware.statet.r.debug/Tex/BuildTex.format" value="pdf"/>
+<stringAttribute key="de.walware.statet.r.debug/Tex/BuildTex.outputDir" value=""/>
+<intAttribute key="de.walware.statet.r.debug/Tex/BuildTex.type" value="0"/>
+<intAttribute key="de.walware.statet.r.debug/Tex/OpenTex.enabled" value="-1"/>
+</launchConfiguration>

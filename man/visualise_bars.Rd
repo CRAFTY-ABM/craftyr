@@ -2,14 +2,13 @@
 \name{visualise_bars}
 \alias{visualise_bars}
 \title{Prints a bar of data as ggplot2 with potentially different colour, linetype,
-and potentially as facet plot.
-Uses ticks as X variable if present, runid otherwise.}
+and potentially as facet plot.}
 \usage{
 visualise_bars(simp, data, y_column, title = NULL, fill_column = NULL,
   fill_legendtitle = fill_column, fill_legenditemnames = NULL,
   facet_column = NULL, facet_ncol = 4, filename = paste(title,
   shbasic::shbasic_condenseRunids(data[, "Runid"]), sep = "_"), alpha = 1,
-  ggplotparams = NULL, x_column = "ID")
+  ggplotaddons = NULL, x_column = "ID", position = "dodge")
 }
 \arguments{
 \item{simp}{SIMulation Properties}
@@ -34,9 +33,11 @@ visualise_bars(simp, data, y_column, title = NULL, fill_column = NULL,
 
 \item{alpha}{}
 
-\item{ggplotparams}{vector of ggplot objects to add}
+\item{ggplotaddons}{vector of ggplot objects to add}
 
 \item{x_column}{}
+
+\item{position}{passed to geom_bar}
 }
 \value{
 ggplot2 line visualisation
@@ -44,7 +45,6 @@ ggplot2 line visualisation
 \description{
 Prints a bar of data as ggplot2 with potentially different colour, linetype,
 and potentially as facet plot.
-Uses ticks as X variable if present, runid otherwise.
 }
 \examples{
 #######################################################################

@@ -39,6 +39,23 @@
 #  [...]
 
 ## ---- eval=FALSE---------------------------------------------------------
+#  # Only contained when the particular script is only executed on a specific maschine!
+#  # Otherwise. the maschine=specific file needs to be executed before.
+#  source("/PATH-TO/simp-machine_cluster.R")
+#  
+#  # Usually also in simp.R, but required here to find simp.R
+#  simp$sim$folder 	<- " "parentFolder/_version""	
+#  
+#  simp$sim$runids 	<- c("0-0")			# run to deal with
+#  simp$sim$id			<- "template-0-0" 	# ID to identify specific data collections (e.g. regions)
+#  simp$sim$task		<- "task1"			# Name of surrounding folder, usually a description of task
+#  
+#  # simp$dirs$simp is set by maschine-specific file:
+#  setwd(paste(simp$dirs$simp, simp$sim$folder, "cluster/", simp$sim$task, sep="/"))
+#  # usually, the setting/scenario specific simp.R is two levels above:
+#  source("../../simp.R")
+
+## ---- eval=FALSE---------------------------------------------------------
 #  futile.logger::flog.threshold(futile.logger::DEBUG, name='crafty')
 #  futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
 

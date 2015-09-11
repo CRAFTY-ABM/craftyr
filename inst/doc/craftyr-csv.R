@@ -1,12 +1,15 @@
 ## ---- eval=TRUE, results="hide"------------------------------------------
 library(craftyr)
 simp <- param_getExamplesSimp()
+
+futile.logger::flog.threshold(futile.logger::DEBUG, name='craftyr.input.csv')
+
 cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
 		pertick = TRUE, starttick = 2010, endtick = 2020, tickinterval = 10,
 		attachfileinfo = TRUE, bindrows = TRUE)
 csv_LandUseIndex <- cdata
 input_tools_save(simp, "csv_LandUseIndex")
-cdata <- split(cdata, list(cdata$Tick,cdata$Runid))
+cdata <- split(cdata, list(cdata$Tick, cdata$Runid))
 csv_LandUseIndex_split <- cdata
 input_tools_save(simp, "csv_LandUseIndex_split")
 
@@ -80,6 +83,15 @@ csv_aggregateTakeOvers <- input_csv_data(simp, dataname = NULL, datatype = "Take
 		skipXY = TRUE)
 input_tools_save(simp, "csv_aggregateTakeOvers")
 
+## ---- eval=TRUE, results="hide"------------------------------------------
+library(craftyr)
+simp <- param_getExamplesSimp()
+csv_aggregateGiStatistics <- input_csv_data(simp, dataname = NULL, datatype = "GivingInStatistics",
+		pertick = FALSE,
+		bindrows = TRUE,
+		skipXY = TRUE)
+input_tools_save(simp, "csv_aggregateGiStatistics")
+
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  library(craftyr)
 #  simp <- param_getExamplesSimp()
@@ -147,6 +159,7 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 #  hl_comp_cell_aftcomposition(simp, simps = list(simp1, simp2), dataname = "csv_cell_aggregated")
 
 ## ---- eval=FALSE---------------------------------------------------------
+#  library(craftyr)
 #  simp <- param_getDefaultSimp()
 #  input_tools_load(simp, "dataAggregateAFTComposition")
 #  
@@ -166,7 +179,6 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 
 ## ---- eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 library(craftyr)
-library(reshape2)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_aggregateServiceDemand")
 
@@ -192,7 +204,6 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 #  # TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
 #  library(craftyr)
-#  library(reshape2)
 #  simp <- param_getExamplesSimp()
 #  input_tools_load(simp, "csv_aggregateTakeOvers")
 #  input_tools_load(simp, "csv_cell_aggregated")
@@ -227,6 +238,32 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_takeovers(simp)
+
+## ---- eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
+
+library(craftyr)
+library(reshape2)
+simp <- param_getExamplesSimp()
+input_tools_load(simp, "csv_aggregateGiStatistics")
+
+regions = simp$sim$regions
+csv_aggregateGiStatistics <- csv_aggregateGiStatistics[csv_aggregateGiStatistics[,"Region"] %in% regions,]
+
+dat <- aggregate(subset(csv_aggregateGiStatistics, select=simp$mdata$aftNames[-1]), by = list(
+				Trials=csv_aggregateGiStatistics[, "Trials"],
+				Runid=csv_aggregateGiStatistics[, "Runid"]),
+		FUN=sum)
+
+melteddat <- reshape2::melt(dat, variable.name="AFT", id.vars= c("Trials", "Runid"), 
+		direction="long", value.name = "Number")
+
+visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
+		facet_column = "AFT", facet_ncol = 1, fill_column = "AFT",
+		alpha=1.0, x_column = "Trials", ggplotaddons = ggplot2::theme(legend.position="none"))
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_gistatistics_singleRegion(simp, dataname = "csv_aggregateGiStatistics",
+#  		regions = simp$sim$regions, facet_ncol = 1)
 
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 #  input_tools_load(simp, "csv_MarginalUtilitites_melt")

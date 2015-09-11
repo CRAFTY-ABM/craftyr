@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-08-18" />
+<meta name="date" content="2015-09-11" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-08-18</em></h4>
+<h4 class="date"><em>2015-09-11</em></h4>
 </div>
 
 <div id="TOC">
@@ -67,6 +67,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><a href="#debugginglogging">Debugging/Logging</a></li>
 <li><a href="#handling-data">Handling Data</a><ul>
+<li><a href="#run-ids">Run IDs</a></li>
 <li><a href="#storing-data">Storing Data</a></li>
 <li><a href="#using-craftyr-to-put-custom-plots-in-the-right-place">Using craftyr to Put Custom Plots in the Right Place</a></li>
 <li><a href="#comparing-data">Comparing Data</a></li>
@@ -86,8 +87,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="parameters" class="section level2">
 <h2>Parameters</h2>
-<p>There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and parameters. The basic idea is to define a simp list for each project and execute the simp defining R code every time you start a script with the according project. Within the script, “local” properties can overwrite the project level settings, e.g. runID, image resolutions etc.</p>
-<p>Since some paths vary according to the machine that executes the R code, the simp list is created from two parts: A machine-specific part and a general, machine-independent part.</p>
+<p>There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and parameters. The basic idea is to define a simp list for each project and execute the simp defining R code every time you start a script with the according project. Within the script, “local” properties (e.g. runID, image resolutions) can overwrite the project level settings (simpBasic.R) which in turn overwrite craftyr defaults. Often it is a good idea to store setting/scenario specific values in a separate file (simp.R) within the setting/scenario R folder.</p>
+<p>Since some paths vary according to the machine that executes the R code, the project-specific simp list is created from two parts: A machine-specific part (simp-maschine_XY.R) and a general, machine- independent part (simpBasic.R.)</p>
 <pre class="sourceCode r"><code class="sourceCode r">###############################################################################
 <span class="co"># Machine=specific SIMP definition</span>
 <span class="co"># NOTE: Changes in super-level parameters that are used to derive further</span>
@@ -124,8 +125,23 @@ simp$sim$version                &lt;-<span class="st"> &quot;V001&quot;</span>
 simp$sim$allocversion           &lt;-<span class="st"> &quot;V001AllocGen&quot;</span>
 simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</span>
 [...]</code></pre>
-<p>The machine-specific simp part in an according script (simp-&lt;machine&gt;.R) contains the (machine-specific) path to itself and to the machine-independent simp part script (simp.R), loads that general part and may overwrite certain parameters. It also merges the defined parameters in the general crafyr default parameter list to apply craftyr defaults when no other specification is given.</p>
-<p>Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script using craftyr should load the simp code anew. During that process, the entire simp list including all possible changes are removed from memory and loaded anew.</p>
+<p>The machine-specific simp part in an according script contains the (machine-specific) path to itself and to the machine-independent simp part script (simpBasic.R), loads that general part and may overwrite certain parameters. The basic simp file initially merges the defined parameters in the general crafyr default parameter list to apply craftyr defaults when no other specification is given.</p>
+<p>Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script using craftyr should load the simp code anew. During that process, the entire simp list including all possible changes are removed from memory and loaded anew. Following above suggestions, a script first loading the setting/scenario specific simp.R would look like this:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Only contained when the particular script is only executed on a specific maschine!</span>
+<span class="co"># Otherwise. the maschine=specific file needs to be executed before.</span>
+<span class="kw">source</span>(<span class="st">&quot;/PATH-TO/simp-machine_cluster.R&quot;</span>)
+
+<span class="co"># Usually also in simp.R, but required here to find simp.R</span>
+simp$sim$folder     &lt;-<span class="st"> &quot; &quot;</span>parentFolder/_version<span class="st">&quot;&quot;</span>   
+
+simp$sim$runids     &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;0-0&quot;</span>)         <span class="co"># run to deal with</span>
+simp$sim$id         &lt;-<span class="st"> &quot;template-0-0&quot;</span>   <span class="co"># ID to identify specific data collections (e.g. regions)</span>
+simp$sim$task       &lt;-<span class="st"> &quot;task1&quot;</span>          <span class="co"># Name of surrounding folder, usually a description of task </span>
+
+<span class="co"># simp$dirs$simp is set by maschine-specific file:</span>
+<span class="kw">setwd</span>(<span class="kw">paste</span>(simp$dirs$simp, simp$sim$folder, <span class="st">&quot;cluster/&quot;</span>, simp$sim$task, <span class="dt">sep=</span><span class="st">&quot;/&quot;</span>))
+<span class="co"># usually, the setting/scenario specific simp.R is two levels above:</span>
+<span class="kw">source</span>(<span class="st">&quot;../../simp.R&quot;</span>)</code></pre>
 <p>The simp list consists of a number of sublists:</p>
 <ul>
 <li><p>sim</p></li>
@@ -156,6 +172,10 @@ futile.logger::<span class="kw">flog.threshold</span>(futile.logger::TRACE, <spa
 </div>
 <div id="handling-data" class="section level1">
 <h1>Handling Data</h1>
+<div id="run-ids" class="section level2">
+<h2>Run IDs</h2>
+<p>Usually, run IDs consist of the parameter ID (which is in runs.csv) and the random number seed applied in the simulations. However, the user may also decide to omit the random number part and use only the param ID as run ID. Crafty is able to deal with both versions in principle. When the param ID is required (e.g. to retrieve parameter data from a table) the number before a potential ‘-’ is extracted automatically.</p>
+</div>
 <div id="storing-data" class="section level2">
 <h2>Storing Data</h2>
 <p>Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store processed and aggregated data for further use. R provides the possibility of storing R objects into a file.</p>

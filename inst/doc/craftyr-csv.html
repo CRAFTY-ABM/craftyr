@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-08-18" />
+<meta name="date" content="2015-09-11" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-08-18</em></h4>
+<h4 class="date"><em>2015-09-11</em></h4>
 </div>
 
 <div id="TOC">
@@ -66,6 +66,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#source-aggregated-aft-composition">Source: Aggregated AFT Composition</a></li>
 <li><a href="#source-aggregated-demand-and-supply-data-aggregatedemandsupplycsvoutputter">Source: Aggregated Demand and Supply Data (AggregateDemandSupplyCSVOutputter)</a></li>
 <li><a href="#source-takeover-from-giving-in-data-takeovercelloutputter">Source: TakeOver from Giving In Data (TakeoverCellOutputter)</a></li>
+<li><a href="#source-givingin-statistics-givinginstatisticsoutputter">Source: GivingIn Statistics (GivingInStatisticsOutputter)</a></li>
 <li><a href="#source-marginal-utilities">Source: Marginal Utilities</a></li>
 </ul></li>
 <li><a href="#visualise-csv-data">Visualise CSV Data</a><ul>
@@ -82,6 +83,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#generate-landuseindex-key">Generate LandUseIndex key</a></li>
 <li><a href="#aggregate-demand-and-supply">Aggregate demand and supply</a></li>
 </ul></li>
+<li><a href="#conversions">Conversions</a></li>
 </ul>
 </div>
 
@@ -98,12 +100,15 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h2>Source: Regional CSV data (CellTable) - Land use data per cell</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+
+futile.logger::<span class="kw">flog.threshold</span>(futile.logger::DEBUG, <span class="dt">name=</span><span class="st">'craftyr.input.csv'</span>)
+
 cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">columns =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
         <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>,
         <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>)
 csv_LandUseIndex &lt;-<span class="st"> </span>cdata
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex&quot;</span>)
-cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
+cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick, cdata$Runid))
 csv_LandUseIndex_split &lt;-<span class="st"> </span>cdata
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)</code></pre>
 <p>High level:</p>
@@ -181,6 +186,16 @@ csv_aggregateTakeOvers &lt;-<span class="st"> </span><span class="kw">input_csv_
         <span class="dt">bindrows =</span> <span class="ot">TRUE</span>,
         <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_aggregateTakeOvers&quot;</span>)</code></pre>
+</div>
+<div id="source-givingin-statistics-givinginstatisticsoutputter" class="section level2">
+<h2>Source: GivingIn Statistics (GivingInStatisticsOutputter)</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+csv_aggregateGiStatistics &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;GivingInStatistics&quot;</span>,
+        <span class="dt">pertick =</span> <span class="ot">FALSE</span>,
+        <span class="dt">bindrows =</span> <span class="ot">TRUE</span>,
+        <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_aggregateGiStatistics&quot;</span>)</code></pre>
 </div>
 <div id="source-marginal-utilities" class="section level2">
 <h2>Source: Marginal Utilities</h2>
@@ -275,7 +290,8 @@ simp2$sim$shortid &lt;-<span class="st"> &quot;G10/C5&quot;</span>
 <h3>From Aggregated (Region Level) Data</h3>
 <div id="aft-composition-as-timeline-1" class="section level4">
 <h4>AFT Composition as Timeline</h4>
-<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getDefaultSimp</span>()
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getDefaultSimp</span>()
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;dataAggregateAFTComposition&quot;</span>)
 
 data &lt;-reshape2::<span class="kw">melt</span>(dataAggregateAFTComposition, <span class="dt">variable.name=</span><span class="st">&quot;Agent&quot;</span>, <span class="dt">id.vars=</span> <span class="kw">c</span>(<span class="st">&quot;Region&quot;</span>, <span class="st">&quot;Tick&quot;</span>, <span class="st">&quot;Runid&quot;</span>, <span class="st">&quot;Scenario&quot;</span>), <span class="dt">direction=</span><span class="st">&quot;long&quot;</span>)
@@ -295,9 +311,7 @@ d$AFT &lt;-<span class="st"> </span>aftNumbers[<span class="kw">as.character</sp
 <div id="aggregated-demand-and-supply-data" class="section level4">
 <h4>Aggregated Demand and Supply Data</h4>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
-<span class="kw">library</span>(reshape2)</code></pre>
-<pre><code>## Warning: package 'reshape2' was built under R version 3.1.3</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_aggregateServiceDemand&quot;</span>)
 
 data &lt;-<span class="st"> </span><span class="kw">convert_aggregate_meltsupplydemand</span>(simp, csv_aggregateServiceDemand)
@@ -323,7 +337,6 @@ data &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class
 <h4>Take Overs (Giving in)</h4>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)</span>
 <span class="kw">library</span>(craftyr)
-<span class="kw">library</span>(reshape2)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_aggregateTakeOvers&quot;</span>)
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_cell_aggregated&quot;</span>)
@@ -358,6 +371,33 @@ startPopulation &lt;-<span class="st"> </span>startPopulation[<span class="kw">m
 <p>High level:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_takeovers</span>(simp)</code></pre>
 </div>
+<div id="givinginstatistics-frequencies-per-aft---regions-aggregated" class="section level4">
+<h4>GivingInStatistics (Frequencies per AFT - Regions aggregated)</h4>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+<span class="kw">library</span>(reshape2)</code></pre>
+<pre><code>## Warning: package 'reshape2' was built under R version 3.1.3</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_aggregateGiStatistics&quot;</span>)
+
+regions =<span class="st"> </span>simp$sim$regions
+csv_aggregateGiStatistics &lt;-<span class="st"> </span>csv_aggregateGiStatistics[csv_aggregateGiStatistics[,<span class="st">&quot;Region&quot;</span>] %in%<span class="st"> </span>regions,]
+
+dat &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(csv_aggregateGiStatistics, <span class="dt">select=</span>simp$mdata$aftNames[-<span class="dv">1</span>]), <span class="dt">by =</span> <span class="kw">list</span>(
+                <span class="dt">Trials=</span>csv_aggregateGiStatistics[, <span class="st">&quot;Trials&quot;</span>],
+                <span class="dt">Runid=</span>csv_aggregateGiStatistics[, <span class="st">&quot;Runid&quot;</span>]),
+        <span class="dt">FUN=</span>sum)
+
+melteddat &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>(dat, <span class="dt">variable.name=</span><span class="st">&quot;AFT&quot;</span>, <span class="dt">id.vars=</span> <span class="kw">c</span>(<span class="st">&quot;Trials&quot;</span>, <span class="st">&quot;Runid&quot;</span>), 
+        <span class="dt">direction=</span><span class="st">&quot;long&quot;</span>, <span class="dt">value.name =</span> <span class="st">&quot;Number&quot;</span>)
+
+<span class="kw">visualise_bars</span>(simp, <span class="dt">data =</span> melteddat, <span class="dt">y_column =</span> <span class="st">&quot;Number&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;Giving In Statistics&quot;</span>,
+        <span class="dt">facet_column =</span> <span class="st">&quot;AFT&quot;</span>, <span class="dt">facet_ncol =</span> <span class="dv">1</span>, <span class="dt">fill_column =</span> <span class="st">&quot;AFT&quot;</span>,
+        <span class="dt">alpha=</span><span class="fl">1.0</span>, <span class="dt">x_column =</span> <span class="st">&quot;Trials&quot;</span>, <span class="dt">ggplotaddons =</span> ggplot2::<span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>))</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_gistatistics_singleRegion</span>(simp, <span class="dt">dataname =</span> <span class="st">&quot;csv_aggregateGiStatistics&quot;</span>, 
+        <span class="dt">regions =</span> simp$sim$regions, <span class="dt">facet_ncol =</span> <span class="dv">1</span>)</code></pre>
+</div>
 <div id="marginal-utilities" class="section level4">
 <h4>Marginal Utilities</h4>
 <p>TODO</p>
@@ -386,6 +426,12 @@ startPopulation &lt;-<span class="st"> </span>startPopulation[<span class="kw">m
 <p>Aggregates demand and supply for all regions per tick and stores data as CSV file.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_aggregate_demandsupply_csv</span>(simp)</code></pre>
 </div>
+</div>
+<div id="conversions" class="section level1">
+<h1>Conversions</h1>
+<ul>
+<li>convert_csv2shapefile</li>
+</ul>
 </div>
 
 

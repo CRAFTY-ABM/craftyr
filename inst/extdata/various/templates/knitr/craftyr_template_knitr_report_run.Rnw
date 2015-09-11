@@ -1,0 +1,156 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{varioref}
+\usepackage[pdftex]{hyperref}
+\usepackage{float}
+\usepackage{cprotect}
+
+<<configdef, echo=FALSE, results='hide'>>=
+source(simp$simpDefinition)
+
+# ADAPT:
+Version = "C001-StaticScenario"
+source(paste(simp$dirs$simp, "explore/C001", Version, "simp_0.R", sep="/"))
+setwd(paste(simp$dirs$simp, "explore/C001", Version, sep="/"))
+
+simp$sim$runids					<- c(0)
+simp$sim$id 					<- "EU28-0"
+simp$fig$init <- function(simp, outdir, filename) {}
+simp$fig$close<- function() {}
+
+# adjust figure settings:
+library(ggplot2)
+#ggplot2::theme_set(visualisation_raster_legendonlytheme(base_size = 10))
+simp$fig$facetlabelsize	<- 11
+
+opts_chunk$set(comment=NA, echo=FALSE, results='hide', fig.pos='h!', fig.align='center',
+		out.width='\\textwidth', warning=FALSE, message=FALSE,
+		kfigr.prefix = TRUE)
+@
+
+
+\cprotect\title{CRAFTY Europe\\\verb|\Sexpr{simp$sim$version}|}
+\author{Sascha Holzhauer}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Configuration}
+\begin{itemize}
+  \item Scenario A1
+\end{itemize}
+
+\subsection{Run Information}
+\label{runinfo}
+<<runinfo, results='asis'>>=
+hl_compileruninfos(simp)
+@
+
+\subsection{Agent Production Parameters}
+<<productivities, results='asis'>>=
+simp$sim$folder <- ""
+hl_printAgentProductionParameters(simp, filenamepostfix = "_mono_medium")
+simp$sim$folder <- "_C001-StaticScenario"
+@
+
+\subsection{Agent Parameters}
+<<agentparams, results='asis'>>=
+hl_printAgentParameters(simp, aftParamId = 0)
+@
+
+\subsection{Competition Functions}
+\label{competition}
+<<competition, fig.height=3.5, anchor="figure">>=
+hl_printCompetitionFunctions(simp, filename = "Competition_linear",  xrange = c(-0.5,0.5))
+@
+
+\newpage
+\section{Results}
+\subsection{Aggregated Data}
+\subsubsection{Demand and Supply}
+\label{demandsupply}
+<<demandsupply, fig.height=4>>=
+#hl_demandsupply(simp, dataname = "dataAgg", runid = 3)
+hl_aggregate_demandsupply(simp, dataname="dataAggregateSupplyDemand")
+@
+
+%\subsubsection{Marginal Utilities}
+%\label{marginalUtilities}
+%<<marginalUtilities, fig.height=4>>=
+%hl_marginalutilities(simp)
+%@
+
+\newpage
+\subsubsection{AFT Composition}
+\label{aftCompLines}
+<<aftCompLines3, fig.height=4, anchor="figure">>=
+#hl_aftcomposition(simp, dataname = "dataAgg")
+hl_aggregate_aftcompositions(simp, dataname = "dataAggregateAFTComposition")
+@
+
+\subsubsection{AFT Competitiveness}
+\label{aftCompetitivenessLines}
+<<aftCompetitivenessLines, fig.height=4>>=
+hl_competitiveness(simp, dataname = "dataAgg")
+@
+
+
+\newpage
+\subsubsection{AFT TakeOvers}
+<<aftTakeOvers, fig.height=4, fig.cap="Transitions between AFTs because of take overs (giving in). Straight lines represent a transition from an agent of a specific AFT to a new agent applying the same type of land use. Ends of arrows are coloured according to the AFT they lead to. Furthermore, arrows summerise transitions of years in between the shown ones. Therefore, the number of transitions is potentially higher.">>=
+hl_takeovers(simp, dataname = "dataAgg", datanametakeovers="dataTakeOvers", runid=0)
+@
+
+\subsubsection{AFT TakeOver Fluctuations}
+<<aftTakeOverFluctuations, fig.height=4, fig.cap = "Fluctations in numbers of AFT only due to take overs.">>=
+hl_afttakeoverfluctuations(simp, dataname = "dataAgg", datanametakeovers="dataTakeOvers")
+@
+
+\newpage
+\subsection{Regional Data}
+\subsubsection{Regional Demand and Supply}
+<<regionaldemandsupply>>=
+hl_regions_demandandsupply(simp, dataname = "dataAgg", runid = 0, facet_ncol = 4)
+@
+
+\newpage
+\subsubsection{Regional AFT Composition}
+<<regionalafts>>=
+hl_regions_aftcomposition(simp, dataname = "dataAgg", facet_ncol = 4)
+@
+
+\newpage
+\subsection{Map Data}
+\label{aftmaps}
+%<<aftmaps>>=
+%hl_aftmap(simp)
+%@
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[18cm]{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/C001-StaticScenario/Figures/raster/EU28_A1Static_0_EU-Hetero-EU-Hetero.png}
+\caption{AFT map}
+\end{center}
+\end{figure}
+
+
+%\subsubsection{Cell Volatility}
+%\subsubsection{Adoption Cereal: Raster}
+%\subsubsection{Adoption Meat: Raster}
+%\subsubsection{AFT composition: Evolution}
+%\subsubsection{Adoption: Evolution}
+%\subsubsection{Productivity: Evolution}
+%\subsubsection{Productivity per Landmanager}
+%\subsubsection{Effective Capital Levels}
+
+\section{Observations}
+\begin{itemize}
+  \item -
+\end{itemize}  
+
+
+% This line must not be copied or deleted!
+\end{document}

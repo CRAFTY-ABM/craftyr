@@ -22,19 +22,23 @@ high level functions start with hl.
 ## Directory Structure
 
 The package assumes that you stick to the recommended directory structure for both input and output data.
-See [here](https://www.wiki.ed.ac.uk/display/CRAFTY/Filename+Substitution+and+Recommended+Folder+Structure) for a definition. However, if you need to change that structure, craftyr provides some mean to adjust
+See [here](https://www.wiki.ed.ac.uk/display/CRAFTY/Filename+Substitution+and+Recommended+Folder+Structure) 
+for a definition. However, if you need to change that structure, craftyr provides some mean to adjust
 pre-defined values. For instance, you may implement a custom function and assign it to
 `simp$dirs$param$getparamdir`.
 
 ## Parameters
 
-There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and 
-parameters. The basic idea is to define a simp list for each project and execute the simp defining R code
-every time you start a script with the according project. Within the script, "local" properties 
-can overwrite the project level settings, e.g. runID, image resolutions etc.
+There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, 
+and  parameters. The basic idea is to define a simp list for each project and execute the simp defining 
+R code every time you start a script with the according project. Within the script, "local" properties 
+(e.g. runID, image resolutions) can overwrite the project level settings (simpBasic.R) which in turn 
+overwrite craftyr defaults. Often it is a good idea to store setting/scenario specific values in a 
+separate file (simp.R) within the setting/scenario R folder. 
 
-Since some paths vary according to the machine that executes the R code, the simp list is created from two parts:
-A machine-specific part and a general, machine-independent part.
+Since some paths vary according to the machine that executes the R code, the project-specific simp list
+is created from two parts: A machine-specific part (simp-maschine_XY.R) and a general, machine-
+independent part (simpBasic.R.)
 
 ```{r, eval=FALSE}
 ###############################################################################
@@ -78,14 +82,33 @@ simp$sim$scenario				<- "Scenario"
 [...]
 ```
 
-The machine-specific simp part in an according script (simp-\<machine\>.R) contains the (machine-specific) path 
-to itself and to the machine-independent simp part script (simp.R), loads that general part and may overwrite 
-certain parameters. It also merges the defined parameters in the general crafyr default parameter list to
-apply craftyr defaults when no other specification is given.
+The machine-specific simp part in an according script contains the (machine-specific) path 
+to itself and to the machine-independent simp part script (simpBasic.R), loads that general part and 
+may overwrite certain parameters. The basic simp file initially merges the defined parameters in the 
+general crafyr default parameter list to apply craftyr defaults when no other specification is given.
 
-Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script
-using craftyr should load the simp code anew. During that process, the entire simp list including all possible
-changes are removed from memory and loaded anew.
+Using the parameter set during an initial execution of the machine-dependent scripts at startup, each 
+script using craftyr should load the simp code anew. During that process, the entire simp list 
+including all possible changes are removed from memory and loaded anew. Following above suggestions,
+a script first loading the setting/scenario specific simp.R would look like this:
+
+```{r, eval=FALSE}
+# Only contained when the particular script is only executed on a specific maschine!
+# Otherwise. the maschine=specific file needs to be executed before.
+source("/PATH-TO/simp-machine_cluster.R")
+
+# Usually also in simp.R, but required here to find simp.R
+simp$sim$folder 	<- " "parentFolder/_version""	
+
+simp$sim$runids 	<- c("0-0")			# run to deal with
+simp$sim$id			<- "template-0-0" 	# ID to identify specific data collections (e.g. regions)
+simp$sim$task		<- "task1"			# Name of surrounding folder, usually a description of task 
+
+# simp$dirs$simp is set by maschine-specific file:
+setwd(paste(simp$dirs$simp, simp$sim$folder, "cluster/", simp$sim$task, sep="/"))
+# usually, the setting/scenario specific simp.R is two levels above:
+source("../../simp.R")
+```
 
 The simp list consists of a number of sublists:
 
@@ -133,6 +156,13 @@ A tutorial is also [available](http://www.r-bloggers.com/better-logging-in-r-aka
 
  
 # Handling Data
+
+## Run IDs
+
+Usually, run IDs consist of the parameter ID (which is in runs.csv) and the random number seed applied in
+the simulations. However, the user may also decide to omit the random number part and use only the param ID as
+run ID. Crafty is able to deal with both versions in principle. When the param ID is required (e.g. to retrieve
+parameter data from a table) the number before a potential '-' is extracted automatically.
 
 ## Storing Data
 

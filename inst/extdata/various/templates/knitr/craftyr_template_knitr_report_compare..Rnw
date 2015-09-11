@@ -1,0 +1,141 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{varioref}
+\usepackage[pdftex]{hyperref}
+\usepackage{float}
+\usepackage{cprotect}
+
+<<configdef, echo=FALSE, results='hide'>>=
+source(simp$simpDefinition)
+
+# ADAPT:
+Version = "Compare_VersionA_VersionB"
+source(paste(simp$dirs$simp, "explore/C001", Version, "simp_0.R", sep="/"))
+setwd(paste(simp$dirs$simp, "explore/C001", Version, sep="/"))
+
+source("./simp_A.R")
+simp1 <- simp
+simp1$sim$shortid <- "VersionA"
+source("./simp_B.R")
+simp2 <- simp
+simp2$sim$shortid <- "VersionB"
+
+simp$fig$init <- function(simp, outdir, filename) {}
+simp$fig$close<- function() {}
+
+# adjust figure settings:
+library(ggplot2)
+#ggplot2::theme_set(visualisation_raster_legendonlytheme(base_size = 10))
+simp$fig$facetlabelsize	<- 11
+
+opts_chunk$set(comment=NA, echo=FALSE, results='hide', fig.pos='h!', fig.align='center',
+		out.width='\\textwidth', warning=FALSE, message=FALSE,
+		kfigr.prefix = TRUE)
+@
+
+\documentclass[a4paper]{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{varioref}
+\usepackage[pdftex]{hyperref}
+\usepackage{float}
+\usepackage{cprotect}
+
+\cprotect\title{CRAFTY Europe Comparison\\\verb|\Sexpr{simp1$sim$shortid}| - \verb|\Sexpr{simp2$sim$shortid}|}
+\author{Sascha Holzhauer}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Configuration}
+\begin{itemize}
+  \item Scenario A1
+\end{itemize}
+
+\subsection{Agent Production Parameters (both)}
+\label{productivities1}
+<<productivities1, results='asis'>>=
+simp1$sim$folder <- "FolderVersionA"
+hl_printAgentProductionParameters(simp1, filenamepostfix = "_mono_medium")
+simp1$sim$folder <- "_C001-StaticScenario"
+@
+
+\section{Results}
+\subsection{AFT Composition}
+<<aftcomposition, results='asis'>>=
+hl_comp_aggregate_aftcompositions(simp, list(simp1, simp2), dataname="dataAggregateAFTComposition")
+@
+
+\subsection{Demand and Supply}
+<<demandsupply, results='asis'>>=
+hl_comp_demandsupply(simp, list(simp1, simp2), dataname="dataAggregateSupplyDemand")
+@
+
+\subsection{Land Use Map}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/EU28_A1Static_0_EU_Static-A1_ScenarioComparison.png}
+\caption{AFT map}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - C\_Cereal}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_C_Cereal.png}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - NC\_Cereal}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_NC_Cereal.png}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - C\_Livestock}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_C_Livestock.png}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - NC\_Livestock}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_NC_Livestock.png}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - Forester}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_Forester.png}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - Conservationist}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_Conservationist.png}
+\end{center}
+\end{figure}
+
+\subsection{AFT Losses and Gains - Unmanaged}
+\begin{figure}[H]
+\begin{center}
+\includegraphics{C:/Data/LURG/Projects/Volante/ModelComparisonPaper/Output/Compare_StaticA1mono_G9-C8/AFTcompare/EU28_A1Static_0_AFT-Changes_Monofunctional_Static_vs_A1_Unmanaged.png}
+\end{center}
+\end{figure}
+
+\newpage
+\section{Observations}
+\begin{itemize}
+  \item -
+\end{itemize}  
+
+
+\end{document}

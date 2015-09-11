@@ -23,5 +23,7 @@
 #' 
 NULL
 .onAttach <- function(...) {
-	packageStartupMessage("Welcome to craftyr!")
+	packages = installed.packages()
+	packageStartupMessage(paste("Welcome to craftyr ", 
+					packages[packages[,"Package"] == "shbasic", "Version"], "!", sep=""))
 }
