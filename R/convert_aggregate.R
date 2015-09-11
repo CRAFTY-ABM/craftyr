@@ -101,8 +101,8 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 					celldataname,
 					name = "craftyr.convert.aggregate.supply")
 			
-			input_tools_load(simp, dataname)
-			data <- get(dataname)
+			input_tools_load(simp, celldataname)
+			data <- get(celldataname)
 			supply <- data[, colnames(data) %in% c("Tick", "Service.Meat", "Service.Cereal", "Service.Recreation",
 							"Service.Timber", "Runid", "Region")]
 		}
@@ -118,42 +118,50 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 		input_tools_save(simp, supplydataname)
 	}
 }
-convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded", regions = simp$sim$regions) {
+#' Extracts numbers of take overs for every pair of AFT for every tick from stored cell csv data.
+#' Scenario, Runid and Region are preserved.
+#' @param simp 
+#' @param landusedataname 
+#' @return data.frame with previous AFT as row and resulting AFT as column
+#' 
+#' @author Sascha Holzhauer
+#' @export
+convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded") {
 	# <---- test data
 	simp <- param_getExamplesSimp()
 	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
 			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
 			attachfileinfo = TRUE, bindrows = TRUE)
 	rownames(cdata) <- NULL
-	
-	###
-	
-	simp <- param_getExamplesSimp()
-	csv_aggregateTakeOvers <- input_csv_data(simp, dataname = NULL, datatype = "TakeOvers", pertick = FALSE,
-			bindrows = TRUE,
-			skipXY = TRUE)
 	# test data ---->
 	
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
+	afts <- as.numeric(names(simp$mdata$aftNames))
 	
-	# TODO aggregate/count changes in land use
+	library(plyr) # the '.' operator cannot be addressed (?!)
+	transitions <- plyr::ddply(cdata, .(Scenario, Runid, Region), function(cd) {
+		results <- list()
+		for (tick in 1:(length(unique(cd$Tick))-1)) {
+			# tick = 1
+			ticks = unique(cd$Tick)[tick:(tick + 1)]
+			result <- sapply(afts, function(fromAFT, ticks) { 
+							data <- sapply(afts, 
+								function(fromAFT, toAFT, ticks) {
+									data.frame(number = sum(cdata[cd$Tick == ticks[1], "LandUseIndex"] == fromAFT & 
+													cd[cd$Tick == ticks[2], "LandUseIndex"] == toAFT),
+												AFT = setNames(simp$mdata$aftNames[fromAFT], NULL),
+												toAFT = setNames(simp$mdata$aftNames[toAFT], NULL),
+												Tick = ticks[2])
+								}, fromAFT = fromAFT, ticks = ticks, simplify = FALSE)
+							do.call(rbind, data)
+						}, ticks = ticks, simplify = FALSE)
+			results <- do.call(rbind, append(list(results),result))
+		}
+		results
+	})
 	
-	td <- matrix(c(1,2,1,2, 1,2,2,2, 4,2,2,4, 4,1,5,1), ncol= 4, byrow = TRUE)
-	rle(td[1,])
-	rle(td[4,])
-	
-	afts <- names(simp$mdata$aftNames)
-	
-	transitions <- aft
-	
-	for (tick in 2:length(unique(cdata$Tick))) {
-		ticks = unique(cdata$Tick)[tick:(tick + 1)]
-		sapply(afts, function(x, ticks) sapply(afts, function(x, y, ticks) {
-					cat(x, y, "\n")
-					sum(cdata[cdata$Tick == ticks[1], "LandUseIndex"] == x & 
-									cdata[cdata$Tick == ticks[2], "LandUseIndex"] == y)
-				}, x = x, ticks = ticks), ticks = ticks)
-	}
-	
+	transitions <- reshape2::dcast(transitions, Tick + Scenario + Runid + Region + AFT ~ toAFT, 
+					fun.aggregate = sum, margins = NULL,
+			subset = NULL, fill = NULL, drop = TRUE, value.var = "number")
 }

@@ -24,6 +24,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$sim$allocf					<- paste("_", defsimp$sim$version, "alloc", sep="")
 	
 	defsimp$sim$scenario				<- "scenario"
+	defsimp$sim$allscenarios			<- c("scenario")
 	defsimp$sim$regionalisation			<- "regionalisation"
 	defsimp$sim$regions					<- c("region")
 	defsimp$sim$runids					<- c("0-0")
@@ -61,6 +62,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$csv$cname_aft 			<- "Agent"
 	defsimp$csv$cname_x				<- "X"
 	defsimp$csv$cname_y				<- "Y"
+	defsimp$csv$tickinterval_agg	<- 1
+	defsimp$csv$tickinterval_cell	<- 10
 	
 	### Model Data ################################################################
 	
@@ -119,6 +122,36 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	### Parameter Creation ###########################################################
 	defsimp$paramcreation$startrun	<- -1
 	
+	### Batch Run Creation Settings #################################################
+	defsimp$batchcreation$scenarios				<- c("A1", "B1")
+	defsimp$batchcreation$startrun 				<- 0
+	defsimp$batchcreation$regionalisations			<- c("26")
+	defsimp$batchcreation$modes					<- c("plain", "complex")
+	defsimp$batchcreation$percentage_takeovers 	<- c(30) 
+	defsimp$batchcreation$competitions 			<- c("plain" = "Competition_linear.xml", 
+													"complex" = "Competition_exp.xml")
+	defsimp$batchcreation$institutions				<- c("plain"="", "complex" = "")
+	defsimp$batchcreation$multifunctionality 		<- c("plain" = "mono", "complex"= "multi")
+	defsimp$batchcreation$allocation				<- c("GiveUpGiveInAllocationModel.xml")
+	defsimp$batchcreation$variationstages 			<- c("plain" = "homo", "complex"= "hetero")
+	defsimp$batchcreation$socialnetwork 			<- "SocialNetwork_HDFF.xml"
+	defsimp$batchcreation$searchabilities			<- c(30)
+	defsimp$batchcreation$inputdatadir 			<- NULL
+	defsimp$batchcreation$agentparam_tmpldir		<- NULL
+	defsimp$batchcreation$gu_stages				<- c("medium")
+	defsimp$batchcreation$gi_stages				<- c("medium")
+	defsimp$batchcreation$placeholders				<- c(1)
+	
+	defsimp$batchcreation$versiondirs$production	<- NULL
+	defsimp$batchcreation$versiondirs$competition	<- NULL
+	defsimp$batchcreation$versiondirs$allocation	<- NULL
+	defsimp$batchcreation$versiondirs$worldfile	<- NULL
+	defsimp$batchcreation$versiondirs$agentdef 	<- NULL
+	
+	defsimp$batchcreation$sensisfilename		<- "AFT_CapitalSensitivities.csv"
+	defsimp$batchcreation$monoprodfilename 		<- "AFT_MonoProductivities.csv"
+	defsimp$batchcreation$multiprodfilename 	<- "AFT_MultiProductivities.csv"
+
 	### Technical Settings ###########################################################
 	defsimp$tech <- list()
 	defsimp$tech$maxtick <- 3000

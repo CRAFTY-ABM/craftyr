@@ -4,15 +4,15 @@
 \title{Transition plot of AFT take overs (both due to giving in and giving up)}
 \usage{
 hl_takeovers_all(simp, runid = simp$sim$runids[1],
-  dataname = "csv_cell_aggregated", starttick = 2010, tickinterval = 5,
-  endtick = 2040, datanametakeovers = "csv_aggregateTakeOver")
+  landusedataname = "csv_LandUseIndex_rbinded", starttick = 2010,
+  tickinterval = 5, endtick = 2040,
+  datanametakeovers = "csv_aggregateTakeOver",
+  dataname = "csv_cell_aggregated")
 }
 \arguments{
 \item{simp}{}
 
 \item{runid}{}
-
-\item{dataname}{}
 
 \item{starttick}{}
 
@@ -21,6 +21,8 @@ hl_takeovers_all(simp, runid = simp$sim$runids[1],
 \item{endtick}{}
 
 \item{datanametakeovers}{}
+
+\item{dataname}{}
 }
 \value{
 transition plot

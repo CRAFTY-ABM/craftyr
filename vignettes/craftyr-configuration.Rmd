@@ -1,0 +1,30 @@
+---
+title: "Create and adjust CRAFTY configuration files"
+author: "Sascha Holzhauer"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+  toc: true
+vignette: >
+  %\VignetteIndexEntry{Create and adjust CRAFTY configuration files}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+		
+# Manipulate CSV files
+
+## Change column headers
+
+```{r, eval=FALSE, results="hide"}
+library(craftyr)
+simp <- craftyr::param_getDefaultSimp()
+simp$sim$folder 	<- ""
+adjust_changecolumnnames(simp,  indir = simp$dirs$param$getparamdir(simp, "capitals"),
+		colname_old = "Pasture", colname_new = "Grass", filepattern = "*.csv")
+```
+
+# Further scripts
+
+There are a number of python scripts which might be helpful for configuring CRAFTY, too:
+https://bitbucket.org/S-Holzhauer/py4abm

@@ -33,13 +33,16 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 #' @author Sascha Holzhauer
 #' @export
 hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
+	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+				simp$sim$runids[1]}) 
+				
 	if (tools::file_ext(filename) == "ods") {
 		require(readODS)
 		runinfo <- read.ods(filename)[[1]][,1:simp$tech$runinfocolnumber]
 		colnames(runinfo) <- runinfo[2,]
 		runinfo <- runinfo[-c(1,2),]
 		rinfo <- runinfo[runinfo["Version"] == simp$sim$version & 
-						runinfo["1st Run ID"] == simp$sim$runids[1], ]
+						runinfo["1st Run ID"] == paramid, ]
 	} else if(tools::file_ext(filename) == "csv") {
 		runinfo <- read.csv(filename, skip = 1)
 		rinfo <- runinfo[runinfo$Version == simp$sim$version,]

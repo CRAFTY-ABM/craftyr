@@ -172,8 +172,6 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 	
 	# <--- test data:
 #	simp <- craftyr::param_getExamplesSimp()
-#	starttick = 2000
-#	endtick = 2020
 #	tick = 2020
 #	dataname = "csv_LandUseIndex_rbinded"
 #	regions =  simp$sim$regions
@@ -206,6 +204,9 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 #	simp$fig$init			<- craftyr::output_visualise_initFigure
 	### test data --->
 	
+	#regions = c("SE")
+	#cdata1 <- csv_LandUseIndex_rbinded <- cdata1
+	
 	cdata <- list()
 	for (i in 1:length(ids)) {
 		simp$sim$id <- ids[i]
@@ -227,10 +228,10 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 	cdata <- lapply(cdata, function(x) {x$Tick <- NULL; x})
 	
 	for (aftgroup in selectedAFTGroups) {
-		#aftgroup <- selectedAFTGroups[1]
+		#aftgroup <- selectedAFTGroups[6]
 		aftgroup <- aftgroup[[1]]
 		cdata_aft <- sapply(cdata, function(dat) {
-					# dat <- cdata[[1]]
+					# dat2 <- cdata[[2]]
 					dat[dat$LandUseIndex %in% aftgroup, "LandUseIndex"]  <- 100
 					dat[!dat$LandUseIndex %in% 100, "LandUseIndex"] <- 0 
 					dat}, simplify=FALSE)
@@ -285,6 +286,12 @@ hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggpl
 			theme = if (simp$fig$plottitle) visualisation_raster_legendandtitle else visualisation_raster_legendonlytheme,
 			ggplotaddon = list(ggplotaddon, countryshapeelem, ggplot2::coord_equal()))
 }
+#' Ggplot2 theme that plots legend and title only
+#' @param base_size 
+#' @param base_family 
+#' @return ggplot theme
+#' 
+#' @author Sascha Holzhauer
 visualisation_raster_legendandtitle <- function(base_size = 11, base_family = "Helvetica"){
 	library(ggplot2)  # correct (see stack exchange question) for %+replace%
 	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%

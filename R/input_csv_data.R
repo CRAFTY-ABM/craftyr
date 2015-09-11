@@ -24,7 +24,7 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 		extension = "csv",
 		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
 		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
-		tickinterval = 1, 
+		tickinterval = simp$csv$tickinterval_agg, 
 		attachfileinfo = TRUE,
 		splitfileinfo = FALSE,
 		bindrows = FALSE,
@@ -39,37 +39,54 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 	
 	data <- lapply(fileinfos, function(item) {
 				result <- plyr::ddply(item, "Filename", function(df) {
-							return <- utils::read.csv(df[,"Filename"])
-							if (attachfileinfo) {
-								infos <- df[,-which(colnames(df)  %in% c("Filename", names(return)))]
-								return <- cbind(return, infos, row.names=NULL)
-							}
-							if (skipXY) {
-								return[,simp$csv$cname_x] <- NULL
-								return[,simp$csv$cname_y] <- NULL
-							}
-							if (!is.null(aggregationFunction)) {
-								return <- aggregationFunction(simp, return)
-							}
-							return
+							return <- tryCatch({
+								data <- utils::read.csv(df[,"Filename"])
+								if (length(data[,1]) == 0) {
+									warnings("CSV file ", df[,"Filename"] , " does not contain any rows!")
+									return(NULL)
+								} else {
+									if (attachfileinfo) {
+										infos <- df[,-which(colnames(df)  %in% c("Filename", names(data)))]
+										data <- cbind(data, infos, row.names=NULL)
+									}
+									if (skipXY) {
+										data[,simp$csv$cname_x] <- NULL
+										data[,simp$csv$cname_y] <- NULL
+									}
+									if (!is.null(aggregationFunction)) {
+										data <- aggregationFunction(simp, data)
+									}
+								}
+								invisible(data)
+							}, error = function(err) {
+								warning(err)
+								return(NULL)
+							})
+							if(length(return) == 0)  R.oo::throw.default("Something's wrong (returned data frame empty)...")
+							invisible(return)
 				})
 				# don't know why filename is within ddply return...
-				result[,-which(colnames(result)  %in% c("Filename"))]
+				negindices <- which(colnames(result)  %in% c("Filename"))
+				result <- if(length(negindices)>0) result[, -negindices] else result
 	})
 	
 	if (!is.null(columns)) {
 		# assumes that fileinfos structure is the same for all list elements!
-		
-		data <- tryCatch({lapply(data, function(x) x[, c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y), columns, 
+		data <- lapply(data, function(x){
+						tryCatch({
+								x[, c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y), columns, 
 									if (attachfileinfo) 
-						colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])])
-			}, error = function(e) {
-				futile.logger::flog.error("Undefined columns requested from CSV data: %s", 
-						paste(c(simp$csv$cname_x, simp$csv$cname_y), columns, if (attachfileinfo) 
-									colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)], 
-						collapse="|", sep="|"),
-				name="craftyr.input.csv")
-			})
+										colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])]
+							
+						}, error = function(e) {
+								futile.logger::flog.error("Undefined columns requested from CSV data: %s (%s)", 
+									paste(unique(c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y),
+										columns, if (attachfileinfo) 
+										colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])), 
+										collapse="|"),
+									e,
+									name="craftyr.input.csv")
+						})})
 	}
 			
 	if (attachfileinfo & splitfileinfo) data <- split(data, data[,names(fileinfos)])
@@ -78,5 +95,5 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 		result <- do.call(rbind.data.frame, data)
 	else
 		result <- data
-	result
+	invisible(result)
 }

@@ -136,7 +136,6 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 	colnames(startPopulation)[colnames(startPopulation) == "AFT"] <- "Number"
 	
 	# TODO cells that go to unmanaged are not considered...
-	
 	output_visualise_takeovers(simp,
 			data = dat, 
 			startpopulation = startPopulation,
@@ -158,18 +157,16 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_takeovers_all <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
+hl_takeovers_all <- function(simp, runid = simp$sim$runids[1], landusedataname = "csv_LandUseIndex_rbinded",
 		starttick = 2010, tickinterval=5, endtick = 2040,
-		datanametakeovers = "csv_aggregateTakeOver") {
+		datanametakeovers = "csv_aggregateTakeOver", dataname = "csv_cell_aggregated") {
 	
-	
-	dataTakeOvers <- convert_aggregate_takeovers()# TODO)
-	
+	dataTakeOversAll <- convert_aggregate_takeovers(simp, landusedataname = landusedataname)
 	input_tools_save(simp, "dataTakeOversAll")
 	
-	hl_takeovers(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
-			starttick = 2010, tickinterval=5, endtick = 2040,
-			datanametakeovers = "dataTakeOversAll")
+	hl_takeovers(simp, runid = simp$sim$runids[1], dataname = dataname,
+			starttick = starttick, tickinterval=tickinterval, endtick = endtick,
+			datanametakeovers = datanametakeovers)
 		
 }
 #' AFT take over fluctations as timeline
@@ -261,4 +258,61 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 			filename = paste("AggregateServiceDemand", 
 					shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), simp$sim$id, sep="_"),
 			alpha=0.7)
+}
+#' Bar plot of number of takeovers per number of trials. Various AFTs as facets.
+#' @param simp 
+#' @param dataname 
+#' @param region 
+#' @param facet_ncol 
+#' @return plot 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_gistatistics_singleRegion <- function(simp, dataname = "csv_aggregateGiStatistics", 
+		regions = simp$sim$regions, facet_ncol = 1) {
+	
+	input_tools_load(simp, "csv_aggregateGiStatistics")
+	
+	csv_aggregateGiStatistics <- csv_aggregateGiStatistics[csv_aggregateGiStatistics[,"Region"] %in% regions,]
+	
+	dat <- aggregate(subset(csv_aggregateGiStatistics, select=simp$mdata$aftNames[-1]), by = list(
+					Trials=csv_aggregateGiStatistics[, "Trials"],
+					Runid=csv_aggregateGiStatistics[, "Runid"]),
+			FUN=sum)
+	
+	melteddat <- reshape2::melt(dat, variable.name="AFT", id.vars= c("Trials", "Runid"), 
+			direction="long", value.name = "Number")
+	
+	visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
+			facet_column = "AFT", facet_ncol = facet_ncol, fill_column = "AFT",
+			alpha=1.0, x_column = "Trials", ggplotaddons = ggplot2::theme(legend.position="none"))
+}
+#' Bar plot of number of takeovers per number of trials. Various regions as facets.
+#' @param simp 
+#' @param dataname 
+#' @param region 
+#' @param facet_ncol 
+#' @return plot 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_gistatistics_singleAFT <- function(simp, dataname = "csv_aggregateGiStatistics",
+		regions = simp$sim$regions, facet_ncol = 1) {
+
+	input_tools_load(simp, "csv_aggregateGiStatistics")
+	
+	csv_aggregateGiStatistics <- csv_aggregateGiStatistics[csv_aggregateGiStatistics[,"Region"] %in% regions,]
+
+	melteddat <- reshape2::melt(dat, variable.name="AFT", id.vars= c("Region", "Trials", "Runid"), 
+			direction="long")
+	
+	dat <- aggregate(subset(csv_aggregateGiStatistics, select=simp$mdata$aftNames[-1]), by = list(
+					Trials=csv_aggregateGiStatistics[, "Trials"],
+					Region=csv_aggregateGiStatistics[, "Region"],
+					Runid=csv_aggregateGiStatistics[, "Runid"]),
+			FUN=sum)
+		
+	visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
+			facet_column = "Region", facet_ncol = facet_ncol, fill_column = "Region",
+			alpha=1.0, x_column = "Trials", ggplotaddons = ggplot2::theme(legend.position="none"))
 }

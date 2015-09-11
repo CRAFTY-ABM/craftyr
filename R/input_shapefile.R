@@ -45,7 +45,7 @@ input_shapes_countries <- function(simp,
 	#filename_shapes <- "C:/Data/LURG/Projects/Volante/InputData/shp/sandbox/rastervector/NL2.shp"
 	#shapes <- rgdal::readOGR(dsn = filename_shapes, "NL2")
 	#shapes.f <- ggplot2::fortify(shapes, region = "DN")
-	###
+	##
 
 	# conversion (does not work! - better transform shapes into LAEA 1989 before):
 	#shapes.etrs.1989.laea <- spTransform(shapes, CRS(

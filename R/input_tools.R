@@ -14,7 +14,7 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 					if (datatype %in% c("capitals")) {
 						paste("worlds", simp$sim$worldname,
 							if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
-									simp$sim$regionalisation, sep="/"), sep="/")
+									simp$sim$regionalisation, sep="/"), "capitals", sep="/")
 					} else if (datatype %in% c("demand")) {
 						paste("worlds", simp$sim$worldname,
 								if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
