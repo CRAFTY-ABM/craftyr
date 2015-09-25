@@ -4,10 +4,11 @@
 \title{Transition plot of AFT take overs (both due to giving in and giving up)}
 \usage{
 hl_takeovers_all(simp, runid = simp$sim$runids[1],
-  landusedataname = "csv_LandUseIndex_rbinded", starttick = 2010,
-  tickinterval = 5, endtick = 2040,
-  datanametakeovers = "csv_aggregateTakeOver",
-  dataname = "csv_cell_aggregated")
+  landusedataname = "csv_LandUseIndex_rbinded",
+  starttick = simp$sim$starttick, tickinterval = 10,
+  endtick = simp$sim$endtick, datanametakeovers = "csv_aggregateTakeOver",
+  dataname = "csv_cell_aggregated", grouping = c("Scenario", "Runid",
+  "Region"))
 }
 \arguments{
 \item{simp}{}

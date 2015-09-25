@@ -1,4 +1,5 @@
 #' Aggregate raster data with the given aggregate function
+#' 
 #' @param inforasterdata 
 #' @param aggregatefunction 
 #' @return data.frame
@@ -17,6 +18,7 @@ convert_raster_flatlist <- function(inforasterdata, aggregatefunction="sum") {
 	result <- do.call(rbind, flatdata)
 }
 #' Compute AFt numbers
+#' 
 #' @param aft_raster 
 #' @return data.farme with numbers and info
 #' 
@@ -39,7 +41,8 @@ convert_raster_getAftNumbers <- function(aft_raster) {
 			})
 	result <- do.call(rbind, aftNumbers)
 }
-#' Determine the fraction of AFTs in the given rasters whose state corresonds with the given state.
+#' Determine the fraction of AFTs in the given rasters whose state corresonds with the given state
+#' 
 #' @param aft_raster list (Regions) of list (Tick) of raster including information of AFT IDs
 #' @param state_raster list (Regions) of list (Tick) of raster including information of AFT states
 #' @param state the state of interest

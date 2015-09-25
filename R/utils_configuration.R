@@ -33,7 +33,7 @@ adjust_changecolumnnames <- function(sip,  indir = simp$dirs$param$getparamdir(s
 				outfile,
 				name = "craftyr.utils.adjust.colnames")
 		
-		write.csv(data, outfile)
+		write.csv(data, outfile, row.names = FALSE)
 	}
 	futile.logger::flog.info("Processed %d files!",
 			length(list.files(indir, pattern = filepattern)),

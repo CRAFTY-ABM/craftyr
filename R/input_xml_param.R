@@ -23,5 +23,12 @@ input_xml_param_competition <- function(simp, filename = "Competition_linear") {
 get_function <- function(data) {
 	if (data["curve.class"] %in% "com.moseph.modelutils.curve.LinearFunction") {
 		return(function(x) {x*as.numeric(data["curve.b"]) + as.numeric(data["curve.a"])})
+	} else if (data["curve.class"] %in% "com.moseph.modelutils.curve.ExponentialFunction") {
+		return(function(x) {as.numeric(data["curve.A"]) + 
+							(as.numeric(data["curve.B"])*exp(as.numeric(data["curve.C"])*x))})
+	} else {
+		futile.logger::flog.warn("Curve in %s not supported!",
+					filename,
+					name = "craftyr.input.xml.param.competition")
 	}
 }

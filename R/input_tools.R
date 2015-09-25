@@ -12,11 +12,11 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 	}
 	return <- paste(simp$dirs$data,
 					if (datatype %in% c("capitals")) {
-						paste("worlds", simp$sim$worldname,
+						paste(simp$sim$folder,"worlds", simp$sim$worldname,
 							if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
 									simp$sim$regionalisation, sep="/"), "capitals", sep="/")
 					} else if (datatype %in% c("demand")) {
-						paste("worlds", simp$sim$worldname,
+						paste(simp$sim$folder, "worlds", simp$sim$worldname,
 								if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
 											simp$sim$regionalisation, simp$sim$scenario, sep="/"), sep="/")
 					} else if (datatype %in% c("agentparams")) {
@@ -28,7 +28,8 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 					},
 					sep="/")
 }
-#' Determines the model output folder(s) for the given \eqn{simp}.
+#' Determines the model output folder(s) for the given \eqn{simp}
+#' 
 #' If one of the parameters \eqn{simp$sim$version}, \eqn{simp$sim$world}, 
 #' \eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runids},
 #' or \eqn{simp$sim$regions} is a vector, a vector of directories is returned.
@@ -56,7 +57,8 @@ input_tools_getModelOutputDir <- function(simp) {
 	
 	result
 }
-#' Determine a vector of ticks for the files in the given directory that match the given pattern.
+#' Determine a vector of ticks for the files in the given directory that match the given pattern
+#' 
 #' If pattern is not specified it is assumed that all requested files in the directory are of the form 
 #' *<scenario>-<runid>-<region>-<datatype>-<dataname>-<tick>.<extension>.
 #' If extension is not given, any extension is considered. If datatype and dataname are 
@@ -134,13 +136,26 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 	}
 	filteredTicks
 }
-#' Determines the model output filenames for the given simp and datatype, dataname, ticks settings.
-#' Able to read multiple scenarios/regions/runids.
+#' Determines the model output filenames for the given simp and datatype, dataname, ticks settings
+#' 
+#' Able to read multiple scenarios (as in \code{simp$sim$scenario})/regions (as in \code{simp$sim$regions})/
+#' runids (as in \code{simp$sim$runids}).
 #' Attaches infos (region, runid, scenario).
 #' 
 #' @inheritParams input_tools_getAvailableTicks
 #' @param folders 
-#' @param pertick if TRUE the filename will be complemented by all available ticks
+#' @param simp 
+#' @param folders 
+#' @param datatype 
+#' @param dataname 
+#' @param extension 
+#' @param returnfileinfo 
+#' @param pertick  if TRUE the filename will be complemented by all available ticks
+#' 					(using \code{\link{input_tools_getAvailableTicks}})
+#' @param starttick only required when \code{pertick == TRUE}
+#' @param endtick only required when \code{pertick == TRUE}
+#' @param tickinterval only required when \code{pertick == TRUE}
+#' 
 #' @return list of vector of filenames (list elements rerpesent files of one folder)
 #' 
 #' @author Sascha Holzhauer
@@ -163,9 +178,11 @@ input_tools_getModelOutputFilenames <- function(simp,
 					Region = 	if (is.null(simp$sim$regions)) "" else simp$sim$regions))
 	
 	# attach filename:
-	# Folder = filename need to be concatenated here because of lapply when pertick == FALSE (difficulties for vector of folders)
+	# Folder = filename need to be concatenated here because of lapply when pertick == FALSE 
+	# (difficulties for vector of folders)
 	fileinfogrid <- data.frame(fileinfogrid, Filename = paste(folders, 
-					input_tools_getFilenameListRepetitions(simp, datatype = datatype, dataname = dataname, folders, considertick = pertick),
+					input_tools_getFilenameListRepetitions(simp, datatype = datatype, dataname = dataname, 
+							folders, considertick = pertick),
 					sep="/"))
 	
 	if (pertick) {
@@ -258,7 +275,8 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 	}
 	l
 }
-#' Determines the model input filenames for the given simp and datatype, dataname, ticks settings.
+#' Determines the model input filenames for the given simp and datatype, dataname, ticks settings
+#' 
 #' @inheritParams input_tools_getModelOutputFilenames
 #' @return  list of vector of filenames (list elements rerpesent files of one folder)
 #' 
@@ -276,6 +294,7 @@ input_tools_getModelInputFilenames <- function(simp, folders = input_tools_getMo
 			pertick, starttick, endtick, tickinterval)
 }
 #' Wrapper for save
+#' 
 #' @param simp 
 #' @param object 
 #' 
@@ -293,7 +312,8 @@ input_tools_save <- function(simp, object) {
 					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""), 
 			envir = parent.frame())
 }
-#' Checks whether an object with the given object name has been stored under the given simp configuration 
+#' Checks whether an object with the given object name has been stored under the given simp configuration
+#' 
 #' @param simp 
 #' @param objectName 
 #' @return TRUE if object already stored
@@ -304,7 +324,8 @@ input_tools_checkexists <- function(simp, objectName) {
 	return(file.exists(paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
 							if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep="")))
 }
-#' #' Wrapper for load
+#' Wrapper for load
+#' 
 #' @param simp 
 #' @param objectName 
 #' 

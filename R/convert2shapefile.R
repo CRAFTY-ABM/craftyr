@@ -1,4 +1,4 @@
-#' Convert X and Y coordinates from a CSV file into a shapefile.
+#' Convert X and Y coordinates from a CSV file into a shapefile
 #' 
 #' NOTE: not tested yet
 #' @param sip 

@@ -1,4 +1,5 @@
-#' Extracts cell coordinates and land use from stored cell data and generates raster file.
+#' Extracts cell coordinates and land use from stored cell data and generates raster file
+#' 
 #' @param simp 
 #' @param tick
 #' @param dataname 

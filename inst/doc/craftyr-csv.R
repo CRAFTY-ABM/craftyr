@@ -7,14 +7,14 @@ futile.logger::flog.threshold(futile.logger::DEBUG, name='craftyr.input.csv')
 cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
 		pertick = TRUE, starttick = 2010, endtick = 2020, tickinterval = 10,
 		attachfileinfo = TRUE, bindrows = TRUE)
-csv_LandUseIndex <- cdata
-input_tools_save(simp, "csv_LandUseIndex")
+csv_LandUseIndex_rbinded <- cdata
+input_tools_save(simp, "csv_LandUseIndex_rbinded")
 cdata <- split(cdata, list(cdata$Tick, cdata$Runid))
 csv_LandUseIndex_split <- cdata
 input_tools_save(simp, "csv_LandUseIndex_split")
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
-#  hl_store_csvcelldata(simp, dataname = "csv_LandUseIndex", tickinterval = 10)
+#  hl_store_csvcelldata(simp, dataname = "csv_LandUseIndex_rbinded", tickinterval = 10)
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", colums = "LandUseIndex",
@@ -128,13 +128,13 @@ visualise_cells_printRawPlots(simp, csv_LandUseIndex_split,
 ## ---- eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 library(craftyr)
 simp <- param_getExamplesSimp()
-input_tools_load(simp, "csv_LandUseIndex")
+input_tools_load(simp, "csv_LandUseIndex_rbinded")
 
 # aggregate regions:
-csv_LandUseIndex$AftNumbers <- csv_LandUseIndex$LandUseIndex
-aftData <- aggregate(subset(csv_LandUseIndex, select=c("AftNumbers")),
-		by = list(ID = csv_LandUseIndex[,"Runid"],
-				Tick=csv_LandUseIndex[, "Tick"],  AFT=csv_LandUseIndex[,"LandUseIndex"]),
+csv_LandUseIndex_rbinded$AftNumbers <- csv_LandUseIndex_rbinded$LandUseIndex
+aftData <- aggregate(subset(csv_LandUseIndex_rbinded, select=c("AftNumbers")),
+		by = list(ID = csv_LandUseIndex_rbinded[,"Runid"],
+				Tick=csv_LandUseIndex_rbinded[, "Tick"],  AFT=csv_LandUseIndex_rbinded[,"LandUseIndex"]),
 		FUN=sum)
 aftData$AFT <- as.factor(aftData$AFT)
 aftData$Proportion <- ave(aftData$AftNumbers, aftData$ID, aftData$Tick, FUN =  function(.x) .x/sum(.x))
@@ -238,6 +238,25 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_takeovers(simp)
+
+## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
+#  library(craftyr)
+#  simp <- param_getExamplesSimp()
+#  
+#  dataTakeOversAll <- convert_aggregate_takeovers(simp,
+#  	landusedataname = "csv_LandUseIndex_rbinded")
+#  input_tools_save(simp, "dataTakeOversAll")
+#  	
+#  hl_takeovers(simp, runid = simp$sim$runids[1],
+#  		dataname 			= "csv_cell_aggregated",
+#  		starttick 			= 2000,
+#  		tickinterval 		= 5,
+#  		endtick 			= 2020,
+#  		datanametakeovers 	= "csv_aggregateTakeOver")
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_takeovers_all(simp, landusedataname = "csv_LandUseIndex_rbinded",
+#  	starttick = 2000, tickinterval=5, endtick = 2020)
 
 ## ---- eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 

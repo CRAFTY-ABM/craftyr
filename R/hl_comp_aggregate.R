@@ -1,4 +1,5 @@
-#' Load, aggregate and visualise AFT composition data of several runs.
+#' Load, aggregate and visualise AFT composition data of several runs to compare
+#' 
 #' @param simp
 #' @param simps list of simp that shall be compared. \code{simp$sim$shortid} is combined with Runid to distinguish data!
 #' @param dataname name of aggregated data from cell data
@@ -41,6 +42,7 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 			alpha=0.7)
 }
 #' Compare Yearly aggregated AFT composition
+#' 
 #' @param simp 
 #' @param dataname 
 #' @return timelien plot
@@ -76,7 +78,8 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 			filename = "AftComposition",
 			alpha=0.7)
 }
-#' Read supply and demand and plot for given runid.
+#' Read supply and demand and plot for given runid
+#' 
 #' @param simp 
 #' @param runid 
 #' @param dataname aggregated demand and supply (from aggregated CSV)

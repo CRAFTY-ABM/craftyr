@@ -1,4 +1,4 @@
-#' Aggregate demand and supply for all regions per tick and store as CSV file.
+#' Aggregate demand and supply for all regions per tick and store as CSV file
 #' 
 #' @param simp 
 #' @param dataname  

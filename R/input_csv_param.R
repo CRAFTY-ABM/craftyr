@@ -40,13 +40,7 @@ input_csv_param_initialAllocation <- function(simp, aftColumn = "LandUseIndex",
 #' @author Sascha Holzhauer
 #' @export
 input_csv_param_demand <- function(simp) {
-	filenames <- paste(input_tools_getModelInputDir(simp, datatype="demand"), '/',
-			if(!is.null(simp$sim$regionalisation)) paste(simp$sim$regionalisation, "_", sep=""),  
-			simp$sim$scenario, "_",
-			simp$sim$regions, "_",
-			"Demand.csv", sep="")
-	
-	filenames = do.call(paste, c(input_tools_getModelInputDir(simp, datatype="demand"), '/', 
+	filenames = do.call(paste, c(simp$dirs$param$getparamdir(simp, datatype="demand"), '/', 
 					expand.grid(input_tools_constructFilenameList(simp, datatype = "demands",,
 									order = simp$sim$filepartorder_demands), stringsAsFactors = FALSE), ".csv", sep=""))
 	futile.logger::flog.debug("Filenames for collecting demand: %s",
