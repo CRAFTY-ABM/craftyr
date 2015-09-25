@@ -152,6 +152,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$batchcreation$monoprodfilename 		<- "AFT_MonoProductivities.csv"
 	defsimp$batchcreation$multiprodfilename 	<- "AFT_MultiProductivities.csv"
 
+	defsimp$batchcreation$extendruncsv			<- FALSE
+	
 	### Technical Settings ###########################################################
 	defsimp$tech <- list()
 	defsimp$tech$maxtick <- 3000

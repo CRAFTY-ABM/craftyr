@@ -50,6 +50,9 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 								-c(1,length(data[1,])-2,length(data[1,])-1,length(data[1,]))]))
 	}
 	# print table
+	colnames(agentparams) <- gsub("givingUp", "GU", colnames(agentparams), fixed = TRUE)
+	colnames(agentparams) <- gsub("givingIn", "GI", colnames(agentparams), fixed = TRUE)
+	
 	table <- xtable::xtable(agentparams,
 			label= "param.agents",
 			caption= "Agent Parameters"

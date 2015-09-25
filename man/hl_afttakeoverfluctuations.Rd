@@ -4,8 +4,8 @@
 \title{AFT take over fluctations as timeline}
 \usage{
 hl_afttakeoverfluctuations(simp, dataname = "csv_cell_aggregated",
-  starttick = 2010, tickinterval = 5, endtick = 2040,
-  datanametakeovers = "csv_aggregateTakeOver")
+  starttick = simp$sim$starttick, tickinterval = 5,
+  endtick = simp$sim$endtick, datanametakeovers = "csv_aggregateTakeOver")
 }
 \arguments{
 \item{simp}{}

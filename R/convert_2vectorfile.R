@@ -1,4 +1,5 @@
-#' Reads in CSV files with coordinates and creates polygone shapefiels via raster.
+#' Reads in CSV files with coordinates and creates polygone shapefiels via raster
+#' 
 #' Considers only CSV fiels in the indir. They must have a "x" and "y" column, but not "z"!
 #' @param indir 
 #' @param outdir

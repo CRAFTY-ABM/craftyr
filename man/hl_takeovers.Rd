@@ -4,8 +4,10 @@
 \title{Transition plot of AFT take overs due to giving in}
 \usage{
 hl_takeovers(simp, runid = simp$sim$runids[1],
-  dataname = "csv_cell_aggregated", starttick = 2010, tickinterval = 5,
-  endtick = 2040, datanametakeovers = "csv_aggregateTakeOver")
+  dataname = "csv_cell_aggregated", starttick = simp$sim$starttick,
+  tickinterval = 5, endtick = simp$sim$endtick,
+  datanametakeovers = "csv_aggregateTakeOver", transitionthreshold = 5,
+  aftnames = simp$mdata$aftNames[-1])
 }
 \arguments{
 \item{simp}{}
@@ -21,6 +23,11 @@ hl_takeovers(simp, runid = simp$sim$runids[1],
 \item{endtick}{}
 
 \item{datanametakeovers}{}
+
+\item{transitionthreshold}{}
+
+\item{aftnames}{AFT names (defaults to simp$mdata$aftNames without the first entry which is usually
+'Unmanaged' and not considered in stored take over data)}
 }
 \value{
 transition plot

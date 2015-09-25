@@ -18,15 +18,22 @@ output_visualise_takeovers <- function(simp,
 		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1,
 		type_of_arrow = "grid",
-		transitionthreshold = 0) {
+		transitionthreshold = 0,
+		aftnames = simp$mdata$aftNames[-1]) {
 	
 	# TODO allow for multiple runids (changes to startpopulation and plot as facet eg.)
 	ticks = seq(starttick, endtick, tickinterval)
 	data[data <= transitionthreshold] <- 0
 	
+	if (length(unique(data[["AFT"]])) != length(startpopulation$Agent)) {
+		R.oo::throw.default(sprintf("Agents in start population (%s) do not match agents in data (%)!"),
+				paste(startpopulation$Agent, collapse="/"),
+				paste(unique(data[["AFT"]]), collapse="/"))
+	}
+	
 	for (run_id in simp$sim$runids) {
 		cols <- colnames(data)
-		trans <- aggregate(data[,colnames(data) %in% simp$mdata$aftNames], by=list( 
+		trans <- aggregate(data[,colnames(data) %in% aftnames], by=list( 
 						Tick=data[["Tick"]], AFT=data[["AFT"]]), FUN=sum)
 		
 		population <- startpopulation$Number
@@ -34,15 +41,25 @@ output_visualise_takeovers <- function(simp,
 		transitions <- list()
 		populations <- data.frame(population)
 
-		for (tick in ticks) {
-			t <- aggregate(subset(trans, Tick >= tick & Tick < tick + tickinterval, select=simp$mdata$aftNames), by = list(
+		validticks <- ticks[ticks %in% unique(data[["Tick"]])]
+		
+		if (length(validticks) == 0) {
+			R.oo:throw.default(sprintf("Requested ticks (%s) do not match available ticks (%s)!",
+							paste(ticks, collapse=","),
+							paste(unique(data[["Tick"]]), collapse=",")
+							))
+		}
+		
+		for (tick in validticks) {
+			t <- aggregate(subset(trans, Tick >= tick & Tick < tick + tickinterval, select=aftnames), 
+					by = list(
 							AFT=trans[trans$Tick >= tick & trans$Tick < tick + tickinterval,"AFT"]),
 					FUN=sum)
 			
 			rownames(t) <- t$AFT
 			
-			aftNumbers <- names(simp$mdata$aftNames)
-			names(aftNumbers) <- simp$mdata$aftNames
+			aftNumbers <- names(aftnames)
+			names(aftNumbers) <- aftnames
 			
 			# order data according to AFT numbers
 			t <- t[order(aftNumbers[as.character(t$AFT)]),]
@@ -66,7 +83,7 @@ output_visualise_takeovers <- function(simp,
 		
 		# TODO integerate absolute AFT numbers
 		# TODO enable the combination of AFTs into groups
-		aftindex <- names(simp$colours$AFT) %in% names(simp$mdata$aftNames)[simp$mdata$aftNames %in% colnames(data)]
+		aftindex <- names(simp$colours$AFT) %in% names(aftnames)[aftnames %in% colnames(data)]
 		
 		shGmisc::transitionPlot(transitions,
 				cex = 1.2,

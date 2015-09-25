@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-09-11" />
+<meta name="date" content="2015-09-25" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-09-11</em></h4>
+<h4 class="date"><em>2015-09-25</em></h4>
 </div>
 
 <div id="TOC">
@@ -75,8 +75,18 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#landuseindex-raw-plot">LandUseIndex: Raw Plot</a></li>
 </ul></li>
 <li><a href="#aggregate-data">Aggregate Data</a><ul>
-<li><a href="#from-cell-level-data">From Cell Level Data</a></li>
-<li><a href="#from-aggregated-region-level-data">From Aggregated (Region Level) Data</a></li>
+<li><a href="#from-cell-level-data">From Cell Level Data</a><ul>
+<li><a href="#aft-composition-as-timeline">AFT Composition as Timeline</a></li>
+</ul></li>
+<li><a href="#from-aggregated-region-level-data">From Aggregated (Region Level) Data</a><ul>
+<li><a href="#aft-composition-as-timeline-1">AFT Composition as Timeline</a></li>
+<li><a href="#aggregated-demand-and-supply-data">Aggregated Demand and Supply Data</a></li>
+<li><a href="#take-overs-giving-in">Take Overs (Giving in)</a></li>
+<li><a href="#take-overs-all">Take Overs (All)</a></li>
+<li><a href="#givinginstatistics-frequencies-per-aft---regions-aggregated">GivingInStatistics (Frequencies per AFT - Regions aggregated)</a></li>
+<li><a href="#marginal-utilities">Marginal Utilities</a></li>
+<li><a href="#total-productivity">Total Productivity</a></li>
+</ul></li>
 </ul></li>
 </ul></li>
 <li><a href="#output-write-csv-data">Output (write) CSV Data</a><ul>
@@ -106,13 +116,13 @@ futile.logger::<span class="kw">flog.threshold</span>(futile.logger::DEBUG, <spa
 cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">columns =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
         <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>,
         <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>)
-csv_LandUseIndex &lt;-<span class="st"> </span>cdata
-<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex&quot;</span>)
+csv_LandUseIndex_rbinded &lt;-<span class="st"> </span>cdata
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)
 cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick, cdata$Runid))
 csv_LandUseIndex_split &lt;-<span class="st"> </span>cdata
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_split&quot;</span>)</code></pre>
 <p>High level:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_store_csvcelldata</span>(simp, <span class="dt">dataname =</span> <span class="st">&quot;csv_LandUseIndex&quot;</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_store_csvcelldata</span>(simp, <span class="dt">dataname =</span> <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>)</code></pre>
 <p>For large data sets it is a good idea to clean the data somewhat before storing:</p>
 <pre class="sourceCode r"><code class="sourceCode r">cdata &lt;-<span class="st"> </span><span class="kw">input_csv_data</span>(simp, <span class="dt">dataname =</span> <span class="ot">NULL</span>, <span class="dt">datatype =</span> <span class="st">&quot;Cell&quot;</span>, <span class="dt">colums =</span> <span class="st">&quot;LandUseIndex&quot;</span>,
         <span class="dt">pertick =</span> <span class="ot">TRUE</span>, <span class="dt">starttick =</span> <span class="dv">2010</span>, <span class="dt">endtick =</span> <span class="dv">2040</span>, <span class="dt">tickinterval =</span> <span class="dv">30</span>, <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>)
@@ -154,10 +164,8 @@ csv_cell_aggregated &lt;-<span class="st"> </span><span class="kw">input_csv_dat
         <span class="dt">starttick =</span> <span class="dv">2000</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>,
         <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>,
         <span class="dt">aggregationFunction =</span> aggregationFunction,
-        <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)</code></pre>
-<pre><code>## Warning in loop_apply(n, do.ply): package 'plyr' was built under R version
-## 3.1.3</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rownames</span>(csv_cell_aggregated) &lt;-<span class="st"> </span><span class="ot">NULL</span>
+        <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)
+<span class="kw">rownames</span>(csv_cell_aggregated) &lt;-<span class="st"> </span><span class="ot">NULL</span>
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_cell_aggregated&quot;</span>)</code></pre>
 </div>
 <div id="source-aggregated-aft-composition" class="section level2">
@@ -256,13 +264,13 @@ simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>
 <h4>AFT Composition as Timeline</h4>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
-<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex&quot;</span>)
+<span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)
 
 <span class="co"># aggregate regions:</span>
-csv_LandUseIndex$AftNumbers &lt;-<span class="st"> </span>csv_LandUseIndex$LandUseIndex
-aftData &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(csv_LandUseIndex, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;AftNumbers&quot;</span>)),
-        <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">ID =</span> csv_LandUseIndex[,<span class="st">&quot;Runid&quot;</span>],
-                <span class="dt">Tick=</span>csv_LandUseIndex[, <span class="st">&quot;Tick&quot;</span>],  <span class="dt">AFT=</span>csv_LandUseIndex[,<span class="st">&quot;LandUseIndex&quot;</span>]),
+csv_LandUseIndex_rbinded$AftNumbers &lt;-<span class="st"> </span>csv_LandUseIndex_rbinded$LandUseIndex
+aftData &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(csv_LandUseIndex_rbinded, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;AftNumbers&quot;</span>)),
+        <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">ID =</span> csv_LandUseIndex_rbinded[,<span class="st">&quot;Runid&quot;</span>],
+                <span class="dt">Tick=</span>csv_LandUseIndex_rbinded[, <span class="st">&quot;Tick&quot;</span>],  <span class="dt">AFT=</span>csv_LandUseIndex_rbinded[,<span class="st">&quot;LandUseIndex&quot;</span>]),
         <span class="dt">FUN=</span>sum)
 aftData$AFT &lt;-<span class="st"> </span><span class="kw">as.factor</span>(aftData$AFT)
 aftData$Proportion &lt;-<span class="st"> </span><span class="kw">ave</span>(aftData$AftNumbers, aftData$ID, aftData$Tick, <span class="dt">FUN =</span>  function(.x) .x/<span class="kw">sum</span>(.x))
@@ -371,12 +379,30 @@ startPopulation &lt;-<span class="st"> </span>startPopulation[<span class="kw">m
 <p>High level:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_takeovers</span>(simp)</code></pre>
 </div>
+<div id="take-overs-all" class="section level4">
+<h4>Take Overs (All)</h4>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+
+dataTakeOversAll &lt;-<span class="st"> </span><span class="kw">convert_aggregate_takeovers</span>(simp,
+    <span class="dt">landusedataname =</span> <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;dataTakeOversAll&quot;</span>)
+    
+<span class="kw">hl_takeovers</span>(simp, <span class="dt">runid =</span> simp$sim$runids[<span class="dv">1</span>], 
+        <span class="dt">dataname            =</span> <span class="st">&quot;csv_cell_aggregated&quot;</span>,
+        <span class="dt">starttick           =</span> <span class="dv">2000</span>, 
+        <span class="dt">tickinterval        =</span> <span class="dv">5</span>, 
+        <span class="dt">endtick             =</span> <span class="dv">2020</span>,
+        <span class="dt">datanametakeovers   =</span> <span class="st">&quot;csv_aggregateTakeOver&quot;</span>)</code></pre>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_takeovers_all</span>(simp, <span class="dt">landusedataname =</span> <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>,
+    <span class="dt">starttick =</span> <span class="dv">2000</span>, <span class="dt">tickinterval=</span><span class="dv">5</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>)</code></pre>
+</div>
 <div id="givinginstatistics-frequencies-per-aft---regions-aggregated" class="section level4">
 <h4>GivingInStatistics (Frequencies per AFT - Regions aggregated)</h4>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
-<span class="kw">library</span>(reshape2)</code></pre>
-<pre><code>## Warning: package 'reshape2' was built under R version 3.1.3</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+<span class="kw">library</span>(reshape2)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_aggregateGiStatistics&quot;</span>)
 
 regions =<span class="st"> </span>simp$sim$regions

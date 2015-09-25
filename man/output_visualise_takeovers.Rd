@@ -7,7 +7,8 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
   starttick = if (!is.null(simp$sim$starttick)) simp$sim$starttick else
   simp$tech$mintick, endtick = if (!is.null(simp$sim$endtick))
   simp$sim$endtick else simp$tech$maxtick, tickinterval = 1,
-  type_of_arrow = "grid", transitionthreshold = 0)
+  type_of_arrow = "grid", transitionthreshold = 0,
+  aftnames = simp$mdata$aftNames[-1])
 }
 \arguments{
 \item{simp}{SIMulation Properties}

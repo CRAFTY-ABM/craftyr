@@ -48,7 +48,7 @@ visualise_bars <- function(simp, data, y_column, title = NULL,
 	}
 	
 	p1 <- ggplot2::ggplot() +
-			ggplot2::geom_bar(data = data , alpha=alpha, mapping=ggplot2::aes_string(x = x_column, y = y_column,
+			ggplot2::geom_bar(data = data , alpha=alpha, mapping=ggplot2::aes_string(x = x_column,  y = y_column,
 							fill = fill_column), stat="identity", position = position) +
 			facetElem  +
 		 	scaleFillElem +

@@ -1,4 +1,5 @@
-#' Calcualte and plot competitiveness for every AFT on every cell
+#' Calculate and plot competitiveness for every AFT on every cell
+#' 
 #' @param simp 
 #' @param dirtocapitals 
 #' @param capitalfilename 

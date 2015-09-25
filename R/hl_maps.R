@@ -1,4 +1,5 @@
 #' AFT map for 2010 and 2040 with differences from stored CSV data
+#' 
 #' @param simp 
 #' @param dataname name of stored CSV LandUseIndex data
 #' @return map plot
@@ -48,6 +49,7 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 			ggplotaddon = ggplotaddon)
 }
 #' AFT map for 2010 and 2040 with differences (placed horicontally) for multiple Runids
+#' 
 #' @param simp 
 #' @param dataname 
 #' @return map plot
@@ -90,7 +92,8 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = 3,
 			legenditemnames = simp$mdata$aftNames, coloursetname="AFT")
 }
-#' Plot changes between ticks for a specific (combination of) land use(s).
+#' Plot changes between ticks for a specific (combination of) land use(s)
+#' 
 #' @param simp 
 #' @param dataname 
 #' @param selectedAFT 
@@ -153,7 +156,8 @@ hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinde
 	hl_aftmap_changes(simp, cdata, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, regions = regions,
 			addcountryshapes = FALSE, plotunchanged = TRUE)
 }
-#' Plot changes between rusn of a specific tick for a particular (combination of) land use(s).
+#' Plot changes between runs of a specific tick for a particular (combination of) land use(s)
+#' 
 #' @param simp 
 #' @param dataname 
 #' @param selectedAFT 
@@ -242,7 +246,8 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 			addcountryshapes = addcountryshapes, plotunchanged = plotunchanged)
 	}
 }
-#' Plot changes between ticks for a specific (combination of) land use(s).
+#' Plot changes between ticks for a specific (combination of) land use(s)
+#' 
 #' @param simp 
 #' @param cdata list of celldata to compare
 #' @param ncol 
@@ -287,6 +292,7 @@ hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggpl
 			ggplotaddon = list(ggplotaddon, countryshapeelem, ggplot2::coord_equal()))
 }
 #' Ggplot2 theme that plots legend and title only
+#' 
 #' @param base_size 
 #' @param base_family 
 #' @return ggplot theme

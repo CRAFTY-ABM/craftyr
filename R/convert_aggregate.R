@@ -1,4 +1,5 @@
-#' Melts demand and supply data and splits service columns into type and service.
+#' Melts demand and supply data and splits service columns into type and service
+#' 
 #' @param simp 
 #' @param data 
 #' @return melted data.frame
@@ -118,29 +119,33 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 		input_tools_save(simp, supplydataname)
 	}
 }
-#' Extracts numbers of take overs for every pair of AFT for every tick from stored cell csv data.
+#' Extracts numbers of take overs for every pair of AFT for every tick from stored cell csv data
+#' 
 #' Scenario, Runid and Region are preserved.
 #' @param simp 
-#' @param landusedataname 
+#' @param landusedataname
+#' @param grouping adjusts which columns are considered for aggregatation
 #' @return data.frame with previous AFT as row and resulting AFT as column
 #' 
 #' @author Sascha Holzhauer
 #' @export
-convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded") {
+convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded",
+		grouping = c("Scenario", "Runid", "Region")) {
 	# <---- test data
-	simp <- param_getExamplesSimp()
-	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
-			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
-			attachfileinfo = TRUE, bindrows = TRUE)
-	rownames(cdata) <- NULL
+#	simp <- param_getExamplesSimp()
+#	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
+#			pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
+#			attachfileinfo = TRUE, bindrows = TRUE)
+#	rownames(cdata) <- NULL
 	# test data ---->
 	
-	input_tools_load(simp, dataname)
-	cdata <- get(dataname)
+	input_tools_load(simp, landusedataname)
+	cdata <- get(landusedataname)
 	afts <- as.numeric(names(simp$mdata$aftNames))
 	
-	library(plyr) # the '.' operator cannot be addressed (?!)
-	transitions <- plyr::ddply(cdata, .(Scenario, Runid, Region), function(cd) {
+	cdata <- cdata[,c("LandUseIndex", grouping, "Tick")]
+	
+	transitions <- plyr::ddply(cdata, grouping, function(cd) {
 		results <- list()
 		for (tick in 1:(length(unique(cd$Tick))-1)) {
 			# tick = 1
@@ -150,8 +155,8 @@ convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseInde
 								function(fromAFT, toAFT, ticks) {
 									data.frame(number = sum(cdata[cd$Tick == ticks[1], "LandUseIndex"] == fromAFT & 
 													cd[cd$Tick == ticks[2], "LandUseIndex"] == toAFT),
-												AFT = setNames(simp$mdata$aftNames[fromAFT], NULL),
-												toAFT = setNames(simp$mdata$aftNames[toAFT], NULL),
+												AFT = setNames(simp$mdata$aftNames[as.character(fromAFT)], NULL),
+												toAFT = setNames(simp$mdata$aftNames[as.character(toAFT)], NULL),
 												Tick = ticks[2])
 								}, fromAFT = fromAFT, ticks = ticks, simplify = FALSE)
 							do.call(rbind, data)
@@ -161,7 +166,8 @@ convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseInde
 		results
 	})
 	
-	transitions <- reshape2::dcast(transitions, Tick + Scenario + Runid + Region + AFT ~ toAFT, 
+	transitions <- reshape2::dcast(transitions, as.formula(paste("Tick + ", paste(grouping, collapse=" + "),
+							" + AFT ~ toAFT", sep="")), 
 					fun.aggregate = sum, margins = NULL,
 			subset = NULL, fill = NULL, drop = TRUE, value.var = "number")
 }

@@ -1,4 +1,6 @@
-#' Reads marginal utilties and prepares the data for plotting. Stores data and returns.
+#' Reads marginal utilties and prepares the data for plotting
+#' 
+#' Stores data and returns.
 #' @param simp 
 #' @param filename 
 #' @return data.frame
@@ -23,7 +25,9 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 			filename = paste("MarginalUtilities", sep=""),
 			alpha=0.7)
 }
-#' Print LaTeX table including run information for the version in \code{simp$sim$version} and
+#' Print LaTeX table including run information
+#' 
+#' Considers the version in \code{simp$sim$version} and
 #' the '1st Run ID' in \code{simp$sim$runids[1]}.
 #' @param simp 
 #' @param filename 
@@ -35,14 +39,15 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
 	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 				simp$sim$runids[1]}) 
+	randomseed <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][2] else NULL)
 				
 	if (tools::file_ext(filename) == "ods") {
 		require(readODS)
 		runinfo <- read.ods(filename)[[1]][,1:simp$tech$runinfocolnumber]
 		colnames(runinfo) <- runinfo[2,]
 		runinfo <- runinfo[-c(1,2),]
-		rinfo <- runinfo[runinfo["Version"] == simp$sim$version & 
-						runinfo["1st Run ID"] == paramid, ]
+		rinfo <- runinfo[runinfo["Version"] == simp$sim$version &
+						runinfo["1st Run ID"] == paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
 	} else if(tools::file_ext(filename) == "csv") {
 		runinfo <- read.csv(filename, skip = 1)
 		rinfo <- runinfo[runinfo$Version == simp$sim$version,]
@@ -50,7 +55,7 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 		Roo::throw.default("File extension ", tools::file_ext(filename)," not supported!")
 	}
 	
-	if (length(rinfo) == 0) {
+	if (length(rinfo[,1]) == 0) {
 		Roo::throw.default("Runinfo table ", filename," does not contain a row for version " + 
 						simp$sim$version, "!", sep="")
 	}
