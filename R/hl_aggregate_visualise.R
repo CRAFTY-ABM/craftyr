@@ -47,7 +47,8 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 	input_tools_load(simp, dataname)
 	data <- get(dataname)
 	
-	aftData <- data[, colnames(data) %in% c("Tick", "Competitiveness", "Runid", "Region", "LandUseIndex")]
+	aftData <- data[data$LandUseIndex != as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames=="Unmanaged"]), 
+			colnames(data) %in% c("Tick", "Competitiveness", "Runid", "Region", "LandUseIndex")]
 	aftData <- aggregate(subset(aftData, select=c("Competitiveness")),
 			by = list(ID = aftData[,"Runid"], Tick=aftData[, "Tick"], AFT=aftData[,"LandUseIndex"]),
 			FUN=mean)
@@ -227,18 +228,23 @@ hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 #' Yearly aggregated AFT composition
 #' 
 #' @param simp 
-#' @param dataname 
+#' @param dataname
+#' @param includeunmanaged if \code{TRUE} the number of unmanaged cells is plotted, too. It is derived from the
+#' 			total number of cells obtained
+#' @param aggcelldataname
 #' @return timelien plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTComposition") {
+hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTComposition", 
+		includeunmanaged = FALSE, aggcelldataname = "dataAgg") {
+	# dataname = "dataAggregateAFTComposition"
 	input_tools_load(simp, dataname)
 	dataComp <- get(dataname)
 	
 	# filter rows with "?"s
-	dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(rbind,lapply(dataComp[,grep("AFT.", 
-											colnames(dataComp))],as.character)))
+	dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, lapply(dataComp[,grep("AFT.", 
+											colnames(dataComp))], as.character)))
 	dataComp <- dataComp[complete.cases(dataComp),]
 	
 	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
@@ -247,11 +253,30 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	
 	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
 			direction="long")
+	
+	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
+			direction="long")
 
 	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, 
 					Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), 
 			"sum", na.rm = TRUE)
 	
+	if (includeunmanaged) {
+		
+		input_tools_load(simp, aggcelldataname)
+		aggcelldata <- get(aggcelldataname)
+		
+		cellnum <- sum(aggcelldata[aggcelldata$Tick == aggcelldata$Tick[1], "AFT"])
+		
+		d <-  plyr::ddply(d, "Tick", function(df, cellnum) {
+					rbind(df, data.frame(AFT = "Unmanaged",
+									Tick = unique(df$Tick),
+									Runid = unique(df$Runid),
+									Scenario = unique(df$Scenario),
+									value = cellnum - sum(df$value)))
+				}, cellnum = cellnum)
+		
+	}
 	# substitute AFT names by AFT ID
 	aftNumbers <- names(simp$mdata$aftNames)
 	names(aftNumbers) <- simp$mdata$aftNames
@@ -393,21 +418,25 @@ hl_gistatistics_singleAFT <- function(simp, dataname = "csv_aggregateGiStatistic
 #' 
 #' @param simp 
 #' @param dataname 
-#' @param facet_ncol 
-#' @param filename 
 #' @param maxcompetitiveness either an absoulte value or a percentage given as string (e.g. "90%"). The latter
-#' 			selects the lowest X percent. 
-#' @param numbins 
-#' @param title 
-#' @param ggplotaddons 
-#' @param setfigdims if \code{TRUE} \code{simp$fig$height} and \code{simp$fig$width} are set appropriately
+#' 			selects the lowest X percent.
+#' @param afts AFTs to display (as vector of names)
 #' @return facet histogram plot 
+#' 
+#' @inheritParams visualise_competition_prealloc
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded", 
-		facet_ncol = length(simp$mdata$aftNames) - 1, filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
-		maxcompetitiveness = "90%", numbins = 20, title = NULL, ggplotaddons = NULL, setfigdims = TRUE) {
+		maxcompetitiveness = "90%", 
+		# passed to visualise_competition_prealloc
+		numbins = 20,
+		facet_ncol = length(simp$mdata$aftNames) - 1,
+		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
+		title = NULL, ggplotaddons = NULL,
+		setfigdims = TRUE,
+		afts = simp$mdata$aftNames) {
+	
 	input_tools_load(simp, dataname)
 	data <- get(dataname)
 	
@@ -430,9 +459,11 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 	data$GU[data$PreAllocCompetitiveness < data$PreAllocGivingUpThreshold] <- 1
 	data$GU <- as.factor(data$GU)
 	data$AFT <- simp$mdata$aftNames[match(data$PreAllocLandUseIndex, as.numeric(names(simp$mdata$aftNames)))]
+	
 	data$PreAllocLandUseIndex <- NULL
 	data$PreAllocGivingUpThreshold <- NULL
 	
+	data <- data[data$AFT %in% afts,]
 	
 	visualise_competition_prealloc(simp, data, facet_ncol = facet_ncol, filename = filename,
 			numbins = numbins, title = title, ggplotaddons = ggplotaddons, setfigdims = setfigdims)

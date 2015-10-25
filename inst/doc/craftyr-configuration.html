@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-09-25" />
+<meta name="date" content="2015-10-25" />
 
 <title>Create and adjust CRAFTY configuration files</title>
 
@@ -54,12 +54,30 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Create and adjust CRAFTY configuration files</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-09-25</em></h4>
+<h4 class="date"><em>2015-10-25</em></h4>
 </div>
 
 
 <div id="manipulate-csv-files" class="section level1">
 <h1>Manipulate CSV files</h1>
+<div id="explore-number-of-cells-of-regions-from-capital-csv-files" class="section level2">
+<h2>Explore number of cells of regions (from capital CSV files)</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span>craftyr::<span class="kw">param_getDefaultSimp</span>()
+simp$sim$filepartorder  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>)
+cellnumdf &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals_cellnumbers</span>(<span class="dt">simp =</span> simp, 
+            <span class="dt">regionpartfromend =</span> <span class="dv">2</span>, <span class="dt">regionpartdevider =</span> <span class="st">&quot;_&quot;</span>)
+<span class="co"># order decreasingly according to number of cells:</span>
+cellnumdf[<span class="kw">order</span>(cellnumdf, <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)]</code></pre>
+</div>
+<div id="determine-assignment-to-slots-for-parallel-computing" class="section level2">
+<h2>Determine assignment to slots for parallel computing</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span>craftyr::<span class="kw">param_getDefaultSimp</span>()
+simp$sim$filepartorder  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>)
+slotgroups &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals_slotassignment</span>(<span class="dt">simp =</span> simp, <span class="dt">slotnums =</span> <span class="dv">16</span>,
+            <span class="dt">regionpartfromend =</span> <span class="dv">2</span>, <span class="dt">regionpartdevider =</span> <span class="st">&quot;_&quot;</span>)</code></pre>
+</div>
 <div id="change-column-headers" class="section level2">
 <h2>Change column headers</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)

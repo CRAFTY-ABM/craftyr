@@ -66,12 +66,12 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 #' Read and plot compotition functions
 #' @param simp 
 #' @param filename 
-#' @param xrange Vector of two. The x range to plot 
 #' @return plot
+#' @inheritParams visualise_competition_funcs
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_printCompetitionFunctions <- function(simp, filename = "Competition_linear", xrange = c(-3,3)) {
+hl_printCompetitionFunctions <- function(simp, filename = "Competition_linear", xrange = c(-3,3), yrange = c(-1,1)) {
 	functions <- input_xml_param_competition(simp, filename = filename)
-	visualise_competition_funcs(simp, functions, xrange)
+	visualise_competition_funcs(simp, functions, xrange, yrange)
 } 

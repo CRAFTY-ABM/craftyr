@@ -3,6 +3,7 @@
 #' @param simp
 #' @param simps list of simp that shall be compared. \code{simp$sim$shortid} is combined with Runid to distinguish data!
 #' @param dataname name of aggregated data from cell data
+#' @param title title for plot
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
@@ -49,7 +50,10 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggregateAFTComposition") {
+hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggregateAFTComposition", 
+		filename = paste("AftComposition_", 
+			if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+			title = "Aft Composition")	 {
 	dataComp <- data.frame()
 	for (p in simps) {
 		input_tools_load(p, dataname)
@@ -72,22 +76,30 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	visualise_lines(simp, d, "value", title = "Aft Composition",
+	visualise_lines(simp, d, "value", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
-			filename = "AftComposition",
+			filename = filename,
 			alpha=0.7)
 }
 #' Read supply and demand and plot for given runid
 #' 
-#' @param simp 
+#' @param simp Considered:\itemise{
+#'	\item simp$fig$averagedemand
+#'	}
 #' @param runid 
 #' @param dataname aggregated demand and supply (from aggregated CSV)
-#' @return plot
+#' @param title title for plot
+#' @param visualise if \code{FALSE}, only combined and aggregated demand and supply data is returned
+#' @return plot, combined supply and demand data
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated") {
+hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated", 
+		filename = paste("TotalDemandAndSupply_", 
+			if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+		title = paste("Demand & Supply (", paste(simp$sim$rundesc, collapse = "/"),")", sep=""),
+		visualise = TRUE) {
 	aggregated_demand <- data.frame()
 	aggregated_supply  <- data.frame()
 	for (p in simps) {
@@ -107,17 +119,82 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated") 
 	### Demand & Supply
 	datDemand <- data.frame(Tick=aggregated_demand$Tick, Variable=aggregated_demand$variable, 
 			Type=aggregated_demand$Type, Value=aggregated_demand$Demand)
-	
+
 	datSupply <- data.frame(Tick=aggregated_supply$Tick, Variable=aggregated_supply$Service, Type=aggregated_supply$Type, 
 			Value=aggregated_supply$TotalProduction)
+	
+	if (simp$fig$averagedemand) {
+		datDemand <- aggregate(subset(datDemand, select=c("Value")),
+				by = list(Type = datDemand[,"Type"], Tick=datDemand[, "Tick"], Variable = datDemand[,"Variable"]), 
+				FUN=sum)
+		datDemand <- aggregate(subset(datDemand, select=c("Value")),
+				by = list(Tick=datDemand[, "Tick"], Variable = datDemand[,"Variable"]), FUN=mean)
+		datDemand$Type <- "Demand (mean)"
+	} 
 	
 	combined <- rbind(datDemand, datSupply)
 	combined <- aggregate(subset(combined, select=c("Value")),
 			by =list(Tick=combined[, "Tick"], ID=combined[,"Type"], Service = combined[,"Variable"]), FUN=sum)
-	visualise_lines(simp, combined, "Value", title = paste("Demand & Supply (", paste(simp$sim$rundesc, collapse = "/"),
-					")", sep=""),
+	combined <- combined[combined$Tick < simp$sim$endtick,]
+	
+	if(visualise) {
+		visualise_lines(simp, combined, "Value", title = title,
+				colour_column = "Service",
+				linetype_column = "ID",
+				filename = filename,
+				alpha=0.7)
+	}
+	
+	invisible(combined)
+}
+#' Supply and Demand gap depending on AFT param
+#' 
+#' Plots the gab between demand and supply for various runs with
+#' agent param as dependent variable.
+#'
+#' @param simp 
+#' @param simps 
+#' @param dataname 
+#' @param filename 
+#' @param title 
+#' @param agentparam 
+#' @param aft 
+#' @param ggplotparams 
+#' @return plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_comp_demandsupplygap_agentparams <- function(simp, simps = input_tools_buildsimplist(111:112),
+		dataname = "csv_cell_aggregated", 
+		filename = paste("SupplyDemandGap_", 
+				if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+		title = paste("Demand/Supply Gap", if(!is.null(paste(simp$sim$rundesc))) 
+					paste(simp$sim$rundesc, collapse = "/"), sep=" - "),
+		agentparam = "givingUpProb", aft = simp$mdata$aftNames[2], ggplotparams = NULL) {
+			
+	runs <- do.call(c, lapply(simps, function(x) x$sim$shortid))
+	
+	# get GU Probabilities
+	runsdata <- input_csv_param_runs(simp)
+	aftParamIds <- runsdata[runsdata$run %in% runs, "aftParamId"]
+	aftparamdata <- input_csv_param_agents(simp, aft, filenameprefix = "AftParams_")
+	agentparams <- aftparamdata[match(aftParamIds,aftparamdata$aftParamId), agentparam]
+	names(agentparams) <- runs
+	
+	# Get supply demand gap
+	supplydemand <- hl_comp_demandsupply(simp, simps, dataname=dataname, visualise = FALSE)
+	supplydemand <- supplydemand[supplydemand$Tick == max(supplydemand$Tick),]
+	supplydemand$Type <- gsub("[-1-9]", "", supplydemand$ID)
+	supplydemand$ID <- gsub("[-A-Za-z]", "", supplydemand$ID)
+	
+	data <- reshape2::dcast(supplydemand, formula=ID+Service~Type, value.var="Value")
+	data$Value <- data$Supply - data$Demand
+	data$Tick <- agentparams[data$ID]
+	
+	# Draw figure
+	visualise_lines(simp, data, "Value", title = title,
 			colour_column = "Service",
-			linetype_column = "ID",
-			filename = paste("TotalDemandAndSupply_", paste(simp$sim$rundesc, collapse = "-"), sep=""),
-			alpha=0.7)
+			filename = filename,
+			alpha=0.7,
+			ggplotparams = list(ggplot2::xlab(agentparam), ggplotparams))
 }

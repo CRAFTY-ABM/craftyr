@@ -62,3 +62,40 @@ High level:
 ```{r, eval=FALSE, results="hide"}
 hl_printCompetitionFunctions(simp, filename = "Competition_linear")
 ```
+
+# Agent Productivities (LaTeX table)
+
+TODO make evaluate
+```{r, eval=FALSE, results="hide"}
+library(craftyr)
+simp <- param_getExamplesSimp()
+data <- input_csv_param_productivities(simp, aft = "C_Cereal", filenameprefix = "AftProduction_",
+				filenamepostfix = "_multi_medium")
+		
+table <- xtable::xtable(data,
+		label= paste("param.productivities.", aft, sep=""), 
+		caption= paste("Productivities and Capital Sensitivities for ", 
+		tikzDevice::sanitizeTexString(aft), sep=""))
+
+print(table, sanitize.colnames.function = identity,
+		sanitize.rownames.function = identity,
+		include.rownames = FALSE,
+		table.placement = "h!")
+```
+
+High level (produces a table for every AFT):
+```{r, eval=FALSE, results="hide"}
+hl_printAgentProductionParameters(simp, filenamepostfix = "_mono_medium")
+```
+
+# Agent Properties Table
+
+TODO make evaluate
+```{r, eval=FALSE, results="hide"}
+source("./demo/example_table_singleagentparameters.R")
+```
+
+High level (produces a table for every AFT):
+```{r, eval=FALSE, results="hide"}
+hl_printAgentParameters(simp, aftParamId = aftParamId)
+```

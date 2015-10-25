@@ -8,7 +8,7 @@ input_tools_getModelInputDir(simp, datatype)
 \arguments{
 \item{simp}{SIMulation Properties}
 
-\item{datatype}{one of c("capitals", "demand")}
+\item{datatype}{one of c("capitals", "demand", "agentparams", "productivities", "competition", "runs")}
 }
 \value{
 model output directory as string

@@ -107,6 +107,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$facetlabelsize	<- 12
 	defsimp$fig$outlinesize		<- 0.2
 	defsimp$fig$countryshapes$alpha	<- 0.75
+	defsimp$fig$averagedemand  <- FALSE
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()

@@ -11,6 +11,8 @@ hl_comp_cell_aftcomposition(simp, simps, dataname = "csv_cell_aggregated")
 \item{simps}{list of simp that shall be compared. \code{simp$sim$shortid} is combined with Runid to distinguish data!}
 
 \item{dataname}{name of aggregated data from cell data}
+
+\item{title}{title for plot}
 }
 \value{
 timeline plot

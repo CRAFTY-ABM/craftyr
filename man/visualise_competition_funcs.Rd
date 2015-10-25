@@ -3,7 +3,8 @@
 \alias{visualise_competition_funcs}
 \title{Plot competition functions for services}
 \usage{
-visualise_competition_funcs(simp, functions, xrange = c(-3, 3))
+visualise_competition_funcs(simp, functions, xrange = c(-3, 3),
+  yrange = c(-1, 1))
 }
 \arguments{
 \item{simp}{}
@@ -11,6 +12,8 @@ visualise_competition_funcs(simp, functions, xrange = c(-3, 3))
 \item{functions}{}
 
 \item{xrange}{Vector of two. The x range to plot}
+
+\item{yrange}{Vector of two. The y range to plot}
 }
 \value{
 plot

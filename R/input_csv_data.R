@@ -83,12 +83,13 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 										colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])]
 							
 						}, error = function(e) {
-								futile.logger::flog.error("Undefined columns requested from CSV data: %s (%s)", 
-									paste(unique(c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y),
-										columns, if (attachfileinfo) 
-										colnames(fileinfos[[1]])[colnames(fileinfos[[1]]) %in% colnames(x)])), 
-										collapse="|"),
+								requested_cols = unique(c(if(!skipXY) c(simp$csv$cname_x, simp$csv$cname_y),
+												columns))
+								futile.logger::flog.error("Undefined columns requested from CSV data: %s (%s). Existing: %s.", 
+									paste(requested_cols[!requested_cols %in% colnames(x)], collapse="|"),
 									e,
+									paste(colnames(x), collapse="|"),
+	
 									name="craftyr.input.csv")
 						})})
 	}

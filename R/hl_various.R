@@ -27,8 +27,8 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 }
 #' Print LaTeX table including run information
 #' 
-#' Considers the version in \code{simp$sim$version} and
-#' the '1st Run ID' in \code{simp$sim$runids[1]}.
+#' Considers the \code{simp$sim$version} in column version and the 
+#' the \code{simp$sim$runids[1]} in column '1st Run ID' or between '1st Run ID' and 'Last Run ID'. 
 #' @param simp 
 #' @param filename 
 #' @param rows
@@ -48,15 +48,20 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 		runinfo <- runinfo[-c(1,2),]
 		rinfo <- runinfo[runinfo["Version"] == simp$sim$version &
 						runinfo["1st Run ID"] == paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
+		
+		if (length(rinfo[,1]) == 0) {
+			rinfo <- runinfo[runinfo["Version"] == simp$sim$version & runinfo["1st Run ID"] <= paramid &
+							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
+		}
 	} else if(tools::file_ext(filename) == "csv") {
 		runinfo <- read.csv(filename, skip = 1)
 		rinfo <- runinfo[runinfo$Version == simp$sim$version,]
 	} else {
-		Roo::throw.default("File extension ", tools::file_ext(filename)," not supported!")
+		R.oo::throw.default("File extension ", tools::file_ext(filename)," not supported!")
 	}
 	
 	if (length(rinfo[,1]) == 0) {
-		Roo::throw.default("Runinfo table ", filename," does not contain a row for version " + 
+		R.oo::throw.default("Runinfo table ", filename," does not contain a row for version " + 
 						simp$sim$version, "!", sep="")
 	}
 	

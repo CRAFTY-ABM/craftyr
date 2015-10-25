@@ -14,6 +14,28 @@ vignette: >
 		
 # Manipulate CSV files
 
+## Explore number of cells of regions (from capital CSV files)
+
+```{r, eval=FALSE, results="hide"}
+library(craftyr)
+simp <- craftyr::param_getDefaultSimp()
+simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
+cellnumdf <- input_csv_param_capitals_cellnumbers(simp = simp, 
+			regionpartfromend = 2, regionpartdevider = "_")
+# order decreasingly according to number of cells:
+cellnumdf[order(cellnumdf, decreasing = TRUE)]
+```
+
+## Determine assignment to slots for parallel computing
+
+```{r, eval=FALSE, results="hide"}
+library(craftyr)
+simp <- craftyr::param_getDefaultSimp()
+simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
+slotgroups <- input_csv_param_capitals_slotassignment(simp = simp, slotnums = 16,
+			regionpartfromend = 2, regionpartdevider = "_")
+```
+
 ## Change column headers
 
 ```{r, eval=FALSE, results="hide"}

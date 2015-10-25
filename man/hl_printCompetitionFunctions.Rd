@@ -4,7 +4,7 @@
 \title{Read and plot compotition functions}
 \usage{
 hl_printCompetitionFunctions(simp, filename = "Competition_linear",
-  xrange = c(-3, 3))
+  xrange = c(-3, 3), yrange = c(-1, 1))
 }
 \arguments{
 \item{simp}{}
@@ -12,6 +12,8 @@ hl_printCompetitionFunctions(simp, filename = "Competition_linear",
 \item{filename}{}
 
 \item{xrange}{Vector of two. The x range to plot}
+
+\item{yrange}{Vector of two. The y range to plot}
 }
 \value{
 plot

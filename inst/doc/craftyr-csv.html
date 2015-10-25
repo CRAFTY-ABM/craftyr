@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-09-25" />
+<meta name="date" content="2015-10-25" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-09-25</em></h4>
+<h4 class="date"><em>2015-10-25</em></h4>
 </div>
 
 <div id="TOC">
@@ -92,6 +92,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#output-write-csv-data">Output (write) CSV Data</a><ul>
 <li><a href="#generate-landuseindex-key">Generate LandUseIndex key</a></li>
 <li><a href="#aggregate-demand-and-supply">Aggregate demand and supply</a></li>
+<li><a href="#supplydemand-gap-regarding-agent-parameters-gu-probability">Supply/Demand gap regarding agent parameters (GU probability)</a></li>
 </ul></li>
 <li><a href="#conversions">Conversions</a></li>
 </ul>
@@ -401,8 +402,9 @@ dataTakeOversAll &lt;-<span class="st"> </span><span class="kw">convert_aggregat
 <div id="givinginstatistics-frequencies-per-aft---regions-aggregated" class="section level4">
 <h4>GivingInStatistics (Frequencies per AFT - Regions aggregated)</h4>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
-<span class="kw">library</span>(reshape2)
-simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+<span class="kw">library</span>(reshape2)</code></pre>
+<pre><code>## Warning: package 'reshape2' was built under R version 3.1.3</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_aggregateGiStatistics&quot;</span>)
 
 regions =<span class="st"> </span>simp$sim$regions
@@ -445,12 +447,22 @@ melteddat &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>(d
 <h1>Output (write) CSV Data</h1>
 <div id="generate-landuseindex-key" class="section level2">
 <h2>Generate LandUseIndex key</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_hl_landindiceskey_csv</span>(simp)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_landindiceskey_csv</span>(simp)</code></pre>
 </div>
 <div id="aggregate-demand-and-supply" class="section level2">
 <h2>Aggregate demand and supply</h2>
 <p>Aggregates demand and supply for all regions per tick and stores data as CSV file.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_aggregate_demandsupply_csv</span>(simp)</code></pre>
+</div>
+<div id="supplydemand-gap-regarding-agent-parameters-gu-probability" class="section level2">
+<h2>Supply/Demand gap regarding agent parameters (GU probability)</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_comp_demandsupplygap_agentparams</span>(simp, <span class="dt">simps =</span> <span class="kw">input_tools_buildsimplist</span>(<span class="dv">111</span>:<span class="dv">116</span>),
+        <span class="dt">dataname =</span> <span class="st">&quot;dataAggregateSupplyDemand&quot;</span>, 
+        <span class="dt">filename =</span> <span class="kw">paste</span>(<span class="st">&quot;SupplyDemandGap_&quot;</span>, 
+                if(!<span class="kw">is.null</span>(simp$sim$rundesc))<span class="kw">paste</span>(simp$sim$rundesc, <span class="dt">collapse =</span> <span class="st">&quot;-&quot;</span>) else simp$sim$id, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>),
+        <span class="dt">title =</span> <span class="st">&quot;Demand/Supply Gap&quot;</span>,
+        <span class="dt">agentparam =</span> <span class="st">&quot;givingUpProb&quot;</span>, <span class="dt">aft =</span> simp$mdata$aftNames[<span class="dv">2</span>], 
+        <span class="dt">ggplotparams =</span> ggplot2::<span class="kw">xlab</span>(<span class="st">&quot;Probability of Giving up&quot;</span>))</code></pre>
 </div>
 </div>
 <div id="conversions" class="section level1">
