@@ -295,8 +295,17 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 #  hl_marginalutilities(simp)
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
-#  hl_hl_landindiceskey_csv(simp)
+#  hl_landindiceskey_csv(simp)
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_aggregate_demandsupply_csv(simp)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_comp_demandsupplygap_agentparams(simp, simps = input_tools_buildsimplist(111:116),
+#  		dataname = "dataAggregateSupplyDemand",
+#  		filename = paste("SupplyDemandGap_",
+#  				if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+#  		title = "Demand/Supply Gap",
+#  		agentparam = "givingUpProb", aft = simp$mdata$aftNames[2],
+#  		ggplotparams = ggplot2::xlab("Probability of Giving up"))
 

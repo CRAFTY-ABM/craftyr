@@ -398,13 +398,24 @@ hl_marginalutilities(simp)
 
 ## Generate LandUseIndex key
 ```{r, eval=FALSE, results="hide"}
-hl_hl_landindiceskey_csv(simp)
+hl_landindiceskey_csv(simp)
 ```
 
 ## Aggregate demand and supply
 Aggregates demand and supply for all regions per tick and stores data as CSV file.
 ```{r, eval=FALSE, results="hide"}
 hl_aggregate_demandsupply_csv(simp)
+```
+
+## Supply/Demand gap regarding agent parameters (GU probability)
+```{r, eval=FALSE, results="hide"}
+hl_comp_demandsupplygap_agentparams(simp, simps = input_tools_buildsimplist(111:116),
+		dataname = "dataAggregateSupplyDemand", 
+		filename = paste("SupplyDemandGap_", 
+				if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+		title = "Demand/Supply Gap",
+		agentparam = "givingUpProb", aft = simp$mdata$aftNames[2], 
+		ggplotparams = ggplot2::xlab("Probability of Giving up"))
 ```
 
 # Conversions

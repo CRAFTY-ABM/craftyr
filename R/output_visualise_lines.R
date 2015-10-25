@@ -16,7 +16,7 @@
 #' @param facet_ncol number of columns of facet wrap
 #' @param filename without extension
 #' @param alpha
-#' @param ggplotparams vector of ggplot objects to add
+#' @param ggplotaddons vector of ggplot objects to add
 #' @return ggplot2 line visualisation
 #' @example demo/example_visualise_lines_csv_allocation.R
 #'
@@ -26,7 +26,7 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 		colour_column = NULL, colour_legendtitle = colour_column, colour_legenditemnames = NULL,
 		linetype_column = NULL, linetype_legendtitle = linetype_column, linetype_legenditemnames = NULL,
 		facet_column = NULL, facet_ncol = 2, filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
-		alpha=0.7, ggplotparams = NULL) {
+		alpha=0.7, ggplotaddons = NULL) {
 
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
@@ -74,7 +74,8 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
 		 	scaleColourElem +
 			scaleLinetypeElem + 
-			if (title != "") ggplot2::labs(title = title) else NULL
+			(if (title != "") ggplot2::labs(title = title) else NULL) +
+			ggplotaddons
 	print(p1)
 	simp$fig$close()
 }

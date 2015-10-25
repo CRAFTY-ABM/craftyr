@@ -4,7 +4,10 @@
 \title{Compare Yearly aggregated AFT composition}
 \usage{
 hl_comp_aggregate_aftcompositions(simp, simps,
-  dataname = "csv_aggregateAFTComposition")
+  dataname = "csv_aggregateAFTComposition",
+  filename = paste("AftComposition_", if (!is.null(simp$sim$rundesc))
+  paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep = ""),
+  title = "Aft Composition")
 }
 \arguments{
 \item{simp}{}

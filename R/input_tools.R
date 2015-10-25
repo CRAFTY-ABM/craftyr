@@ -1,7 +1,7 @@
 #' Determines the model input folder for the given datadir
 #' 
 #' @param simp SIMulation Properties
-#' @param datatype one of c("capitals", "demand")
+#' @param datatype one of c("capitals", "demand", "agentparams", "productivities", "competition", "runs")
 #' @return model output directory as string 
 #' 
 #' @author Sascha Holzhauer
@@ -24,7 +24,9 @@ input_tools_getModelInputDir <- function(simp, datatype) {
 					} else if (datatype %in% c("productivities")) {
 						paste(simp$sim$folder, "production", sep="/")
 					} else if (datatype %in% c("competition")) {
-						paste(simp$sim$folder	, "competition", sep="/")
+						paste(simp$sim$folder, "competition", sep="/")
+					} else if (datatype %in% c("runs")) {
+						simp$sim$folder
 					},
 					sep="/")
 }
@@ -342,4 +344,24 @@ input_tools_load <- function(simp, objectName,...) {
 	load(file = paste(simp$dirs$output$rdata, simp$sim$id, "/", objectName, "_", 
 					if(is.null(simp$sim$id)) simp$sim$version else simp$sim$id, ".RData", sep=""),
 			envir = parent.frame(), ...)
+}
+#' Construct a list of SimP for given runs
+#' 
+#' @param runs first part of runid
+#' @param randomseed second part of runid
+#' @return list of SimPs
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_buildsimplist <- function(runs, randomseed = 0) {
+	simps <- list()
+	for (run in runs) {
+		anothersimp <- simp
+		anothersimp$sim$runids 	<- c(paste(run, "-", randomseed, sep=""))		# run to deal with
+		anothersimp$sim$id		<- paste(run, "-", randomseed, sep="")			# ID to identify specific data collections (e.g. regions)
+		anothersimp$sim$task	<- paste(run, "-", randomseed, sep="")			# Name of surounding folder, usually a description of task 
+		anothersimp$sim$shortid	<- run
+		simps <- append(simps, list(anothersimp))
+	}
+	simps
 }

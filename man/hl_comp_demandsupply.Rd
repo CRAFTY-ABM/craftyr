@@ -3,17 +3,27 @@
 \alias{hl_comp_demandsupply}
 \title{Read supply and demand and plot for given runid}
 \usage{
-hl_comp_demandsupply(simp, simps, dataname = "csv_cell_aggregated")
+hl_comp_demandsupply(simp, simps, dataname = "csv_cell_aggregated",
+  filename = paste("TotalDemandAndSupply_", if (!is.null(simp$sim$rundesc))
+  paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep = ""),
+  title = paste("Demand & Supply (", paste(simp$sim$rundesc, collapse = "/"),
+  ")", sep = ""), visualise = TRUE)
 }
 \arguments{
-\item{simp}{}
+\item{simp}{Considered:\itemise{
+\item simp$fig$averagedemand
+}}
 
 \item{dataname}{aggregated demand and supply (from aggregated CSV)}
+
+\item{title}{title for plot}
+
+\item{visualise}{if \code{FALSE}, only combined and aggregated demand and supply data is returned}
 
 \item{runid}{}
 }
 \value{
-plot
+plot, combined supply and demand data
 }
 \description{
 Read supply and demand and plot for given runid

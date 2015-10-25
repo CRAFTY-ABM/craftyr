@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-09-25" />
+<meta name="date" content="2015-10-25" />
 
 <title>Visualising parameter data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Visualising parameter data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-09-25</em></h4>
+<h4 class="date"><em>2015-10-25</em></h4>
 </div>
 
 <div id="TOC">
@@ -62,6 +62,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#features">Features</a></li>
 <li><a href="#capital-data">Capital Data</a></li>
 <li><a href="#competition-functions">Competition Functions</a></li>
+<li><a href="#agent-productivities-latex-table">Agent Productivities (LaTeX table)</a></li>
+<li><a href="#agent-properties-table">Agent Properties Table</a></li>
 </ul>
 </div>
 
@@ -101,6 +103,33 @@ functions &lt;-<span class="st"> </span><span class="kw">input_xml_param_competi
 <span class="kw">visualise_competition_funcs</span>(simp, functions)</code></pre>
 <p>High level:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_printCompetitionFunctions</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;Competition_linear&quot;</span>)</code></pre>
+</div>
+<div id="agent-productivities-latex-table" class="section level1">
+<h1>Agent Productivities (LaTeX table)</h1>
+<p>TODO make evaluate</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+data &lt;-<span class="st"> </span><span class="kw">input_csv_param_productivities</span>(simp, <span class="dt">aft =</span> <span class="st">&quot;C_Cereal&quot;</span>, <span class="dt">filenameprefix =</span> <span class="st">&quot;AftProduction_&quot;</span>,
+                <span class="dt">filenamepostfix =</span> <span class="st">&quot;_multi_medium&quot;</span>)
+        
+table &lt;-<span class="st"> </span>xtable::<span class="kw">xtable</span>(data,
+        <span class="dt">label=</span> <span class="kw">paste</span>(<span class="st">&quot;param.productivities.&quot;</span>, aft, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>), 
+        <span class="dt">caption=</span> <span class="kw">paste</span>(<span class="st">&quot;Productivities and Capital Sensitivities for &quot;</span>, 
+        tikzDevice::<span class="kw">sanitizeTexString</span>(aft), <span class="dt">sep=</span><span class="st">&quot;&quot;</span>))
+
+<span class="kw">print</span>(table, <span class="dt">sanitize.colnames.function =</span> identity,
+        <span class="dt">sanitize.rownames.function =</span> identity,
+        <span class="dt">include.rownames =</span> <span class="ot">FALSE</span>,
+        <span class="dt">table.placement =</span> <span class="st">&quot;h!&quot;</span>)</code></pre>
+<p>High level (produces a table for every AFT):</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_printAgentProductionParameters</span>(simp, <span class="dt">filenamepostfix =</span> <span class="st">&quot;_mono_medium&quot;</span>)</code></pre>
+</div>
+<div id="agent-properties-table" class="section level1">
+<h1>Agent Properties Table</h1>
+<p>TODO make evaluate</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;./demo/example_table_singleagentparameters.R&quot;</span>)</code></pre>
+<p>High level (produces a table for every AFT):</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_printAgentParameters</span>(simp, <span class="dt">aftParamId =</span> aftParamId)</code></pre>
 </div>
 
 

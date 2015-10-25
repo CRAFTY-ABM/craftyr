@@ -1,4 +1,7 @@
+#' Read capital data from input CSV data
+#' 
 #' Reads capital levels for the specified capitals from CSV data for potentially multiple regions
+#' 
 #' @param simp SIMulation Properties
 #' @param capitals vector of strings of requested capital levels
 #' @return list of data.frames containing capital levels  
@@ -10,9 +13,72 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 			folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
 			pertick = FALSE, extension = "csv", returnfileinfo = FALSE)
 	
+	futile.logger::flog.info("Read capital data from %s (only first filename shown)...",
+				filenames[[1]],
+				name = "craftyr.input_csv_param.R")
+		
 	lapply(filenames, shbasic::sh.checkFilename)
 	capitalData <- lapply(filenames, utils::read.csv)
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, capitals)])
+}
+#' Reads capital levels for the specified capitals from CSV data for potentially multiple regions
+#' @param simp SIMulation Properties
+#' @param capitals vector of strings of requested capital levels
+#' @param regionpartfromend index of region part counted from end of filename
+#' @param regionpartdevider character that separated the region filename parts
+#' @return data.frame with column Region and Cells
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_csv_param_capitals_cellnumbers <- function(simp, capitals = simp$mdata$capitals, 
+		regionpartfromend = 2, regionpartdevider = "_") {
+	
+	#simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
+	filenames <- input_tools_getModelOutputFilenames(simp, datatype="Capitals", 
+			folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
+			pertick = FALSE, extension = "csv", returnfileinfo = FALSE)
+	
+	lapply(filenames, shbasic::sh.checkFilename)
+	cellnums <- lapply(filenames, function(file) {
+				data <- utils::read.csv(file)
+				df <- data.frame(
+					Region =  strsplit(file,"_")[[1]][length(strsplit(file,"_")[[1]])-regionpartfromend + 1], 
+					Cells  =  nrow(data))
+			})
+	cellnums <-  do.call(rbind, cellnums)
+}
+#' Assign regions to slots for parallel computing
+#' 
+#' @param simp 
+#' @param capitals 
+#' @param numslots
+#' @param regionpartfromend 
+#' @param regionpartdevider  
+#' @return list of groups of regions 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_csv_param_capitals_slotassignment <- function(simp, capitals = simp$mdata$capitals, numslots = 16,
+		regionpartfromend = 2, regionpartdevider = "_") {
+	
+	cellnumdf <- input_csv_param_capitals_cellnumbers(simp = simp, capitals = capitals, 
+			regionpartfromend = regionpartfromend, regionpartdevider = regionpartdevider)
+	
+	cellnums <- setNames(cellnumdf$Cells, cellnumdf$Region)
+	assign <- cellnums[order(cellnums, decreasing = TRUE)]
+	assignments <- seq(1,length(assign))
+	names(assignments) <- names(assign)
+	
+	assignments[(numslots + 1):length(assignments)] <- numslots : (numslots - (length(assignments)-(numslots + 1)))
+	
+	groups <- split(assign, assignments)
+	grp <- mapply(c, groups, lapply(groups, sum), SIMPLIFY=FALSE)
+	
+	# check whether all cluster sums are below the largest region
+	if (any(lapply(groups, sum) > assign[1])) {
+		warning("A group of regions is larger than the largest single region!")
+	}
+	grp
 }
 #' Reads aft allocation from CSV data for potentially multiple regions
 #' @param simp SIMulation Properties
@@ -83,6 +149,20 @@ input_csv_param_agents <- function(simp, aft, filenameprefix = "AftParams_",
 		filenamepostfix = "") {
 	filename <- paste(simp$dirs$param$getparamdir(simp, datatype="agentparams"), 
 			"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
+	
+	shbasic::sh.checkFilename(filename)
+	paramData <- utils::read.csv(filename)
+	paramData
+}
+#' Read Runs data (Runs.csv)
+#' @param simp 
+#' @return run data
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_csv_param_runs <- function(simp) {
+	filename <- paste(simp$dirs$param$getparamdir(simp, datatype="runs"), 
+			"/Runs.csv", sep="")
 	
 	shbasic::sh.checkFilename(filename)
 	paramData <- utils::read.csv(filename)

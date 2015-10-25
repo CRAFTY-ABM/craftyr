@@ -1,7 +1,7 @@
 #' Aggregate demand and supply for all regions per tick and store as CSV file
 #' 
 #' @param simp 
-#' @param dataname  
+#' @param dataname
 #' @return csv file
 #' 
 #' @author Sascha Holzhauer

@@ -3,12 +3,18 @@
 \alias{hl_aggregate_aftcompositions}
 \title{Yearly aggregated AFT composition}
 \usage{
-hl_aggregate_aftcompositions(simp, dataname = "csv_aggregateAFTComposition")
+hl_aggregate_aftcompositions(simp, dataname = "csv_aggregateAFTComposition",
+  includeunmanaged = FALSE, aggcelldataname = "dataAgg")
 }
 \arguments{
 \item{simp}{}
 
 \item{dataname}{}
+
+\item{includeunmanaged}{if \code{TRUE} the number of unmanaged cells is plotted, too. It is derived from the
+total number of cells obtained}
+
+\item{aggcelldataname}{}
 }
 \value{
 timelien plot

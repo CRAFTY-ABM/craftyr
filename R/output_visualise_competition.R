@@ -1,12 +1,13 @@
 #' Plot competition functions for services
 #' @param simp 
 #' @param functions 
-#' @param xrange Vector of two. The x range to plot 
+#' @param xrange Vector of two. The x range to plot
+#' @param yrange Vector of two. The y range to plot
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3)) {
+visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrange = c(-1,1)) {
 	
 	futile.logger::flog.debug("Print competition functions for services...",
 			name="craftyr.visualise.competition")
@@ -19,13 +20,13 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3)) {
 	stat_functions <- unlist(mapply(function(fun, name) {
 						eval(substitute(
 										expr = {
-											ggplot2::stat_function(fun = fun, aes(colour = service))
+											ggplot2::stat_function(fun = fun, ggplot2::aes(colour = service))
 										}, env = list(service=name)))
 					}, functions, names(functions)))
 	
-	f <- ggplot(data.frame(x = xrange), aes(x))
+	f <- ggplot2::ggplot(data.frame(x = xrange, y = yrange), aes(x))
 	f <- f + stat_functions +
-			scale_colour_manual("Services", values = simp$colours$Service)
+			ggplot2::scale_colour_manual("Services", values = simp$colours$Service)
 	print(f)
 	simp$fig$close()
 }
@@ -35,9 +36,9 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3)) {
 #' @param data
 #' @param facet_ncol 
 #' @param filename 
-#' @param numbins 
-#' @param title 
-#' @param ggplotaddons 
+#' @param numbins number of bins to bin data
+#' @param title plot title
+#' @param ggplotaddons list of ggplot2 elements
 #' @param setfigdims if \code{TRUE} \code{simp$fig$height} and \code{simp$fig$width} are set appropriately
 #' @return facet histogram plot 
 #' 
@@ -45,7 +46,7 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3)) {
 #' @export
 visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$mdata$aftNames) - 1,
 		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
-		numbins = 20, binwidth = max(data$PreAllocCompetitiveness)/numbins, title = NULL, ggplotaddons = NULL, setfigdims = TRUE) {
+		numbins = 20, binwidth = diff(range(data$PreAllocCompetitiveness))/numbins, title = NULL, ggplotaddons = NULL, setfigdims = TRUE) {
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
 	}
@@ -60,7 +61,7 @@ visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$
 			values = c("1"="red", "0" = "green"),
 			labels = c("1"="Giving up", "0"="Persisting"))
 	
-	facetElem = ggplot2::facet_wrap(as.formula(paste("Tick ~", "AFT")), ncol = facet_ncol, scales="free_y")
+	facetElem = ggplot2::facet_grid(as.formula(paste("Tick ~", "AFT")), scales="free_y")
 	
 	p1 <- ggplot2::ggplot(data, aes(x=PreAllocCompetitiveness, fill=GU)) + 
 			geom_bar(binwidth = binwidth) + 
