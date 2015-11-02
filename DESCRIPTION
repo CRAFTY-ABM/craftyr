@@ -14,7 +14,6 @@ Depends:
 Imports:
     futile.logger,
     ggplot2,
-    shGmisc,
     graphics,
     grid,
     knitr,
@@ -35,6 +34,7 @@ License: GPL-3
 VignetteBuilder: knitr
 Suggests:
     knitr,
+    shGmisc,
     tikzDevice,
     readODS,
     sqldf
