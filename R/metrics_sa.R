@@ -1,16 +1,26 @@
 #source(pix$path_names["dataReadingRaster"][[1]])
 
 
-analyse_statistics_sa_moran_local <- function(raster, data =  c(1), type = "Moran") {
-	if (!((type == "Moran") | (type == "Geary"))) {
+#' Spatial autocorrelation score for given raster
+#' 
+#' @param raster 
+#' @param data 
+#' @param type 
+#' @return sa score
+#' 
+#' @author Sascha Holzhauer
+#' @export
+analyse_statistics_sa_local <- function(raster, data =  c(1), type = c("Moran", "Geary", "MoranLocal", "GearyLocal")) {
+	if (!((type == "Moran") | (type == "Geary") | (type == "MoranLocal") | (type == "GearyLocal"))) {
 		throw("Type not supported!")
 	}
+	safunc <- get(type, envir=asNamespace("raster"))
 	if (is.atomic(raster)) {
-		result <- if (type == "Moran") Moran(raster) else Geary(raster)
+		result <-safunc(raster)
 	} else {
 		result <- c()
 		for (r in raster) {
-			result <- append(result, if (type == "Moran") Moran(r) else Geary(r))
+			result <- append(result, safunc(r))
 		}
 	}
 	result

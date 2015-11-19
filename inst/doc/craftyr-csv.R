@@ -158,6 +158,52 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 #  simp2$sim$shortid <- "G10/C5"
 #  hl_comp_cell_aftcomposition(simp, simps = list(simp1, simp2), dataname = "csv_cell_aggregated")
 
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_competitivenessPerRegion(simp1, dataname = "dataAgg")
+
+## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
+#  library(craftyr)
+#  simp <- param_getExamplesSimp()
+#  input_tools_load(simp, objectName = "csv_LandUseIndex_rbinded")
+#  data <- get("csv_LandUseIndex_rbinded")
+#  
+#  scoresdata <- do.call(rbind, lapply(seq(from=2010, to=2040, by=10), function(tick, datac, regions, type) {
+#  					do.call(rbind,lapply(regions, function(tick, region, data, type) {
+#  			tickdata <- data[data$Tick == tick & data$Region %in% region,
+#  					c(simp$csv$cname_x, simp$csv$cname_y, "LandUseIndex")]
+#  			raster <- craftyr::convert_2raster(simp, tickdata, targetCRS = "+init=EPSG:32632", layers=c(1))
+#  			data.frame(Value = analyse_statistics_sa_local(raster[[1]], type = type),
+#  					Tick = tick, type = type
+#  					Region = region)}, tick = tick, data = data, type = type))
+#  		}, data = data, type = "Moran", regions = simp$sim$regions))
+#  
+#  visualise_lines(simp, scoresdata, "Value", title = paste("Spatial Autocorrelation (Moran)", simp$sim$rundesc[simp$sim$runid]),
+#  		linetype_column = "Region",
+#  		filename = paste("Spatial Autocorrelation (Moran)", "_", simp$sim$rundesc[simp$sim$runid], sep=""))
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_aggregate_sa(simp, celldataname = "csv_LandUseIndex_rbinded",
+#  	starttick = simp$sim$starttick, tickinterval=10, endtick = simp$sim$endtick,
+#  	linetypecol = "Region", type = "Moran", regions = simp$sim$regions,
+#  	titleprefix = paste("SpatialAutocorrelation (", type, ")", sep=""),
+#  	filenameprefix = paste("SpatialAutocorrelation", type, sep="_"))
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_connectedness(simp, dataname = "csv_aggregated_connectivity",
+#  		datatype = "LandUseConnectivity", aftcolumns = simp$mdata$aftNames[-1],
+#  		percent = NULL)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_volatility(simp, dataname = "csv_aggregated_cellvolatility",
+#  		datatype = "AggregateCellVolatility", datacolumns = c("CellVolatility", "NumVolatileCells"),
+#  		percent = NULL)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_lines_from_csv(simp, dataname = "dataobjectname",
+#  		datatype = "Datatype", datacolumns = c("ColumnA","ColumnB"), linetypecol = "Region",
+#  		colourcol = "Type", titleprefix = "Title", filenameprefix = "FilenamePrefix",
+#  		percent = NULL)
+
 ## ---- eval=FALSE---------------------------------------------------------
 #  library(craftyr)
 #  simp <- param_getDefaultSimp()
@@ -176,6 +222,9 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 #  		colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 #  		filename = "AftCompositionInvalid",
 #  		alpha=0.7)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_aggregate_aftcompositions(simp)
 
 ## ---- eval=TRUE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 library(craftyr)
@@ -284,6 +333,29 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 #  hl_gistatistics_singleRegion(simp, dataname = "csv_aggregateGiStatistics",
 #  		regions = simp$sim$regions, facet_ncol = 1)
 
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_competitiveness_prealloc(simp, dataname = "csv_preAlloc_rbinded",
+#  		facet_ncol = length(simp$mdata$aftNames), filename = paste("PreAllocationCompetition",
+#  		simp$sim$id, sep="_b_"),
+#  		maxcompetitiveness = "100%", numbins = 15, title = NULL, ggplotaddons = NULL, checkexists = FALSE)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_competitiveness_preallocPerAft(simp, dataname = "csv_preAlloc_rbinded",
+#  		facet_ncol = length(simp$mdata$aftNames), filename = paste("PreAllocationCompetition",
+#  		simp$sim$id, sep="_b_"),
+#  		maxcompetitiveness = "100%", numbins = 15, title = NULL, ggplotaddons = NULL, checkexists = FALSE)
+
+## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
+#  cellnumber <- input_csv_param_capitals_cellnumbers(simp, capitals = simp$mdata$capitals,
+#  		regionpartfromend = 2, regionpartdevider = "_")
+#  
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  numcells <- cellnumbers <- input_csv_param_capitals_cellnumbers(simp, regionpartfromend = 2, regionpartdevider = "_")
+#  hl_volatility(simp, dataname = "csv_aggregated_cellvolatility",
+#  		datatype = "AggregateCellVolatility", datacolumns = c("CellVolatility", "NumVolatileCells"),
+#  		percent = numcells)
+
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 #  input_tools_load(simp, "csv_MarginalUtilitites_melt")
 #  visualise_lines(simp, data, "value", title = "Marginal Utilities",
@@ -308,4 +380,27 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 #  		title = "Demand/Supply Gap",
 #  		agentparam = "givingUpProb", aft = simp$mdata$aftNames[2],
 #  		ggplotparams = ggplot2::xlab("Probability of Giving up"))
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  simp <- param_getExamplesSimp()
+#  input_tools_load(simp, dataname = "csv_LandUseIndex_rbinded")
+#  
+#  data <- get(dataname)
+#  data <- data[data$Tick == 2010, c(simp$csv$cname_x, simp$csv$cname_y, "LandUseIndex")]
+#  rownames(data) <- NULL
+#  
+#  raster <- craftyr::convert_2raster(simp, data, targetCRS = "+init=EPSG:32632", layers=c(1))
+#  
+#  filename <- sprintf("%s/%s_LandUseIndex_%d.%s",
+#  		simp$dirs$output$raster,
+#  		output_tools_getDefaultFilename(simp),
+#  		as.integer(tick),
+#  		"asc")
+#  shbasic::sh.ensurePath(filename, stripFilename = TRUE)
+#  raster::writeRaster(raster[[1]][[1]], filename = filename, format = "ascii",
+#  		NAflag=naflag, overwrite=TRUE)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_cell2raster(simp, tick, dataname = "csv_LandUseIndex_rbinded",
+#  		landuseindexcolname = "LandUseIndex", naflag = -9)
 

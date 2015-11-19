@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-10-25" />
+<meta name="date" content="2015-11-19" />
 
 <title>Introduction to craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Introduction to craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-10-25</em></h4>
+<h4 class="date"><em>2015-11-19</em></h4>
 </div>
 
 <div id="TOC">
@@ -164,8 +164,8 @@ simp$sim$task       &lt;-<span class="st"> &quot;task1&quot;</span>          <sp
 <div id="debugginglogging" class="section level1">
 <h1>Debugging/Logging</h1>
 <p>Craftyr uses the package ‘futile.logger’. Initially, it sets up a console outputter to log everything on INFO level. However, the logger can be configured in a detailed way.</p>
-<pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.threshold</span>(futile.logger::DEBUG, <span class="dt">name=</span><span class="st">'crafty'</span>)
-futile.logger::<span class="kw">flog.threshold</span>(futile.logger::TRACE, <span class="dt">name=</span><span class="st">'crafty.input'</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.threshold</span>(futile.logger::DEBUG, <span class="dt">name=</span><span class="st">'craftyr'</span>)
+futile.logger::<span class="kw">flog.threshold</span>(futile.logger::TRACE, <span class="dt">name=</span><span class="st">'craftyr.input'</span>)</code></pre>
 <p>It is also possible to add handlers for further sinks.</p>
 <pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.appender</span>(<span class="kw">appender.file</span>(filename), <span class="dt">name=</span><span class="st">'test.logger'</span>)</code></pre>
 <p>Compare the documentation for package ‘futile.logger’ for more detailed information. A tutorial is also <a href="http://www.r-bloggers.com/better-logging-in-r-aka-futile-logger-1-3-0-released/">available</a>.</p>

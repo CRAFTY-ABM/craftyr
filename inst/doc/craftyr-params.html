@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-10-25" />
+<meta name="date" content="2015-11-19" />
 
 <title>Visualising parameter data with craftyr</title>
 
@@ -54,14 +54,19 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Visualising parameter data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-10-25</em></h4>
+<h4 class="date"><em>2015-11-19</em></h4>
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#features">Features</a></li>
-<li><a href="#capital-data">Capital Data</a></li>
+<li><a href="#capital-data">Capital Data</a><ul>
+<li><a href="#visualise-capitals">Visualise Capitals</a></li>
+<li><a href="#determine-number-of-cells">Determine Number of Cells</a></li>
+</ul></li>
 <li><a href="#competition-functions">Competition Functions</a></li>
+<li><a href="#run-information-latex-table">Run Information (LaTeX table)</a></li>
+<li><a href="#run-parameters-latex-table">Run Parameters (LaTeX table)</a></li>
 <li><a href="#agent-productivities-latex-table">Agent Productivities (LaTeX table)</a></li>
 <li><a href="#agent-properties-table">Agent Properties Table</a></li>
 </ul>
@@ -74,14 +79,16 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="capital-data" class="section level1">
 <h1>Capital Data</h1>
+<div id="visualise-capitals" class="section level2">
+<h2>Visualise Capitals</h2>
 <p>Via rasters:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#source(&quot;../demo/simp-machine.R&quot;)</span>
-## read capital data from CSV into raster
-<span class="co">#data &lt;- input_csv_param_capitals(simp)</span>
-<span class="co">#rasters &lt;- convert_2raster(simp, data, layers = simp$mdata$capitals)</span>
-<span class="co">#names(rasters) &lt;- &quot;RegionA&quot;</span>
-<span class="co">#visualise_raster_printRawPlots(simp, rasters, legendtitle = &quot;Capitals Example&quot;, </span>
-<span class="co">#       factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id=&quot;None&quot;)</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;../demo/simp-machine.R&quot;</span>)
+<span class="co"># read capital data from CSV into raster</span>
+data &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals</span>(simp)
+rasters &lt;-<span class="st"> </span><span class="kw">convert_2raster</span>(simp, data, <span class="dt">layers =</span> simp$mdata$capitals)
+<span class="kw">names</span>(rasters) &lt;-<span class="st"> &quot;RegionA&quot;</span>
+<span class="kw">visualise_raster_printRawPlots</span>(simp, rasters, <span class="dt">legendtitle =</span> <span class="st">&quot;Capitals Example&quot;</span>, 
+        <span class="dt">factorial=</span> <span class="ot">FALSE</span>, <span class="dt">omitaxisticks =</span> <span class="ot">FALSE</span>, <span class="dt">ncol =</span> <span class="dv">1</span>, <span class="dt">id=</span><span class="st">&quot;None&quot;</span>)</code></pre>
 <p>CSV data directly: TODO</p>
 <pre class="sourceCode r"><code class="sourceCode r">simp$sim$filepartorder &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>)
 capitaldata &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals</span>(simp)
@@ -94,6 +101,12 @@ capitaldata &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_param_capital_map</span>(simp, <span class="dt">capitals =</span> simp$mdata$capitals, 
     <span class="dt">filenameorder=</span> <span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>))</code></pre>
 </div>
+<div id="determine-number-of-cells" class="section level2">
+<h2>Determine Number of Cells</h2>
+<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+cellnumbers &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals_cellnumbers</span>(simp, <span class="dt">regionpartfromend =</span> <span class="dv">2</span>, <span class="dt">regionpartdevider =</span> <span class="st">&quot;_&quot;</span>)</code></pre>
+</div>
+</div>
 <div id="competition-functions" class="section level1">
 <h1>Competition Functions</h1>
 <p>TODO make evaluate</p>
@@ -103,6 +116,16 @@ functions &lt;-<span class="st"> </span><span class="kw">input_xml_param_competi
 <span class="kw">visualise_competition_funcs</span>(simp, functions)</code></pre>
 <p>High level:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_printCompetitionFunctions</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;Competition_linear&quot;</span>)</code></pre>
+</div>
+<div id="run-information-latex-table" class="section level1">
+<h1>Run Information (LaTeX table)</h1>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_compileruninfos</span>(simp)</code></pre>
+</div>
+<div id="run-parameters-latex-table" class="section level1">
+<h1>Run Parameters (LaTeX table)</h1>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_compilerunparams</span>(simp)</code></pre>
 </div>
 <div id="agent-productivities-latex-table" class="section level1">
 <h1>Agent Productivities (LaTeX table)</h1>

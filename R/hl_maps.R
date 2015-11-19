@@ -11,6 +11,18 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
 	
+	if (!paste(secondtick, runid, sep=".") %in% names(cdata)) {
+		futile.logger::flog.error("Data does not contain second tick (%d)!",
+					secondtick,
+					name = "craftyr.hl_maps.R")
+	}
+	
+	if (!paste(secondtick, runid, sep=".") %in% names(cdata)) {
+		futile.logger::flog.error("Data does not contain first tick (%d)!",
+				firsttick,
+				name = "craftyr.hl_maps.R")
+	}
+	
 	cdata$Region <- NULL
 	cdata$Scenario <- NULL
 	

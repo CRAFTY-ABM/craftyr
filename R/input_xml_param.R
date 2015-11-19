@@ -5,9 +5,9 @@
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_xml_param_competition <- function(simp, filename = "Competition_linear") {
+input_xml_param_competition <- function(simp, srcfilename = "Competition_linear") {
 	filepath <- paste(simp$dirs$param$getparamdir(simp, datatype="competition"), 
-			"/", filename, ".xml", sep="")
+			"/", srcfilename, ".xml", sep="")
 	
 	xmlParsed <- XML::xmlParse(file=filepath)
 	xml_data  <- XML::xmlToList(xmlParsed)

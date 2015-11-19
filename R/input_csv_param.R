@@ -21,28 +21,29 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 	capitalData <- lapply(filenames, utils::read.csv)
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, capitals)])
 }
-#' Reads capital levels for the specified capitals from CSV data for potentially multiple regions
+#' Determines number of cells from CSV data for potentially multiple regions
+#' 
 #' @param simp SIMulation Properties
-#' @param capitals vector of strings of requested capital levels
-#' @param regionpartfromend index of region part counted from end of filename
-#' @param regionpartdevider character that separated the region filename parts
-#' @return data.frame with column Region and Cells
+#' @param regionpartfromend index of region part counted from end of filename (used to extract region from filename)
+#' @param regionpartdevider character that separated the region filename parts (used to extract region from filename)
+#' @return data.frame with columns Region and Cells
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_csv_param_capitals_cellnumbers <- function(simp, capitals = simp$mdata$capitals, 
+input_csv_param_capitals_cellnumbers <- function(simp,
 		regionpartfromend = 2, regionpartdevider = "_") {
 	
 	#simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
-	filenames <- input_tools_getModelOutputFilenames(simp, datatype="Capitals", 
+	filenames <- input_tools_getModelInputFilenames(simp, datatype="Capitals", 
 			folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
-			pertick = FALSE, extension = "csv", returnfileinfo = FALSE)
+			pertick = FALSE, extension = "csv")
 	
 	lapply(filenames, shbasic::sh.checkFilename)
 	cellnums <- lapply(filenames, function(file) {
 				data <- utils::read.csv(file)
 				df <- data.frame(
-					Region =  strsplit(file,"_")[[1]][length(strsplit(file,"_")[[1]])-regionpartfromend + 1], 
+					Region =  strsplit(file, paste("[/", regionpartdevider,"]"))[[1]][length(strsplit(file, 
+											paste("[/", regionpartdevider,"]"))[[1]])- regionpartfromend + 1], 
 					Cells  =  nrow(data))
 			})
 	cellnums <-  do.call(rbind, cellnums)

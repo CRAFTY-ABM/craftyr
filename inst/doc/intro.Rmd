@@ -142,8 +142,8 @@ Craftyr uses the package 'futile.logger'. Initially, it sets up a console output
 to log everything on INFO level. However, the logger can be configured in a detailed way.
 
 ```{r, eval=FALSE}
-futile.logger::flog.threshold(futile.logger::DEBUG, name='crafty')
-futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
+futile.logger::flog.threshold(futile.logger::DEBUG, name='craftyr')
+futile.logger::flog.threshold(futile.logger::TRACE, name='craftyr.input')
 ```
 It is also possible to add handlers for further sinks.  
 

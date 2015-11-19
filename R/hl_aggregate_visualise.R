@@ -1,5 +1,6 @@
 #' Load, aggregate and visualise AFT composition data
 #' 
+#' Usually, does not include the number of unmanaged cells.
 #' @param simp 
 #' @param dataname 
 #' @return timeline plot
@@ -69,6 +70,41 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
 			alpha=0.7)
 }
+#' Load from csv data, aggregate, and plot AFT competitiveness per region
+#' 
+#' @param simp 
+#' @param dataname 
+#' @return ggplot2 plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated") {
+	input_tools_load(simp, dataname)
+	data <- get(dataname)
+	
+	aftData <- data[data$LandUseIndex != as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames=="Unmanaged"]), 
+			colnames(data) %in% c("Tick", "Competitiveness", "Runid", "Region", "LandUseIndex")]
+	aftData <- aggregate(subset(aftData, select=c("Competitiveness")),
+			by = list(ID = aftData[,"Runid"], Tick=aftData[, "Tick"], Region=aftData[, "Region"], 
+					AFT=aftData[,"LandUseIndex"]),
+			FUN=mean)
+	aftData$AFT <- as.factor(aftData$AFT)
+	
+	# Add 0 for missing entries:
+	# http://stackoverflow.com/questions/25054174/data-standardization-for-all-group-data-frame-in-r
+	## does not work
+	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
+	
+	visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness",
+			colour_column = "AFT",
+			colour_legenditemnames = simp$mdata$aftNames,
+			linetype_column = "Region",
+			linetype_legendtitle = simp$sim$rundesclabel,
+			linetype_legenditemnames = simp$sim$rundesc,
+			filename = paste("TotalCompetitivenessPerRegion", 
+					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
+			alpha=0.7)
+}
 #' Read supply and demand and plot for given runid
 #' 
 #' @param simp 
@@ -107,6 +143,74 @@ hl_demandsupply <- function(simp, runid = simp$sim$id, dataname = "csv_cell_aggr
 			filename = paste("TotalDemandAndSupply_",simp$sim$rundesc[runid], sep=""),
 			alpha=0.7)
 }
+#' Read data and visualise datacolumns as lines
+#' 
+#' Reads data from CSV file if not existing as rData object and visualises datacolums.
+#' @param simp 
+#' @param dataname name of rData object
+#' @param datatype datatype of CSV data (only relevant if rData not yet existing)
+#' @param datacolumns columns to plot
+#' @param linetypecol
+#' @param colourcol
+#' @param titleprefix
+#' @param filenameprefix 
+#' @param percent data.frame with frist column containing the grouping (and named with the grouping variable) 
+#' 	the 2nd column values shall be considered as 100% for
+#' @return plot (and rData) 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_lines_from_csv <- function(simp, dataname, datatype, datacolumns = NULL, linetypecol = "ID",
+		colourcol = "Type", titleprefix = NULL, filenameprefix = NULL, percent = NULL) {
+	
+	if (!input_tools_checkexists(simp, dataname)) {
+		
+		assign(dataname, input_csv_data(simp, dataname = NULL, 
+				datatype = datatype,
+				pertick = FALSE, bindrows = TRUE))
+		
+		input_tools_save(simp, dataname)
+	}
+	
+	input_tools_load(simp, dataname)
+	data <- get(dataname)
+
+	data <- reshape2::melt(data, variable.name="Type", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
+			direction="long", value.name = "Value")
+	if(!is.null(datacolumns)) data <- data[data$Type %in% datacolumns,]
+	
+	if(!is.null(percent)) {
+		data <- plyr::ddply(data, names(percent)[1], function(cd, percent) {
+					cd$Value <- cd$Value * 100 / percent[percent[,1] == as.character(unique(cd[,names(percent)[1]])), 2]
+					cd
+				}, percent = percent)
+	}
+	
+	
+	visualise_lines(simp, data, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
+			colour_column = colourcol,
+			linetype_column = linetypecol,
+			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""))
+}
+#' Read cell volatility data and visualise CellVolatility and NumVolatileCells as lines
+#' 
+#' @param simp 
+#' @param dataname 
+#' @param datatype 
+#' @param datacolumns 
+#' @return plot (and rData)
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_volatility <- function(simp, dataname = "csv_aggregated_cellvolatility", 
+		datatype = "AggregateCellVolatility", datacolumns = c("CellVolatility", "NumVolatileCells"),
+		percent = NULL) {
+	
+	hl_lines_from_csv(simp, dataname = dataname, 
+			datatype = datatype, datacolumns = datacolumns, linetypecol = "Region",
+			colourcol = "Type", titleprefix = "Cell Volatility", filenameprefix = "CellVolatility", 
+			percent = percent)
+}
 #' Transition plot of AFT take overs due to giving in
 #' 
 #' @param simp 
@@ -142,25 +246,30 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 	
 	input_tools_load(simp, datanametakeovers)
 	dataTakeOvers <- get(datanametakeovers)
-	dat <- aggregate(subset(dataTakeOvers, select=aftnames), by = list(
-					Tick=dataTakeOvers[, "Tick"],
-					Runid=dataTakeOvers[, "Runid"],
-					AFT=dataTakeOvers[,"AFT"]),
-			FUN=sum)
 	
-	startPopulation <- startPopulation[match(aftnames, startPopulation$Agent),]
-	colnames(startPopulation)[colnames(startPopulation) == "AFT"] <- "Number"
-	
-	# TODO cells that go to unmanaged are not considered...
-	output_visualise_takeovers(simp,
-			data = dat, 
-			startpopulation = startPopulation,
-			starttick = starttick,
-			endtick=endtick,
-			tickinterval=tickinterval,
-			type_of_arrow = "gradient2sided",
-			transitionthreshold = transitionthreshold,
-			aftnames = aftnames)
+	if(any(aftnames %in% names(dataTakeOvers))) {
+		dat <- aggregate(subset(dataTakeOvers, select=aftnames), by = list(
+						Tick=dataTakeOvers[, "Tick"],
+						Runid=dataTakeOvers[, "Runid"],
+						AFT=dataTakeOvers[,"AFT"]),
+				FUN=sum)
+		
+		startPopulation <- startPopulation[match(aftnames, startPopulation$Agent),]
+		colnames(startPopulation)[colnames(startPopulation) == "AFT"] <- "Number"
+		
+		# TODO cells that go to unmanaged are not considered...
+		output_visualise_takeovers(simp,
+				data = dat, 
+				startpopulation = startPopulation,
+				starttick = starttick,
+				endtick=endtick,
+				tickinterval=tickinterval,
+				type_of_arrow = "gradient2sided",
+				transitionthreshold = transitionthreshold,
+				aftnames = aftnames)
+	} else {
+		warning(paste("There is no AFT giving in data in rData with name", datanametakeovers, "for ID", simp$sim$id))
+	}
 }
 #' Transition plot of AFT take overs (both due to giving in and giving up)
 #' 
@@ -213,17 +322,22 @@ hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 	input_tools_load(simp, datanametakeovers)
 	dataTakeOvers <- get(datanametakeovers)
 	simp$mdata$aftNames <- simp$mdata$aftNames[-1]
-	dat <- aggregate(subset(dataTakeOvers, select=simp$mdata$aftNames), by = list(
-					Tick=dataTakeOvers[, "Tick"],
-					Runid=dataTakeOvers[, "Runid"],
-					AFT=dataTakeOvers[,"AFT"]),
-			FUN=sum)
 	
-	output_visualise_aftFluctuations(simp,
-			data = dat,
-			starttick = starttick + 1,
-			endtick = endtick - 1,
-			tickinterval = tickinterval)
+	if(any(aftnames %in% names(dataTakeOvers))) {
+		dat <- aggregate(subset(dataTakeOvers, select=simp$mdata$aftNames), by = list(
+						Tick=dataTakeOvers[, "Tick"],
+						Runid=dataTakeOvers[, "Runid"],
+						AFT=dataTakeOvers[,"AFT"]),
+				FUN=sum)
+		
+		output_visualise_aftFluctuations(simp,
+				data = dat,
+				starttick = starttick + 1,
+				endtick = endtick - 1,
+				tickinterval = tickinterval)
+	} else {
+		warning(paste("There is no AFT giving in data in rData with name", datanametakeovers, "for ID", simp$sim$id))
+	}
 }
 #' Yearly aggregated AFT composition
 #' 
@@ -248,11 +362,6 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	dataComp <- dataComp[complete.cases(dataComp),]
 	
 	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
-	
-	
-	
-	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
-			direction="long")
 	
 	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
 			direction="long")
@@ -309,6 +418,7 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 	
 	visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand",
 			colour_column = "Service",
+			# TODO use simp$mdata$services or document setting NULL
 			colour_legenditemnames = simp$mdata$conversion$services,
 			linetype_column = "Type",
 			facet_column = "ID",
@@ -428,43 +538,183 @@ hl_gistatistics_singleAFT <- function(simp, dataname = "csv_aggregateGiStatistic
 #' @author Sascha Holzhauer
 #' @export
 hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded", 
+		maxcompetitiveness = "100%", 
+		# passed to visualise_competition_prealloc
+		numbins = 20,
+		facet_ncol = NULL,
+		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
+		title = NULL,
+		ggplotaddons = NULL,
+		setfigdims = TRUE,
+		afts = simp$mdata$aftNames,
+		checkexists = FALSE) {
+	
+	storename <- paste("PreAllocationCompetitionPlot", paste(afts, collapse="-"), numbins, sep="_")
+	if (checkexists && input_tools_checkexists(simp, storename)) {
+		local({
+			input_tools_load(simp, storename)
+			
+			numTicks <- simp$sim$endtick - simp$sim$starttick + 1
+			if(setfigdims) {
+				simp$fig$height			<- simp$fig$height * if(is.null(facet_ncol)) numTicks else numTicks/facet_ncol
+				simp$fig$width			<- simp$fig$width * if(is.null(facet_ncol)) length(simp$mdata$aftNames) - 1 else facet_ncol 
+			}
+			simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "bars", sep="/"), filename = filename)
+			
+			print(get(storename))
+			
+			simp$fig$close()
+		})
+		gc()
+	} else {
+		
+		input_tools_load(simp, dataname)
+		data <- get(dataname)
+		
+		# check for table/data.frame
+		if("Above" %in% colnames(data) && "Below" %in% colnames(data)) {
+			
+			suppressWarnings(data$Comp <- as.numeric(levels(data$Comp)[data$Comp]))
+			data <- data[complete.cases(data),]
+			
+			if (grepl("%", maxcompetitiveness)) {
+				maxcompetitiveness <- quantile(data$Comp, 
+						as.numeric(gsub("%", "",maxcompetitiveness))/100)
+			}
+			
+			data <- data[data$Comp <= maxcompetitiveness,]
+			
+			
+			visualise_competition_preallocTable(simp, data, facet_ncol = facet_ncol, filename = filename,
+					numbins = numbins, title = title, ggplotaddons = ggplotaddons, setfigdims = setfigdims, 
+					storename = if(checkexists) storename else NULL)
+		} else {
+		
+			suppressWarnings(data$PreAllocCompetitiveness <-  
+							as.numeric(levels(data$PreAllocCompetitiveness)[data$PreAllocCompetitiveness]))
+			suppressWarnings(data$PreAllocGivingUpThreshold <-  
+							as.numeric(levels(data$PreAllocGivingUpThreshold)[data$PreAllocGivingUpThreshold]))
+			
+			data <- data[complete.cases(data),]
+			
+			if (grepl("%", maxcompetitiveness)) {
+				maxcompetitiveness <- quantile(data$PreAllocCompetitiveness, 
+						as.numeric(gsub("%", "",maxcompetitiveness))/100)
+			}
+			
+			data <- data[data$PreAllocCompetitiveness <= maxcompetitiveness,]
+			# data <- data[1:1000,]
+			
+			data$GU <- 0
+			data$GU[data$PreAllocCompetitiveness < data$PreAllocGivingUpThreshold] <- 1
+			data$GU <- as.factor(data$GU)
+			data$AFT <- simp$mdata$aftNames[match(data$PreAllocLandUseIndex, as.numeric(names(simp$mdata$aftNames)))]
+			
+			data$PreAllocLandUseIndex <- NULL
+			data$PreAllocGivingUpThreshold <- NULL
+			
+			data <- data[data$AFT %in% afts,]
+			
+			visualise_competition_prealloc(simp, data, facet_ncol = facet_ncol, filename = filename,
+					numbins = numbins, title = title, ggplotaddons = ggplotaddons, setfigdims = setfigdims, 
+					storename = if(checkexists) storename else NULL)
+		}
+	}
+}
+#' Visualise pre-allocation competitiveness per AFT
+#' 
+#' Write one file per AFT.
+#' @return facet histogram plot in file 
+#' 
+#' @inheritParams hl_competitiveness_prealloc
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_competitiveness_preallocPerAft <- function(simp, dataname = "csv_preAlloc_rbinded",
 		maxcompetitiveness = "90%", 
 		# passed to visualise_competition_prealloc
 		numbins = 20,
-		facet_ncol = length(simp$mdata$aftNames) - 1,
+		facet_ncol = 5,
 		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
 		title = NULL, ggplotaddons = NULL,
 		setfigdims = TRUE,
-		afts = simp$mdata$aftNames) {
+		afts = simp$mdata$aftNames[-1],
+		checkexists = FALSE) {
 	
-	input_tools_load(simp, dataname)
-	data <- get(dataname)
+	lapply(afts, function(aft) {
+				hl_competitiveness_prealloc(
+						simp,
+						dataname = dataname,
+						maxcompetitiveness = maxcompetitiveness,
+						numbins = numbins,
+						facet_ncol = facet_ncol,
+						filename = paste(filename, aft, sep="_"),
+						title =  if (!is.null(title)) paste(title, aft) else NULL,
+						ggplotaddons = ggplotaddons,
+						setfigdims = setfigdims,
+						afts = aft,
+						checkexists = checkexists)})	
+}
+#' Read stored landuse data, calculate and visualise spatial autocorrelation score
+#' 
+#' NOTE: Needs the cell data to be stored as rData (see \link{input_csv_data}).
+#' @param simp 
+#' @param celldataname 
+#' @param starttick 
+#' @param tickinterval 
+#' @param endtick 
+#' @param linetypecol 
+#' @param type 
+#' @param regions 
+#' @param colourcol 
+#' @param titleprefix 
+#' @param filenameprefix 
+#' @return lines plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_aggregate_sa <- function(simp, celldataname = "csv_LandUseIndex_rbinded", 
+		starttick = simp$sim$starttick, tickinterval=10, endtick = simp$sim$endtick,
+		linetypecol = "Region", type = "Moran",
+		regions = simp$sim$regions,
+		colourcol = NULL, titleprefix = paste("SpatialAutocorrelation (", type, ")", sep=""), 
+			filenameprefix = paste("SpatialAutocorrelation", type, sep="_")) {
+
+	input_tools_load(simp, objectName = celldataname)
+	data <- get(celldataname)
 	
-	suppressWarnings(data$PreAllocCompetitiveness <-  
-					as.numeric(levels(data$PreAllocCompetitiveness)[data$PreAllocCompetitiveness]))
-	suppressWarnings(data$PreAllocGivingUpThreshold <-  
-					as.numeric(levels(data$PreAllocGivingUpThreshold)[data$PreAllocGivingUpThreshold]))
-	
-	data <- data[complete.cases(data),]
-	
-	if (grepl("%", maxcompetitiveness)) {
-		maxcompetitiveness <- quantile(data$PreAllocCompetitiveness, 
-				as.numeric(gsub("%", "",maxcompetitiveness))/100)
-	}
-	
-	data <- data[data$PreAllocCompetitiveness <= maxcompetitiveness,]
-	# data <- data[1:1000,]
-	
-	data$GU <- 0
-	data$GU[data$PreAllocCompetitiveness < data$PreAllocGivingUpThreshold] <- 1
-	data$GU <- as.factor(data$GU)
-	data$AFT <- simp$mdata$aftNames[match(data$PreAllocLandUseIndex, as.numeric(names(simp$mdata$aftNames)))]
-	
-	data$PreAllocLandUseIndex <- NULL
-	data$PreAllocGivingUpThreshold <- NULL
-	
-	data <- data[data$AFT %in% afts,]
-	
-	visualise_competition_prealloc(simp, data, facet_ncol = facet_ncol, filename = filename,
-			numbins = numbins, title = title, ggplotaddons = ggplotaddons, setfigdims = setfigdims)
+	scoresdata <- do.call(rbind, lapply(seq(from=starttick, to=endtick, by=tickinterval), 
+					function(tick, data, type ,regions) {
+						do.call(rbind,lapply(regions, function(tick, region, data, type) {
+				tickdata <- data[data$Tick == tick & data$Region %in% region, 
+						c(simp$csv$cname_x, simp$csv$cname_y, "LandUseIndex")]
+				raster <- craftyr::convert_2raster(simp, tickdata, targetCRS = "+init=EPSG:32632", layers=c(1))
+				data.frame(Value = analyse_statistics_sa_local(raster[[1]], type = type),
+						Tick = tick,
+						Region = region)}, tick = tick, data = data, type = type))
+			}, data = data, type = type, regions = regions))
+
+	visualise_lines(simp, scoresdata, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
+			colour_column = colourcol,
+			linetype_column = linetypecol,
+			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""))
+}
+#' Visualise stored metric LandUseConnectivity as timelines
+#' 
+#' @param simp 
+#' @param dataname 
+#' @param datatype 
+#' @param datacolumns 
+#' @return plot (and rData)
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_connectedness <- function(simp, dataname = "csv_aggregated_connectivity", 
+		datatype = "LandUseConnectivity", aftcolumns = simp$mdata$aftNames[-1],
+		percent = NULL) {
+	# dataname = "dataAggregateConnectivity"
+	craftyr::hl_lines_from_csv(simp, dataname = dataname, 
+			datatype = datatype, datacolumns = aftcolumns, linetypecol = "Region",
+			colourcol = "Type", titleprefix = "Connectedness", filenameprefix = "Connectedness288", 
+			percent = percent)
 }

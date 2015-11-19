@@ -14,7 +14,7 @@ hl_aftcomposition(simp, dataname = "csv_cell_aggregated")
 timeline plot
 }
 \description{
-Load, aggregate and visualise AFT composition data
+Usually, does not include the number of unmanaged cells.
 }
 \author{
 Sascha Holzhauer

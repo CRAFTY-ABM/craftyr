@@ -94,6 +94,19 @@ rownames(csv_cell_aggregated) <- NULL
 input_tools_save(simp, "csv_cell_aggregated")
 ```
 
+## Source: Cell Table (Pre-Allocation Competitiveness)
+
+Read CSV data of pre-allocation competitiveness and transfer to data.frame of frequencies
+
+```{r, eval=FALSE}
+library(craftyr)
+simp <- param_getExamplesSimp()
+simp$sim$filepartorder	<- c("regions", "D", "datatype")
+csv_preAllocTable <- input_csv_prealloccomp(simp)
+input_tools_save(simp, "csv_preAllocTable")
+```
+
+
 ## Source: Aggregated AFT Composition
 
 ```{r, eval=FALSE}
@@ -230,6 +243,75 @@ simp2$sim$shortid <- "G10/C5"
 hl_comp_cell_aftcomposition(simp, simps = list(simp1, simp2), dataname = "csv_cell_aggregated")
 ```
 
+#### Competitiveness (Mean by region)
+% TODO
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_competitivenessPerRegion(simp1, dataname = "dataAgg")
+```
+
+
+#### Spatial Autocorrelation
+```{r, eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"}
+library(craftyr)
+simp <- param_getExamplesSimp()
+input_tools_load(simp, objectName = "csv_LandUseIndex_rbinded")
+data <- get("csv_LandUseIndex_rbinded")
+
+scoresdata <- do.call(rbind, lapply(seq(from=2010, to=2040, by=10), function(tick, datac, regions, type) {
+					do.call(rbind,lapply(regions, function(tick, region, data, type) {
+			tickdata <- data[data$Tick == tick & data$Region %in% region, 
+					c(simp$csv$cname_x, simp$csv$cname_y, "LandUseIndex")]
+			raster <- craftyr::convert_2raster(simp, tickdata, targetCRS = "+init=EPSG:32632", layers=c(1))
+			data.frame(Value = analyse_statistics_sa_local(raster[[1]], type = type),
+					Tick = tick, type = type
+					Region = region)}, tick = tick, data = data, type = type))
+		}, data = data, type = "Moran", regions = simp$sim$regions))
+
+visualise_lines(simp, scoresdata, "Value", title = paste("Spatial Autocorrelation (Moran)", simp$sim$rundesc[simp$sim$runid]),
+		linetype_column = "Region",
+		filename = paste("Spatial Autocorrelation (Moran)", "_", simp$sim$rundesc[simp$sim$runid], sep=""))
+```
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_aggregate_sa(simp, celldataname = "csv_LandUseIndex_rbinded", 
+	starttick = simp$sim$starttick, tickinterval=10, endtick = simp$sim$endtick,
+	linetypecol = "Region", type = "Moran", regions = simp$sim$regions,
+	titleprefix = paste("SpatialAutocorrelation (", type, ")", sep=""), 
+	filenameprefix = paste("SpatialAutocorrelation", type, sep="_"))
+```
+
+#### Cell Connectedness
+Visualise stored metric LandUseConnectivity as timelines
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_connectedness(simp, dataname = "csv_aggregated_connectivity", 
+		datatype = "LandUseConnectivity", aftcolumns = simp$mdata$aftNames[-1],
+		percent = NULL)
+```
+
+#### Cell Volatility
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_volatility(simp, dataname = "csv_aggregated_cellvolatility", 
+		datatype = "AggregateCellVolatility", datacolumns = c("CellVolatility", "NumVolatileCells"),
+		percent = NULL)
+```
+
+#### Further Cell Data as Timeline
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_lines_from_csv(simp, dataname = "dataobjectname", 
+		datatype = "Datatype", datacolumns = c("ColumnA","ColumnB"), linetypecol = "Region",
+		colourcol = "Type", titleprefix = "Title", filenameprefix = "FilenamePrefix", 
+		percent = NULL)
+```
+
 ### From Aggregated (Region Level) Data
 
 #### AFT Composition as Timeline
@@ -252,6 +334,11 @@ visualise_lines(simp, d, "value", title = "AftCompositionInvalid",
 		colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 		filename = "AftCompositionInvalid",
 		alpha=0.7)
+```
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_aggregate_aftcompositions(simp)
 ```
 
 #### Aggregated Demand and Supply Data
@@ -376,7 +463,38 @@ High level:
 hl_gistatistics_singleRegion(simp, dataname = "csv_aggregateGiStatistics", 
 		regions = simp$sim$regions, facet_ncol = 1)
 ```
+#### Pre-Allocation Competitiveness
+% TODO
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_competitiveness_prealloc(simp, dataname = "csv_preAlloc_rbinded", 
+		facet_ncol = length(simp$mdata$aftNames), filename = paste("PreAllocationCompetition", 
+		simp$sim$id, sep="_b_"),
+		maxcompetitiveness = "100%", numbins = 15, title = NULL, ggplotaddons = NULL, checkexists = FALSE)
+```
 
+High level when separating AFTs:
+```{r, eval=FALSE, results="hide"}
+hl_competitiveness_preallocPerAft(simp, dataname = "csv_preAlloc_rbinded", 
+		facet_ncol = length(simp$mdata$aftNames), filename = paste("PreAllocationCompetition", 
+		simp$sim$id, sep="_b_"),
+		maxcompetitiveness = "100%", numbins = 15, title = NULL, ggplotaddons = NULL, checkexists = FALSE)
+```
+
+#### Cell Volatility
+TODO
+```{r, eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"}
+cellnumber <- input_csv_param_capitals_cellnumbers(simp, capitals = simp$mdata$capitals, 
+		regionpartfromend = 2, regionpartdevider = "_")
+
+```
+High level:
+```{r, eval=FALSE, results="hide"}
+numcells <- cellnumbers <- input_csv_param_capitals_cellnumbers(simp, regionpartfromend = 2, regionpartdevider = "_")
+hl_volatility(simp, dataname = "csv_aggregated_cellvolatility", 
+		datatype = "AggregateCellVolatility", datacolumns = c("CellVolatility", "NumVolatileCells"),
+		percent = numcells)
+```
 
 #### Marginal Utilities
 TODO
@@ -421,3 +539,31 @@ hl_comp_demandsupplygap_agentparams(simp, simps = input_tools_buildsimplist(111:
 # Conversions
 
  - convert_csv2shapefile
+ 
+## Stored CSV/data.frame (rData) to raster file (ASCII)
+
+```{r, eval=FALSE, results="hide"}
+simp <- param_getExamplesSimp()
+input_tools_load(simp, dataname = "csv_LandUseIndex_rbinded")
+
+data <- get(dataname)
+data <- data[data$Tick == 2010, c(simp$csv$cname_x, simp$csv$cname_y, "LandUseIndex")]
+rownames(data) <- NULL
+
+raster <- craftyr::convert_2raster(simp, data, targetCRS = "+init=EPSG:32632", layers=c(1))
+
+filename <- sprintf("%s/%s_LandUseIndex_%d.%s",
+		simp$dirs$output$raster,
+		output_tools_getDefaultFilename(simp),
+		as.integer(tick),
+		"asc")
+shbasic::sh.ensurePath(filename, stripFilename = TRUE)
+raster::writeRaster(raster[[1]][[1]], filename = filename, format = "ascii", 
+		NAflag=naflag, overwrite=TRUE)
+```
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_cell2raster(simp, tick, dataname = "csv_LandUseIndex_rbinded", 
+		landuseindexcolname = "LandUseIndex", naflag = -9)
+```

@@ -3,17 +3,19 @@
 \alias{hl_printCompetitionFunctions}
 \title{Read and plot compotition functions}
 \usage{
-hl_printCompetitionFunctions(simp, filename = "Competition_linear",
-  xrange = c(-3, 3), yrange = c(-1, 1))
+hl_printCompetitionFunctions(simp, srcfilename = "Competition_linear",
+  xrange = c(-3, 3), yrange = c(-1, 1), filename = "competitionFunctions")
 }
 \arguments{
 \item{simp}{}
 
-\item{filename}{}
+\item{srcfilename}{competition XML file}
 
 \item{xrange}{Vector of two. The x range to plot}
 
 \item{yrange}{Vector of two. The y range to plot}
+
+\item{filename}{filename for figure}
 }
 \value{
 plot

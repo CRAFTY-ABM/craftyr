@@ -102,3 +102,40 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 		result <- data
 	invisible(result)
 }
+#' Read CSV data of pre-allocation competitiveness and transfer to data.frame of frequencies
+#' 
+#' @param simp 
+#' @param datatype 
+#' @param starttick 
+#' @param endtick 
+#' @param tickinterval 
+#' @return data.frame of frequencies per Tick, Comp and Above/Below column according 
+#' frequencies
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_csv_prealloccomp <- function(simp, datatype = "PreAlloc",
+		starttick = if(!is.null(simp$sim$starttick)) simp$sim$starttick else simp$tech$mintick,
+		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
+		tickinterval = simp$csv$tickinterval_agg) {
+	
+	data <- input_csv_data(simp, dataname = NULL, datatype = "PreAlloc",
+			columns = c("Tick", "PreAllocCompetitiveness", "PreAllocLandUseIndex", "PreAllocGivingUpThreshold"),
+			pertick = FALSE, attachfileinfo = FALSE, skipXY = TRUE, bindrows = TRUE)
+	
+	ticks <- seq(starttick, endtick, tickinterval)
+	data <- data[data$PreAllocLandUseIndex != "None" && data$Tick %in% ticks,]
+	
+	csv_preAllocTable <- plyr::ddply(.data =  data, c("Tick","PreAllocLandUseIndex"), function(df){
+				# df <- data[data$Tick == 2011 & data$PreAllocLandUseIndex == 2,]
+				tableData = merge(as.data.frame(table(df[as.numeric(df$PreAllocCompetitiveness) >= 
+								as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"]), 
+								responseName = "Above"), 
+						as.data.frame(table(df[as.numeric(df$PreAllocCompetitiveness) < 
+								as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"]), 
+								responseName = "Below"), by="Var1", all=T)
+				tableData[is.na(tableData)] <-  0
+				names(tableData)[names(tableData)=="Var1"] <- "Comp"
+				tableData
+			})
+}
