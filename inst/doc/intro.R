@@ -56,8 +56,8 @@
 #  source("../../simp.R")
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  futile.logger::flog.threshold(futile.logger::DEBUG, name='crafty')
-#  futile.logger::flog.threshold(futile.logger::TRACE, name='crafty.input')
+#  futile.logger::flog.threshold(futile.logger::DEBUG, name='craftyr')
+#  futile.logger::flog.threshold(futile.logger::TRACE, name='craftyr.input')
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  futile.logger::flog.appender(appender.file(filename), name='test.logger')

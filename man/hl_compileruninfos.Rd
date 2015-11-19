@@ -16,8 +16,8 @@ hl_compileruninfos(simp, filename = simp$dirs$output$runinfo, rows = NULL)
 xtable plot
 }
 \description{
-Considers the version in \code{simp$sim$version} and
-the '1st Run ID' in \code{simp$sim$runids[1]}.
+Considers the \code{simp$sim$version} in column version and the
+the \code{simp$sim$runids[1]} in column '1st Run ID' or between '1st Run ID' and 'Last Run ID'.
 }
 \author{
 Sascha Holzhauer

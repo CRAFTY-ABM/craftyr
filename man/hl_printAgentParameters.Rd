@@ -4,7 +4,7 @@
 \title{Print agent parameters}
 \usage{
 hl_printAgentParameters(simp, filenameprefix = "AftParams_",
-  filenamepostfix = "", aftParamId = 0)
+  filenamepostfix = "", aftParamId = NULL, columnindices = c(2:7, 9))
 }
 \arguments{
 \item{simp}{}

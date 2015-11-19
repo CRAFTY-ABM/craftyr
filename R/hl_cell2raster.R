@@ -9,7 +9,7 @@
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_cell2raster <- function(simp,tick, dataname = "csv_LandUseIndex_rbinded", 
+hl_cell2raster <- function(simp, tick, dataname = "csv_LandUseIndex_rbinded", 
 		landuseindexcolname = "LandUseIndex", naflag = -9) {
 	input_tools_load(simp, dataname)
 	

@@ -19,15 +19,16 @@ vignette: >
 
 # Capital Data
 
+## Visualise Capitals
 Via rasters:
-```{r, eval=TRUE}
-#source("../demo/simp-machine.R")
-## read capital data from CSV into raster
-#data <- input_csv_param_capitals(simp)
-#rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
-#names(rasters) <- "RegionA"
-#visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
-#		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
+```{r, eval=FALSE}
+source("../demo/simp-machine.R")
+# read capital data from CSV into raster
+data <- input_csv_param_capitals(simp)
+rasters <- convert_2raster(simp, data, layers = simp$mdata$capitals)
+names(rasters) <- "RegionA"
+visualise_raster_printRawPlots(simp, rasters, legendtitle = "Capitals Example", 
+		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, id="None")
 ```
 
 CSV data directly:
@@ -48,6 +49,13 @@ hl_param_capital_map(simp, capitals = simp$mdata$capitals,
 	filenameorder= c("regionalisation", "U", "regions", "U", "datatype"))
 ```
 
+## Determine Number of Cells
+
+```{r, eval=FALSE, results="hide"}
+simp <- param_getExamplesSimp()
+cellnumbers <- input_csv_param_capitals_cellnumbers(simp, regionpartfromend = 2, regionpartdevider = "_")
+```
+		
 # Competition Functions
 
 TODO make evaluate
@@ -61,6 +69,20 @@ visualise_competition_funcs(simp, functions)
 High level:
 ```{r, eval=FALSE, results="hide"}
 hl_printCompetitionFunctions(simp, filename = "Competition_linear")
+```
+
+# Run Information (LaTeX table)
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_compileruninfos(simp)
+```
+
+# Run Parameters (LaTeX table)
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_compilerunparams(simp)
 ```
 
 # Agent Productivities (LaTeX table)

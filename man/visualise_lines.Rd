@@ -10,7 +10,7 @@ visualise_lines(simp, data, y_column, title = NULL, colour_column = NULL,
   linetype_column = NULL, linetype_legendtitle = linetype_column,
   linetype_legenditemnames = NULL, facet_column = NULL, facet_ncol = 2,
   filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]),
-  sep = "_"), alpha = 0.7, ggplotparams = NULL)
+  sep = "_"), alpha = simp$fig$alpha, ggplotaddons = NULL)
 }
 \arguments{
 \item{simp}{SIMulation Properties}
@@ -41,7 +41,7 @@ visualise_lines(simp, data, y_column, title = NULL, colour_column = NULL,
 
 \item{alpha}{}
 
-\item{ggplotparams}{vector of ggplot objects to add}
+\item{ggplotaddons}{vector of ggplot objects to add}
 }
 \value{
 ggplot2 line visualisation

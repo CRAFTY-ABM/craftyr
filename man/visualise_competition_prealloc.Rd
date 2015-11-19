@@ -8,14 +8,16 @@ visualise_competition_prealloc(simp, data,
   filename = paste("PreAllocationCompetition", simp$sim$id, sep = "_"),
   numbins = 20,
   binwidth = diff(range(data$PreAllocCompetitiveness))/numbins,
-  title = NULL, ggplotaddons = NULL, setfigdims = TRUE)
+  title = NULL, ggplotaddons = NULL, setfigdims = TRUE,
+  storename = NULL)
 }
 \arguments{
 \item{simp}{}
 
 \item{data}{}
 
-\item{facet_ncol}{}
+\item{facet_ncol}{if \code{NULL} ticks will be as rows, agents as columns. Otherwise, facets will
+distinguished by ticks only (and facet_cols specifies the number of columns)}
 
 \item{filename}{}
 

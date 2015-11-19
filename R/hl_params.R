@@ -26,7 +26,7 @@ hl_printAgentProductionParameters <- function(simp, filenameprefix = "AftProduct
 		print(table, sanitize.colnames.function = identity,
 				sanitize.rownames.function = identity,
 				include.rownames = FALSE,
-				table.placement = "h!")
+				table.placement = "H")
 	}
 }
 #' Print agent parameters
@@ -39,7 +39,16 @@ hl_printAgentProductionParameters <- function(simp, filenameprefix = "AftProduct
 #' @author Sascha Holzhauer
 #' @export
 hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
-		filenamepostfix = "", aftParamId = 0) {
+		filenamepostfix = "", aftParamId = NULL, columnindices = c(2:7, 9)) {
+	
+	if (is.null(aftParamId)) {
+		aftParamId = hl_getAgentParamId(simp)
+	}
+	
+	futile.logger::flog.info("Print agent parameter table for agent param ID %d",
+				aftParamId,
+				name = "craftyr.hl_params.R")
+		
 	agentparams <- data.frame()
 	# for each AFT
 	for (aft in simp$mdata$aftNames[-1]) {
@@ -47,7 +56,7 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 		data <- input_csv_param_agents(simp, aft, filenameprefix, filenamepostfix)
 		names(data) <- gsub("Distribution", "Dist", names(data), fixed = TRUE)
 		agentparams <- rbind(agentparams, cbind(AFT = aft, data[data["aftParamId"] == aftParamId, 
-								-c(1,length(data[1,])-2,length(data[1,])-1,length(data[1,]))]))
+								columnindices]))
 	}
 	# print table
 	colnames(agentparams) <- gsub("givingUp", "GU", colnames(agentparams), fixed = TRUE)
@@ -59,19 +68,20 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 	)
 	
 	print(table, sanitize.colnames.function = identity,
-			sanitize.rownames.function = identity,
 			include.rownames = FALSE,
-			table.placement = "h!")
+			table.placement = "H")
 }
 #' Read and plot compotition functions
 #' @param simp 
-#' @param filename 
+#' @param srcfilename competition XML file
 #' @return plot
+#' 
 #' @inheritParams visualise_competition_funcs
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_printCompetitionFunctions <- function(simp, filename = "Competition_linear", xrange = c(-3,3), yrange = c(-1,1)) {
-	functions <- input_xml_param_competition(simp, filename = filename)
-	visualise_competition_funcs(simp, functions, xrange, yrange)
+hl_printCompetitionFunctions <- function(simp, srcfilename = "Competition_linear", xrange = c(-3,3), yrange = c(-1,1),
+		filename = "competitionFunctions") {
+	functions <- input_xml_param_competition(simp, srcfilename = srcfilename)
+	visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename)
 } 

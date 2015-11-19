@@ -3,11 +3,12 @@
 #' @param functions 
 #' @param xrange Vector of two. The x range to plot
 #' @param yrange Vector of two. The y range to plot
+#' @param filename filename for figure
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrange = c(-1,1)) {
+visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrange = c(-1,1), filename = "competitionFunctions") {
 	
 	futile.logger::flog.debug("Print competition functions for services...",
 			name="craftyr.visualise.competition")
@@ -15,7 +16,7 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 	simp$fig$numcols <- 1
 	simp$fig$numfigs <- 1
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "param", sep="/"), 
-			filename = "competitionFunctions")
+			filename = filename)
 	
 	stat_functions <- unlist(mapply(function(fun, name) {
 						eval(substitute(
@@ -34,7 +35,8 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 #' 
 #' @param simp 
 #' @param data
-#' @param facet_ncol 
+#' @param facet_ncol if \code{NULL} ticks will be as rows, agents as columns. Otherwise, facets will 
+#' 		  distinguished by ticks only (and facet_cols specifies the number of columns)
 #' @param filename 
 #' @param numbins number of bins to bin data
 #' @param title plot title
@@ -46,29 +48,130 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 #' @export
 visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$mdata$aftNames) - 1,
 		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
-		numbins = 20, binwidth = diff(range(data$PreAllocCompetitiveness))/numbins, title = NULL, ggplotaddons = NULL, setfigdims = TRUE) {
+		numbins = 20, binwidth = diff(range(data$PreAllocCompetitiveness))/numbins, title = NULL,
+		ggplotaddons = NULL, setfigdims = TRUE, storename = NULL) {
+	
+	
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
 	}
 	
-	if(setfigdims) {
-		simp$fig$height			<- 200 * length(unique(data$Tick))
-		simp$fig$width			<- 400 * facet_ncol
+	if(length(data) == 0) {
+		R.oo:throw.default("Data is empty!")
 	}
+	
+	if(setfigdims) {
+		simp$fig$height	<- simp$fig$height * if(is.null(facet_ncol)) length(unique(data$Tick)) else length(unique(data$Tick))/facet_ncol
+		simp$fig$width	<- simp$fig$width * if(is.null(facet_ncol)) length(simp$mdata$aftNames) - 1 else facet_ncol 
+	}
+	
 	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "bars", sep="/"), filename = filename)
 	
 	scaleFillElem <- ggplot2::scale_fill_manual(name="GivingUp", 
 			values = c("1"="red", "0" = "green"),
 			labels = c("1"="Giving up", "0"="Persisting"))
 	
-	facetElem = ggplot2::facet_grid(as.formula(paste("Tick ~", "AFT")), scales="free_y")
+	if (!is.null(facet_ncol)) {
+		facetElem = ggplot2::facet_wrap(as.formula("~ Tick"), ncol = facet_ncol)	
+	} else {
+		facetElem = ggplot2::facet_grid(as.formula(paste("Tick ~", "AFT")), scales="free_y")	
+	}
 	
-	p1 <- ggplot2::ggplot(data, aes(x=PreAllocCompetitiveness, fill=GU)) + 
-			geom_bar(binwidth = binwidth) + 
+	p1 <- ggplot2::ggplot(data, ggplot2::aes(x=PreAllocCompetitiveness, fill=GU)) + 
+			ggplot2::geom_bar(binwidth = binwidth) + 
 			facetElem  +
 			scaleFillElem +
 			{if (!is.null(title)) ggplot2::labs(title = title) else NULL} +
 			ggplotaddons
+	
+	if(!is.null(storename)) {
+		assign(storename, p1)
+		input_tools_save(simp, storename)
+	}
+	
+	print(p1)
+	simp$fig$close()
+}
+#' Histogram of competitiveness per AFT: stacked: below/above GU threshold
+#' 
+#' @param simp 
+#' @param data 
+#' @param facet_ncol 
+#' @param filename 
+#' @param numbins 
+#' @param binwidth 
+#' @param title 
+#' @param ggplotaddons 
+#' @param setfigdims 
+#' @param storename 
+#' @return bar plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+visualise_competition_preallocTable <- function(simp, data, facet_ncol = length(simp$mdata$aftNames) - 1,
+		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
+		numbins = 20, binwidth = NULL, title = NULL,
+		ggplotaddons = NULL, setfigdims = TRUE, storename = NULL) {
+	
+	
+	if (!is.data.frame(data)) {
+		data <- do.call(rbind, data)
+	}
+	
+	if(length(data) == 0) {
+		R.oo:throw.default("Data is empty!")
+	}
+	
+	names(data)[names(data)=="PreAllocLandUseIndex"] <- "AFT"
+	# bin data according to numbins
+	data$Var1 <- as.numeric(data$Var1)
+	
+	# NOTE: If the range of values is too narrow, two deciaml places might not sufficient to satisfy number of bins
+	binneddata <- plyr::ddply(.data = data, c("Tick","AFT"), function(df){
+			# df <- data[data$Tick == 2010 & data$AFT == "None",]	
+			df$bin <-  cut(df$Comp, breaks = numbins, labels = sprintf("%.2f",seq(min(df$Comp), max(df$Comp), 
+											length.out=numbins)+((max(df$Comp)-min(df$Comp))/(2*numbins))))
+			df <- aggregate(subset(df, select=c("Above", "Below")), 
+					by = list("PreAllocCompetitiveness" = df$bin), FUN = "sum")
+			df	
+		})
+	
+	melteddata <- reshape2::melt(binneddata, variable.name="GU", id.vars= c("Tick", "AFT", 
+					"PreAllocCompetitiveness"), 
+		direction="long", value.name = "Number")
+
+	if(setfigdims) {
+		simp$fig$height	<- simp$fig$height * if(is.null(facet_ncol)) length(unique(data$Tick)) else length(unique(data$Tick))/facet_ncol
+		simp$fig$width	<- simp$fig$width * if(is.null(facet_ncol)) length(simp$mdata$aftNames) - 1 else facet_ncol 
+	}
+	
+	simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "bars", sep="/"), filename = filename)
+	
+	scaleFillElem <- ggplot2::scale_fill_manual(name="GivingUp", 
+			values = c("Above" = "green", "Below"="red"),
+			labels = c("Above" = "Persisting", "Below"="Giving up"))
+	
+	if (!is.null(facet_ncol)) {
+		facetElem = ggplot2::facet_wrap(as.formula("~ Tick"), ncol = facet_ncol)	
+	} else {
+		facetElem = ggplot2::facet_grid(as.formula(paste("Tick ~", "AFT")), scales="free_y")	
+	}
+	
+	#binwidth = binwidth, 
+	p1 <- ggplot2::ggplot(melteddata, ggplot2::aes(x=PreAllocCompetitiveness, y=Number, fill=GU)) + 
+			ggplot2::geom_bar( stat="identity") + 
+			facetElem  +
+			scaleFillElem +
+			ggplot2::scale_x_discrete(breaks = function(x) x[seq(1, length(x), 
+										length.out=simp$fig$numticks)]) +
+			{if (!is.null(title)) ggplot2::labs(title = title) else NULL} +
+			ggplotaddons
+	
+	if(!is.null(storename)) {
+		assign(storename, p1)
+		input_tools_save(simp, storename)
+	}
+	
 	print(p1)
 	simp$fig$close()
 }

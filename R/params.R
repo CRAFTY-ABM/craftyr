@@ -33,7 +33,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$sim$hasregiondir			<- TRUE
 	defsimp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
 											"datatype", "D", "dataname", "D", "tick")
-	
+									
 	### Directories ################################################################
 	defsimp$dirs <- list()
 	defsimp$dirs$project			<- "./"
@@ -64,7 +64,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$csv$cname_y				<- "Y"
 	defsimp$csv$tickinterval_agg	<- 1
 	defsimp$csv$tickinterval_cell	<- 10
-	
+
 	### Model Data ################################################################
 	
 	defsimp$mdata <- list()
@@ -104,10 +104,12 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$width			<- 1000
 	defsimp$fig$splitfigs		<- FALSE
 	defsimp$fig$plottitle		<- TRUE
+	defsimp$fig$alpha			<- 0.7
 	defsimp$fig$facetlabelsize	<- 12
 	defsimp$fig$outlinesize		<- 0.2
 	defsimp$fig$countryshapes$alpha	<- 0.75
 	defsimp$fig$averagedemand  <- FALSE
+	defsimp$fig$numticks		<- 8
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()

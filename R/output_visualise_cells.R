@@ -69,7 +69,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 				values = simp$colours$GenericFun(simp, number = length(unique(celldata$Values)), set = coloursetname),
 				labels = legenditemnames)
 	}
-	
+			
 	omitaxistickselem <- NULL
 	if (omitaxisticks) {
 		omitaxistickselem <- ggplot2::theme(axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), 
@@ -79,12 +79,12 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 	# ggplot throws an error if any facet consists only of NAs.
 	celldata <- plyr::ddply(celldata, "ID", function(df) {
 				if (all(is.na(df$Values))) {
-					df[df$X==1 & df$Y==1, "Values"] <- levels(df$Values)[1]
+					df[1, "Values"] <- levels(df$Values)[1]
 				}
 				df
 			})
 	#ggplotaddon <- countryshapeelem
-	
+
 	p1 <- ggplot2::ggplot()+
 			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +

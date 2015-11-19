@@ -3,7 +3,7 @@
 \alias{input_xml_param_competition}
 \title{Reads competition functions for each service}
 \usage{
-input_xml_param_competition(simp, filename = "Competition_linear")
+input_xml_param_competition(simp, srcfilename = "Competition_linear")
 }
 \arguments{
 \item{simp}{SIMulation Properties}

@@ -26,7 +26,7 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 		colour_column = NULL, colour_legendtitle = colour_column, colour_legenditemnames = NULL,
 		linetype_column = NULL, linetype_legendtitle = linetype_column, linetype_legenditemnames = NULL,
 		facet_column = NULL, facet_ncol = 2, filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
-		alpha=0.7, ggplotaddons = NULL) {
+		alpha = simp$fig$alpha, ggplotaddons = NULL) {
 
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
