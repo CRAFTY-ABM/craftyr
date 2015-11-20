@@ -12,7 +12,7 @@ input_csv_data(simp, datatype = NULL, dataname = "Cell", columns = NULL,
   aggregationFunction = NULL, skipXY = FALSE)
 }
 \arguments{
-\item{simp}{SIMulation Properties}
+\item{simp}{SIMulation Properties (considered ao. simp$csv$nastrings)}
 
 \item{datatype}{datatype (e.g. "Capital")}
 

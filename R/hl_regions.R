@@ -51,7 +51,7 @@ hl_regions_demandandsupply <- function(simp, runid = simp$sim$runids[1], datanam
 	datDemand <- data.frame(Tick=csv_aggregated_demand$Tick, Variable=csv_aggregated_demand$variable, 
 			Type="Demand", Value=csv_aggregated_demand$Demand, Region = csv_aggregated_demand$Region)
 
-	datSupply <- csv_aggregated_supply[csv_aggregated_supply$ID == as.numeric(runid),]
+	datSupply <- csv_aggregated_supply[csv_aggregated_supply$ID == runid,]
 	datSupply <- data.frame(Tick=datSupply$Tick, Variable=datSupply$Service, Type="Supply", 
 			Value=datSupply$TotalProduction, Region = datSupply$Region)
 	

@@ -7,7 +7,8 @@ hl_competitiveness_preallocPerAft(simp, dataname = "csv_preAlloc_rbinded",
   maxcompetitiveness = "90\%", numbins = 20, facet_ncol = 5,
   filename = paste("PreAllocationCompetition", simp$sim$id, sep = "_"),
   title = NULL, ggplotaddons = NULL, setfigdims = TRUE,
-  afts = simp$mdata$aftNames[-1], checkexists = FALSE)
+  afts = simp$mdata$aftNames[-1], checkexists = FALSE,
+  skipemptybins = TRUE)
 }
 \arguments{
 \item{simp}{}

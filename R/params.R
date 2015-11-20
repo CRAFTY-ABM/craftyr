@@ -111,6 +111,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$countryshapes$alpha	<- 0.75
 	defsimp$fig$averagedemand  <- FALSE
 	defsimp$fig$numticks		<- 8
+	defsimp$fig$maxnumtypes		<- 3
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()

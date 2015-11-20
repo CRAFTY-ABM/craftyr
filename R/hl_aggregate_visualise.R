@@ -72,13 +72,14 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 }
 #' Load from csv data, aggregate, and plot AFT competitiveness per region
 #' 
+#' If the number of regions is above \code{simp$fig$maxnumtypes} facets will be applied to region variable
 #' @param simp 
 #' @param dataname 
 #' @return ggplot2 plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated") {
+hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", facet_ncol = 4) {
 	input_tools_load(simp, dataname)
 	data <- get(dataname)
 	
@@ -95,12 +96,25 @@ hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated") 
 	## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 	
+	if (length(simp$sim$regions) <= simp$fig$maxnumtypes) {
+		linetype_column = "Region"
+		linetype_legendtitle = simp$sim$rundesclabel
+		linetype_legenditemnames = simp$sim$rundesc
+		facet_column = NULL
+	} else {
+		linetype_column = NULL
+		linetype_legendtitle = NULL
+		linetype_legenditemnames = NULL
+		facet_column = "Region"
+	}
 	visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
-			linetype_column = "Region",
-			linetype_legendtitle = simp$sim$rundesclabel,
-			linetype_legenditemnames = simp$sim$rundesc,
+			linetype_column = linetype_column,
+			linetype_legendtitle = linetype_legendtitle,
+			linetype_legenditemnames = linetype_legenditemnames,
+			facet_column = facet_column,
+			facet_ncol = facet_ncol,
 			filename = paste("TotalCompetitivenessPerRegion", 
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
 			alpha=0.7)
