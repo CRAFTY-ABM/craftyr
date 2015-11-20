@@ -126,12 +126,23 @@ visualise_competition_preallocTable <- function(simp, data, facet_ncol = length(
 	# bin data according to numbins
 	data$Comp <- as.numeric(data$Comp)
 	
-	numbins <- min(numbins, length(unique(data$Comp)))
+	# determine breaks:
+	dx <- diff(rx <- range(data$Comp, na.rm = TRUE))
+	if (dx == 0) {
+		dx <- abs(rx[1L])
+		breaks <- seq.int(rx[1L] - dx/1000, rx[2L] + dx/1000, 
+				length.out = numbins + 1)
+	} else {
+		breaks <- seq.int(rx[1L], rx[2L], length.out = numbins + 1)
+		breaks[c(1L, numbins + 1)] <- c(rx[1L] - dx/1000, rx[2L] + 
+						dx/1000)
+	}
+	labels <- sprintf("%.2f", breaks[-1] - dx/(2*numbins))
+	
 	# NOTE: If the range of values is too narrow, two decimal places might not sufficient to satisfy number of bins
 	binneddata <- plyr::ddply(.data = data, c("Tick","AFT"), function(df){
-			# df <- data[data$Tick == 2020 & data$AFT == "1",]	
-			df$bin <- if(numbins==1) unique(data$Comp) else cut(df$Comp, breaks = numbins, labels = sprintf("%.2f",seq(min(data$Comp), max(data$Comp), 
-											length.out=numbins)+((max(data$Comp)-min(data$Comp))/(2*numbins))))
+			# df <- data[data$Tick == 2011 & data$AFT == "1",]
+			df$bin <- cut(df$Comp, breaks = breaks, labels = labels)
 			df <- aggregate(subset(df, select=c("Above", "Below")), 
 					by = list("PreAllocCompetitiveness" = df$bin), FUN = "sum")
 			df	

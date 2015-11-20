@@ -61,7 +61,7 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 	}
 	
 	if (length(rinfo[,1]) == 0) {
-		R.oo::throw.default("Runinfo table ", filename," does not contain a row for version " + 
+		R.oo::throw.default("Runinfo table ", filename," does not contain a row for version ", 
 						simp$sim$version, "!", sep="")
 	}
 	

@@ -3,7 +3,8 @@
 \alias{hl_competitivenessPerRegion}
 \title{Load from csv data, aggregate, and plot AFT competitiveness per region}
 \usage{
-hl_competitivenessPerRegion(simp, dataname = "csv_cell_aggregated")
+hl_competitivenessPerRegion(simp, dataname = "csv_cell_aggregated",
+  facet_ncol = 4)
 }
 \arguments{
 \item{simp}{}
@@ -14,7 +15,7 @@ hl_competitivenessPerRegion(simp, dataname = "csv_cell_aggregated")
 ggplot2 plot
 }
 \description{
-Load from csv data, aggregate, and plot AFT competitiveness per region
+If the number of regions is above \code{simp$fig$maxnumtypes} facets will be applied to region variable
 }
 \author{
 Sascha Holzhauer

@@ -37,6 +37,6 @@ plot
 Calculate and plot competitiveness for every AFT on every cell
 }
 \author{
-Sascha Holzhauer
+Sascha Holzhauerhl_competitivenessPerRegion
 }
 

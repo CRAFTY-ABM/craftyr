@@ -80,8 +80,15 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_printCompetitionFunctions <- function(simp, srcfilename = "Competition_linear", xrange = c(-3,3), yrange = c(-1,1),
-		filename = "competitionFunctions") {
+hl_printCompetitionFunctions <- function(simp, srcfilename = NULL, xrange = c(-3,3), yrange = c(-1,1),
+		filename = "competitionFunctions", runidcolumnname="run") {
+	if(is.null(srcfilename)) {
+		paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+							simp$sim$runids[1]})
+		runData <- input_csv_param_runs(simp)
+		srcfilename <- basename(as.character(runData[runData[runidcolumnname] == paramid, "Competition_xml"]))
+	}
+	
 	functions <- input_xml_param_competition(simp, srcfilename = srcfilename)
 	visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename)
 } 

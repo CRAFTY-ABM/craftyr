@@ -11,10 +11,15 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
 	
+	cdata$Region <- NULL
+	cdata$Scenario <- NULL
+	
+	runid <- unique(cdata$Runid)
+	
 	if (!paste(secondtick, runid, sep=".") %in% names(cdata)) {
 		futile.logger::flog.error("Data does not contain second tick (%d)!",
-					secondtick,
-					name = "craftyr.hl_maps.R")
+				secondtick,
+				name = "craftyr.hl_maps.R")
 	}
 	
 	if (!paste(secondtick, runid, sep=".") %in% names(cdata)) {
@@ -22,11 +27,6 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 				firsttick,
 				name = "craftyr.hl_maps.R")
 	}
-	
-	cdata$Region <- NULL
-	cdata$Scenario <- NULL
-	
-	runid <- unique(cdata$Runid)
 	
 	if (length(runid) > 1) {
 		futile.logger::flog.warn("More than one runid defined. Using %s.", as.character(runid[1]),
