@@ -547,7 +547,8 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 		ggplotaddons = NULL,
 		setfigdims = TRUE,
 		afts = simp$mdata$aftNames,
-		checkexists = FALSE) {
+		checkexists = FALSE,
+		skipemptybins = TRUE) {
 	
 	storename <- paste("PreAllocationCompetitionPlot", paste(afts, collapse="-"), numbins, sep="_")
 	if (checkexists && input_tools_checkexists(simp, storename)) {
@@ -575,7 +576,12 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 		if("Above" %in% colnames(data) && "Below" %in% colnames(data)) {
 			
 			suppressWarnings(data$Comp <- as.numeric(levels(data$Comp)[data$Comp]))
-			data <- data[complete.cases(data),]
+			aftIDs = as.numeric(names(simp$mdata$aftNames)[match(afts, simp$mdata$aftNames)])
+			data <- data[complete.cases(data) & data$PreAllocLandUseIndex %in% aftIDs,]
+			
+			if(skipemptybins) {
+				data <- data[data$Above != 0 & data$Below != 0,]
+			}
 			
 			if (grepl("%", maxcompetitiveness)) {
 				maxcompetitiveness <- quantile(data$Comp, 
@@ -639,7 +645,8 @@ hl_competitiveness_preallocPerAft <- function(simp, dataname = "csv_preAlloc_rbi
 		title = NULL, ggplotaddons = NULL,
 		setfigdims = TRUE,
 		afts = simp$mdata$aftNames[-1],
-		checkexists = FALSE) {
+		checkexists = FALSE,
+		skipemptybins = TRUE) {
 	
 	lapply(afts, function(aft) {
 				hl_competitiveness_prealloc(
@@ -653,7 +660,8 @@ hl_competitiveness_preallocPerAft <- function(simp, dataname = "csv_preAlloc_rbi
 						ggplotaddons = ggplotaddons,
 						setfigdims = setfigdims,
 						afts = aft,
-						checkexists = checkexists)})	
+						checkexists = checkexists,
+						skipemptybins = skipemptybins)})	
 }
 #' Read stored landuse data, calculate and visualise spatial autocorrelation score
 #' 
@@ -717,4 +725,59 @@ hl_connectedness <- function(simp, dataname = "csv_aggregated_connectivity",
 			datatype = datatype, datacolumns = aftcolumns, linetypecol = "Region",
 			colourcol = "Type", titleprefix = "Connectedness", filenameprefix = "Connectedness288", 
 			percent = percent)
+}
+#' Read and plot normalised per-cell residuals
+#' 
+#' @param simp 
+#' @param filenamemarginalutils 
+#' @param filenamePlotPercellDemand 
+#' @param filenameNormalisedResiduals 
+#' @param capitalfilepartorder 
+#' @return plot(s)
+#' 
+#' @author Sascha HolzhauerVar1
+#' @export
+hl_normalisedutilities <- function(simp,
+		filenamemarginalutils = paste(simp$dirs$output$rdata, "MarginalUtilitiesPerCell.csv", sep = "/"),
+		filenamePlotPercellDemand = NULL,
+		filenameNormalisedResiduals = paste("NormalisedResiduals", 
+				shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
+		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype")) {
+	
+	marginalUtils <- shbasic::sh_tools_loadorsave(SIP = simp, 
+			OBJECTNAME = "csv_MarginalUtilitites_melt",
+			PRODUCTIONFUN = input_marginalutilities,
+			simp = simp, filename = filenamemarginalutils)
+	
+	
+	input_tools_load(simp, "dataAggregateSupplyDemand")
+	data <- convert_aggregate_meltsupplydemand(simp, dataAggregateSupplyDemand)
+	data <- aggregate(subset(data, select=c("Value")),
+			by = list(ID = data[,"Runid"],
+					Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
+					Service=data[,"Service"], Type=data[,"Type"]),
+			FUN=sum)
+	
+	simp$sim$filepartorder	<- capitalfilepartorder
+	num <- input_csv_param_capitals_cellnumbers(simp, regionpartfromend = 2, regionpartdevider = "_")
+	data$Value <- data$Value / sum(num$Cells)
+	
+	if (!is.null(filenamePlotPercellDemand)) {
+		visualise_lines(simp, data, "Value", title = "Per-cell Demand & Supply",
+				colour_column = "Service",
+				linetype_column = "Type",
+				filename = filenamePlotPercellDemand,
+				alpha=simp$fig$alpha)
+	}
+	
+	# merge data
+	data <- data[data$Type == "Demand",]
+	merged <- merge(marginalUtils, data)
+	normalised <- merged
+	normalised$Value <-  normalised$value / normalised$Value
+	visualise_lines(simp, normalised, "Value", title = "Demand-normalised per-cell Residuals",
+			colour_column = "Service",
+			linetype_column = "Type",
+			filename = filenameNormalisedResiduals,
+			alpha=simp$fig$alpha)
 }

@@ -33,20 +33,29 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 input_csv_param_capitals_cellnumbers <- function(simp,
 		regionpartfromend = 2, regionpartdevider = "_") {
 	
-	#simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
-	filenames <- input_tools_getModelInputFilenames(simp, datatype="Capitals", 
-			folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
-			pertick = FALSE, extension = "csv")
+	cellnum <- shbasic::sh_tools_loadorsave(SIP = simp, 
+			OBJECTNAME = paste("cellNum", simp$sim$world, simp$sim$regionalisation, sep="-"),
+			PRODUCTIONFUN = function(simp, regionpartfromend, regionpartdevider) {
 	
-	lapply(filenames, shbasic::sh.checkFilename)
-	cellnums <- lapply(filenames, function(file) {
-				data <- utils::read.csv(file)
-				df <- data.frame(
-					Region =  strsplit(file, paste("[/", regionpartdevider,"]"))[[1]][length(strsplit(file, 
-											paste("[/", regionpartdevider,"]"))[[1]])- regionpartfromend + 1], 
-					Cells  =  nrow(data))
-			})
-	cellnums <-  do.call(rbind, cellnums)
+		#simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
+		filenames <- input_tools_getModelInputFilenames(simp, datatype="Capitals", 
+				folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
+				pertick = FALSE, extension = "csv", returnfileinfo = FALSE)
+		
+		lapply(filenames, shbasic::sh.checkFilename)
+		cellnums <- lapply(filenames, function(file) {
+					data <- utils::read.csv(file)
+					df <- data.frame(
+						Region =  strsplit(file, paste("[/", regionpartdevider,"]"))[[1]][length(strsplit(file, 
+												paste("[/", regionpartdevider,"]"))[[1]])- regionpartfromend + 1], 
+						Cells  =  nrow(data))
+				})
+		cellnums <-  do.call(rbind, cellnums)
+	},
+	simp = simp, 
+	regionpartfromend = regionpartfromend,
+	regionpartdevider = regionpartdevider)
+
 }
 #' Assign regions to slots for parallel computing
 #' 

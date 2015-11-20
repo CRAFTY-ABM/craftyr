@@ -6,7 +6,7 @@
 input_tools_getModelInputFilenames(simp,
   folders = input_tools_getModelInputDir(simp, datatype), datatype = NULL,
   dataname = NULL, extension = NULL, pertick = FALSE, starttick = NULL,
-  endtick = NULL, tickinterval = NULL)
+  endtick = NULL, tickinterval = NULL, returnfileinfo = TRUE)
 }
 \arguments{
 \item{simp}{}
@@ -27,6 +27,8 @@ input_tools_getModelInputFilenames(simp,
 \item{endtick}{only required when \code{pertick == TRUE}}
 
 \item{tickinterval}{only required when \code{pertick == TRUE}}
+
+\item{returnfileinfo}{}
 }
 \value{
 list of vector of filenames (list elements rerpesent files of one folder)

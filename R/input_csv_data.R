@@ -2,7 +2,7 @@
 #' 
 #' Reads output data for the specified datatype and dataname from CSV data for potentially multiple runs, 
 #' regions, and multiple ticks.
-#' @param simp SIMulation Properties
+#' @param simp SIMulation Properties (considered ao. simp$csv$nastrings)
 #' @param datatype  datatype (e.g. "Capital")
 #' @param dataname dataname (e.g. "Cap1")
 #' @param columns Vector of colum names. If given restricts returned colums to the given headers 
@@ -44,7 +44,7 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 	data <- lapply(fileinfos, function(item) {
 				result <- plyr::ddply(item, "Filename", function(df) {
 							return <- tryCatch({
-								data <- utils::read.csv(df[,"Filename"])
+								data <- utils::read.csv(df[,"Filename"], na.strings = simp$csv$nastrings)
 								if (length(data[,1]) == 0) {
 									warnings("CSV file ", df[,"Filename"] , " does not contain any rows!")
 									return(NULL)
@@ -125,9 +125,10 @@ input_csv_prealloccomp <- function(simp, datatype = "PreAlloc",
 	
 	ticks <- seq(starttick, endtick, tickinterval)
 	data <- data[data$PreAllocLandUseIndex != "None" && data$Tick %in% ticks,]
+	data <- data[complete.cases(data),]
 	
 	csv_preAllocTable <- plyr::ddply(.data =  data, c("Tick","PreAllocLandUseIndex"), function(df){
-				# df <- data[data$Tick == 2011 & data$PreAllocLandUseIndex == 2,]
+				# df <- data[data$Tick == 2040 & data$PreAllocLandUseIndex == 2,]
 				tableData = merge(as.data.frame(table(df[as.numeric(df$PreAllocCompetitiveness) >= 
 								as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"]), 
 								responseName = "Above"), 

@@ -62,6 +62,13 @@ input_tools_save(simp, "csv_cell_aggregated")
 ## ---- eval=FALSE---------------------------------------------------------
 #  library(craftyr)
 #  simp <- param_getExamplesSimp()
+#  simp$sim$filepartorder	<- c("regions", "D", "datatype")
+#  csv_preAllocTable <- input_csv_prealloccomp(simp)
+#  input_tools_save(simp, "csv_preAllocTable")
+
+## ---- eval=FALSE---------------------------------------------------------
+#  library(craftyr)
+#  simp <- param_getExamplesSimp()
 #  dataAggregateAFTComposition <- input_csv_data(simp, dataname = NULL, datatype = "AggregateAFTComposition",
 #  		pertick = FALSE,
 #  		bindrows = TRUE,
@@ -365,6 +372,13 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_marginalutilities(simp)
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  hl_normalisedutilities(simp,
+#  		filenamemarginalutils = paste(simp$dirs$output$rdata, "MarginalUtilitiesPerCell.csv", sep = "/"),
+#  		filenameNormalisedResiduals = paste("NormalisedResiduals",
+#  				shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
+#  		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype"))
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_landindiceskey_csv(simp)
