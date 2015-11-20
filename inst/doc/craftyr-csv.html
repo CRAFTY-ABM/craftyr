@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-11-19" />
+<meta name="date" content="2015-11-20" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-11-19</em></h4>
+<h4 class="date"><em>2015-11-20</em></h4>
 </div>
 
 <div id="TOC">
@@ -63,6 +63,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#overall-features">(Overall) Features</a></li>
 <li><a href="#source-regional-csv-data-celltable---land-use-data-per-cell">Source: Regional CSV data (CellTable) - Land use data per cell</a></li>
 <li><a href="#source-regional-csv-data-celltable---aggregated-data">Source: Regional CSV data (CellTable) - Aggregated data</a></li>
+<li><a href="#source-cell-table-pre-allocation-competitiveness">Source: Cell Table (Pre-Allocation Competitiveness)</a></li>
 <li><a href="#source-aggregated-aft-composition">Source: Aggregated AFT Composition</a></li>
 <li><a href="#source-aggregated-demand-and-supply-data-aggregatedemandsupplycsvoutputter">Source: Aggregated Demand and Supply Data (AggregateDemandSupplyCSVOutputter)</a></li>
 <li><a href="#source-takeover-from-giving-in-data-takeovercelloutputter">Source: TakeOver from Giving In Data (TakeoverCellOutputter)</a></li>
@@ -92,6 +93,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#pre-allocation-competitiveness">Pre-Allocation Competitiveness</a></li>
 <li><a href="#cell-volatility-1">Cell Volatility</a></li>
 <li><a href="#marginal-utilities">Marginal Utilities</a></li>
+<li><a href="#demand-normalised-per-cell-marginal-utilities">Demand-normalised per-cell marginal Utilities</a></li>
 <li><a href="#total-productivity">Total Productivity</a></li>
 </ul></li>
 </ul></li>
@@ -177,6 +179,15 @@ csv_cell_aggregated &lt;-<span class="st"> </span><span class="kw">input_csv_dat
         <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)
 <span class="kw">rownames</span>(csv_cell_aggregated) &lt;-<span class="st"> </span><span class="ot">NULL</span>
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_cell_aggregated&quot;</span>)</code></pre>
+</div>
+<div id="source-cell-table-pre-allocation-competitiveness" class="section level2">
+<h2>Source: Cell Table (Pre-Allocation Competitiveness)</h2>
+<p>Read CSV data of pre-allocation competitiveness and transfer to data.frame of frequencies</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
+simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+simp$sim$filepartorder  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;regions&quot;</span>, <span class="st">&quot;D&quot;</span>, <span class="st">&quot;datatype&quot;</span>)
+csv_preAllocTable &lt;-<span class="st"> </span><span class="kw">input_csv_prealloccomp</span>(simp)
+<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_preAllocTable&quot;</span>)</code></pre>
 </div>
 <div id="source-aggregated-aft-composition" class="section level2">
 <h2>Source: Aggregated AFT Composition</h2>
@@ -526,6 +537,17 @@ melteddat &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>(d
         <span class="dt">alpha=</span><span class="fl">0.7</span>)</code></pre>
 <p>High level:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_marginalutilities</span>(simp)</code></pre>
+</div>
+<div id="demand-normalised-per-cell-marginal-utilities" class="section level4">
+<h4>Demand-normalised per-cell marginal Utilities</h4>
+<p>The file MarginalUtilitiesPerCell.csv can be craeted by python script extractMarginalUtilityFromFiles.py.</p>
+<p>TODO</p>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_normalisedutilities</span>(simp,
+        <span class="dt">filenamemarginalutils =</span> <span class="kw">paste</span>(simp$dirs$output$rdata, <span class="st">&quot;MarginalUtilitiesPerCell.csv&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>),
+        <span class="dt">filenameNormalisedResiduals =</span> <span class="kw">paste</span>(<span class="st">&quot;NormalisedResiduals&quot;</span>, 
+                shbasic::<span class="kw">shbasic_condenseRunids</span>(<span class="kw">data.frame</span>(data)[, <span class="st">&quot;ID&quot;</span>]), <span class="dt">sep=</span><span class="st">&quot;_&quot;</span>),
+        <span class="dt">capitalfilepartorder =</span> <span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>))</code></pre>
 </div>
 <div id="total-productivity" class="section level4">
 <h4>Total Productivity</h4>

@@ -291,10 +291,11 @@ input_tools_getModelInputFilenames <- function(simp, folders = input_tools_getMo
 		pertick = FALSE,
 		starttick = NULL,
 		endtick = NULL, 
-		tickinterval = NULL) {
+		tickinterval = NULL,
+		returnfileinfo = TRUE) {
 	input_tools_getModelOutputFilenames(simp = simp, folders = folders, datatype = datatype, dataname = dataname,
 			extension = extension, pertick = pertick, starttick = starttick, endtick = endtick, 
-			tickinterval = tickinterval)
+			tickinterval = tickinterval, returnfileinfo = returnfileinfo)
 }
 #' Wrapper for save
 #' 

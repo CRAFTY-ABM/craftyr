@@ -510,6 +510,21 @@ High level:
 hl_marginalutilities(simp)
 ```
 
+#### Demand-normalised per-cell marginal Utilities
+
+The file MarginalUtilitiesPerCell.csv can be craeted by python script extractMarginalUtilityFromFiles.py.
+
+TODO
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_normalisedutilities(simp,
+		filenamemarginalutils = paste(simp$dirs$output$rdata, "MarginalUtilitiesPerCell.csv", sep = "/"),
+		filenameNormalisedResiduals = paste("NormalisedResiduals", 
+				shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
+		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype"))
+```	
+		
 #### Total Productivity
 
 #  Output (write) CSV Data

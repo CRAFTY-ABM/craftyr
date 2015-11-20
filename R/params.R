@@ -64,6 +64,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$csv$cname_y				<- "Y"
 	defsimp$csv$tickinterval_agg	<- 1
 	defsimp$csv$tickinterval_cell	<- 10
+	defsimp$csv$nastrings			<- "?"
 
 	### Model Data ################################################################
 	

@@ -118,19 +118,20 @@ visualise_competition_preallocTable <- function(simp, data, facet_ncol = length(
 		data <- do.call(rbind, data)
 	}
 	
-	if(length(data) == 0) {
-		R.oo:throw.default("Data is empty!")
+	if(length(data[,1]) == 0) {
+		R.oo::throw.default("Data is empty!")
 	}
 	
 	names(data)[names(data)=="PreAllocLandUseIndex"] <- "AFT"
 	# bin data according to numbins
-	data$Var1 <- as.numeric(data$Var1)
+	data$Comp <- as.numeric(data$Comp)
 	
-	# NOTE: If the range of values is too narrow, two deciaml places might not sufficient to satisfy number of bins
+	numbins <- min(numbins, length(unique(data$Comp)))
+	# NOTE: If the range of values is too narrow, two decimal places might not sufficient to satisfy number of bins
 	binneddata <- plyr::ddply(.data = data, c("Tick","AFT"), function(df){
-			# df <- data[data$Tick == 2010 & data$AFT == "None",]	
-			df$bin <-  cut(df$Comp, breaks = numbins, labels = sprintf("%.2f",seq(min(df$Comp), max(df$Comp), 
-											length.out=numbins)+((max(df$Comp)-min(df$Comp))/(2*numbins))))
+			# df <- data[data$Tick == 2020 & data$AFT == "1",]	
+			df$bin <- if(numbins==1) unique(data$Comp) else cut(df$Comp, breaks = numbins, labels = sprintf("%.2f",seq(min(data$Comp), max(data$Comp), 
+											length.out=numbins)+((max(data$Comp)-min(data$Comp))/(2*numbins))))
 			df <- aggregate(subset(df, select=c("Above", "Below")), 
 					by = list("PreAllocCompetitiveness" = df$bin), FUN = "sum")
 			df	
