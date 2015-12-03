@@ -129,12 +129,14 @@ input_csv_prealloccomp <- function(simp, datatype = "PreAlloc",
 	
 	csv_preAllocTable <- plyr::ddply(.data =  data, c("Tick","PreAllocLandUseIndex"), function(df){
 				# df <- data[data$Tick == 2040 & data$PreAllocLandUseIndex == 2,]
+				belowTable <- table(df[as.numeric(df$PreAllocCompetitiveness) < 
+										as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"])
+				
 				tableData = merge(as.data.frame(table(df[as.numeric(df$PreAllocCompetitiveness) >= 
 								as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"]), 
-								responseName = "Above"), 
-						as.data.frame(table(df[as.numeric(df$PreAllocCompetitiveness) < 
-								as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"]), 
-								responseName = "Below"), by="Var1", all=T)
+								responseName = "Above"),
+						if (nrow(belowTable) == 0) data.frame("Below" = 0, "Var1" = NA) else 
+						as.data.frame(belowTable, responseName = "Below", optional=T), by="Var1", all=T)
 				tableData[is.na(tableData)] <-  0
 				names(tableData)[names(tableData)=="Var1"] <- "Comp"
 				tableData

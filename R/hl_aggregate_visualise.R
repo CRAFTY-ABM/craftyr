@@ -36,6 +36,57 @@ hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated") {
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
 			alpha=0.7)
 }
+#' Load, aggregate and visualise production per service and AFT
+#' 
+#' @param simp 
+#' @param dataname
+#' @param facet_ncol
+#' @param normaliseByAftNumber
+#' @return timeline plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_ncol=2, 
+		normaliseByAftNumber = TRUE) {
+	
+	input_tools_load(simp, dataname)
+	data <- get(dataname)
+	
+	serviceCols <- names(simp$mdata$conversion$services)[grep("Service",
+					names(simp$mdata$conversion$services))]
+	# select cols and skip unmanaged:
+	prodData <- data[data$LandUseIndex >=0, colnames(data) %in% 
+					c("Tick", "LandUseIndex", "AFT", "Runid", "Region", serviceCols)]
+	prodData$AftNumbers <- prodData$AFT
+	
+	prodData <- aggregate(subset(prodData, select=c(serviceCols,"AftNumbers")),
+			by = list(ID = prodData[,"Runid"],
+					Tick=prodData[, "Tick"],  AFT=prodData[,"LandUseIndex"]),
+			FUN=sum)
+	
+	if (normaliseByAftNumber) {
+		prodData[,serviceCols] <- prodData[,serviceCols]/prodData$AftNumbers
+	}
+	prodData$AftNumbers = NULL
+	
+	prodData$AFT <- as.factor(prodData$AFT)
+	prodData <- reshape2::melt(prodData, c("Tick", "AFT", "ID"), value.name="Production", variable.name="Service")
+	
+	prodData$Service <- simp$mdata$conversion$services[prodData$Service]
+	prodData$AFT <- simp$mdata$aftNames[match(prodData$AFT, names(simp$mdata$aftNames))]
+	
+	visualise_lines(simp, prodData, "Production", title = "Service Production",
+			colour_column = "Service",
+			#colour_legenditemnames = simp$mdata$services,
+			linetype_column = "ID",
+			linetype_legendtitle = simp$sim$rundesclabel,
+			linetype_legenditemnames = simp$sim$rundesc,
+			facet_colum = "AFT",
+			facet_ncol = facet_ncol,
+			filename = paste("ServiceProduction", 
+					shbasic::shbasic_condenseRunids(data.frame(prodData)[, "ID"]), sep="_"),
+			alpha=simp$fig$alpha)
+}
 #' Load from csv data, aggregate, and plot AFT competitiveness
 #' 
 #' @param simp 
@@ -754,16 +805,19 @@ hl_connectedness <- function(simp, dataname = "csv_aggregated_connectivity",
 hl_normalisedutilities <- function(simp,
 		filenamemarginalutils = paste(simp$dirs$output$rdata, "MarginalUtilitiesPerCell.csv", sep = "/"),
 		filenamePlotPercellDemand = NULL,
-		filenameNormalisedResiduals = paste("NormalisedResiduals", 
-				shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), sep="_"),
+		filenameNormalisedResiduals = paste("NormalisedResiduals", simp$sim$runid, sep="_"),
 		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype")) {
 	
 	marginalUtils <- shbasic::sh_tools_loadorsave(SIP = simp, 
 			OBJECTNAME = "csv_MarginalUtilitites_melt",
 			PRODUCTIONFUN = input_marginalutilities,
 			simp = simp, filename = filenamemarginalutils)
-	
-	
+
+	marginalUtils$Scenario	<- simp$sim$scenario
+	names(marginalUtils)[names(marginalUtils)=="Runid"] <- "ID"
+	# to distinguish from demand:
+	names(marginalUtils)[names(marginalUtils)=="Value"] <- "V"
+
 	input_tools_load(simp, "dataAggregateSupplyDemand")
 	data <- convert_aggregate_meltsupplydemand(simp, dataAggregateSupplyDemand)
 	data <- aggregate(subset(data, select=c("Value")),
@@ -786,10 +840,9 @@ hl_normalisedutilities <- function(simp,
 	
 	# merge data
 	data <- data[data$Type == "Demand",]
-	merged <- merge(marginalUtils, data)
-	normalised <- merged
-	normalised$Value <-  normalised$value / normalised$Value
-	visualise_lines(simp, normalised, "Value", title = "Demand-normalised per-cell Residuals",
+	normalised <- merge(marginalUtils, data)
+	normalised$Value <-  normalised$V / normalised$Value
+	visualise_lines(simp, normalised, "Value", title = "Demand-normalised per-cell Utilities",
 			colour_column = "Service",
 			linetype_column = "Type",
 			filename = filenameNormalisedResiduals,

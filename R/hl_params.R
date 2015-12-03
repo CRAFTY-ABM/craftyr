@@ -86,7 +86,8 @@ hl_printCompetitionFunctions <- function(simp, srcfilename = NULL, xrange = c(-3
 		paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 							simp$sim$runids[1]})
 		runData <- input_csv_param_runs(simp)
-		srcfilename <- basename(as.character(runData[runData[runidcolumnname] == paramid, "Competition_xml"]))
+		srcfilename <- tools::file_path_sans_ext(basename(as.character(runData[runData[runidcolumnname] == paramid, 
+										"Competition_xml"])))
 	}
 	
 	functions <- input_xml_param_competition(simp, srcfilename = srcfilename)

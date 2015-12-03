@@ -52,7 +52,7 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 	if (!is.null(linetype_column)) {
 		scaleLinetypeElem <- ggplot2::scale_linetype_manual(name=linetype_legendtitle, 
 				values = if (!is.null(simp$linetypes[linetype_column])) simp$linetypes[[linetype_column]] else 
-							seq(from=1, by=1, to=unique(length(data[,linetype_column]))),
+							seq(from=1, by=1, to=length(unique(data[,linetype_column]))),
 				labels = if(!is.null(linetype_legenditemnames)) linetype_legenditemnames else ggplot2::waiver())
 	}
 	
