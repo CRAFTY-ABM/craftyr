@@ -9,8 +9,9 @@ input_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdat
 	utilities = read.csv(filename, colClasses = "numeric")
 	csv_MarginalUtilitites_melt = reshape2::melt(utilities, variable.name="Service", 
 			id.vars= c("Year"), 
-			direction="long")
+			direction="long",
+			value.name = "Value")
 	colnames(csv_MarginalUtilitites_melt)[colnames(csv_MarginalUtilitites_melt) == "Year"] <- "Tick"
-	csv_MarginalUtilitites_melt$Runid <- 0
+	csv_MarginalUtilitites_melt$ID <- simp$sim$runid
 	csv_MarginalUtilitites_melt
 }

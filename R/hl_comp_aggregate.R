@@ -149,7 +149,7 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated",
 }
 #' Supply and Demand gap depending on AFT param
 #' 
-#' Plots the gab between demand and supply for various runs with
+#' Plots the gap between demand and supply for various runs with
 #' agent param as dependent variable.
 #'
 #' @param simp 

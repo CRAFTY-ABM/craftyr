@@ -3,8 +3,9 @@
 \alias{hl_printCompetitionFunctions}
 \title{Read and plot compotition functions}
 \usage{
-hl_printCompetitionFunctions(simp, srcfilename = "Competition_linear",
-  xrange = c(-3, 3), yrange = c(-1, 1), filename = "competitionFunctions")
+hl_printCompetitionFunctions(simp, srcfilename = NULL, xrange = c(-3, 3),
+  yrange = c(-1, 1), filename = "competitionFunctions",
+  runidcolumnname = "run")
 }
 \arguments{
 \item{simp}{}
