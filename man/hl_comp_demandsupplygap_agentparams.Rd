@@ -33,7 +33,7 @@ hl_comp_demandsupplygap_agentparams(simp,
 plot
 }
 \description{
-Plots the gab between demand and supply for various runs with
+Plots the gap between demand and supply for various runs with
 agent param as dependent variable.
 }
 \author{

@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2015-12-03" />
+<meta name="date" content="2015-12-19" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2015-12-03</em></h4>
+<h4 class="date"><em>2015-12-19</em></h4>
 </div>
 
 <div id="TOC">
@@ -96,8 +96,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#demand-normalised-per-cell-marginal-utilities">Demand-normalised per-cell marginal Utilities</a></li>
 <li><a href="#total-productivity">Total Productivity</a></li>
 </ul></li>
-<li><a href="#comparisons">Comparisons</a><ul>
+<li><a href="#from-single-files">From Single Files</a><ul>
 <li><a href="#aft-composition">AFT Composition</a></li>
+<li><a href="#aft-composition-1">AFT Composition</a></li>
 <li><a href="#demand-and-supply">Demand and Supply</a></li>
 </ul></li>
 </ul></li>
@@ -384,9 +385,13 @@ scoresdata &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, 
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getDefaultSimp</span>()
 <span class="kw">input_tools_load</span>(simp, <span class="st">&quot;dataAggregateAFTComposition&quot;</span>)
-
+dataComp &lt;-<span class="st"> </span>dataAggregateAFTComposition
+dataComp[,<span class="kw">grep</span>(<span class="st">&quot;AFT.&quot;</span>, <span class="kw">colnames</span>(dataComp))] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">do.call</span>(cbind, 
+    <span class="kw">lapply</span>(dataComp[,<span class="kw">grep</span>(<span class="st">&quot;AFT.&quot;</span>, <span class="kw">colnames</span>(dataComp))], as.character)))
+dataComp &lt;-<span class="st"> </span>dataComp[<span class="kw">complete.cases</span>(dataComp),]
+<span class="kw">colnames</span>(dataComp) &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;AFT.&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="kw">colnames</span>(dataComp))
+    
 data &lt;-reshape2::<span class="kw">melt</span>(dataAggregateAFTComposition, <span class="dt">variable.name=</span><span class="st">&quot;Agent&quot;</span>, <span class="dt">id.vars=</span> <span class="kw">c</span>(<span class="st">&quot;Region&quot;</span>, <span class="st">&quot;Tick&quot;</span>, <span class="st">&quot;Runid&quot;</span>, <span class="st">&quot;Scenario&quot;</span>), <span class="dt">direction=</span><span class="st">&quot;long&quot;</span>)
-data$value &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">levels</span>(data$value)[data$value])
 d &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(data, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;value&quot;</span>)), <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">Agent =</span> data$Agent, <span class="dt">Tick=</span> data$Tick, <span class="dt">Runid=</span>data$Runid, <span class="dt">Scenario=</span>data$Scenario), <span class="st">&quot;mean&quot;</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
 
 ############### substitute AFT names by AFT ID
@@ -560,9 +565,17 @@ melteddat &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>(d
 <h4>Total Productivity</h4>
 </div>
 </div>
-<div id="comparisons" class="section level3">
-<h3>Comparisons</h3>
-<p>To compare different data sets, according sip lists need to be defined:</p>
+<div id="from-single-files" class="section level3">
+<h3>From Single Files</h3>
+<div id="aft-composition" class="section level4">
+<h4>AFT Composition</h4>
+<p>Reads single CSV file with AFT composition and produces timeline figure.</p>
+<p>High level:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_aftcomposisition_file</span>(simp, csvfilename, <span class="dt">title =</span> <span class="st">&quot;AftComposition&quot;</span>, 
+        <span class="dt">figurefilename =</span> <span class="st">&quot;AftComposition&quot;</span>) 
+
+### Comparisons
+To compare different data sets, according sip lists need to be defined:</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;./simp44.R&quot;</span>)
 simp1 &lt;-<span class="st"> </span>simp
 simp1$sim$shortid &lt;-<span class="st"> &quot;SD.9&quot;</span>
@@ -575,7 +588,8 @@ simp2$sim$shortid &lt;-<span class="st"> &quot;SD.4&quot;</span>
 simp3 &lt;-<span class="st"> </span>simp
 simp3$sim$shortid &lt;-<span class="st"> &quot;SD.55&quot;</span>
 simps &lt;-<span class="st"> </span><span class="kw">list</span>(simp1, simp2, simp3)</code></pre>
-<div id="aft-composition" class="section level4">
+</div>
+<div id="aft-composition-1" class="section level4">
 <h4>AFT Composition</h4>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_comp_aggregate_aftcompositions</span>(simp, simps, <span class="dt">dataname=</span><span class="st">&quot;dataAggregateAFTComposition&quot;</span>)</code></pre>
 </div>

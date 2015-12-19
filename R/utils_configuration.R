@@ -39,3 +39,45 @@ adjust_changecolumnnames <- function(sip,  indir = simp$dirs$param$getparamdir(s
 			length(list.files(indir, pattern = filepattern)),
 			name = "craftyr.utils.adjust.colnames")
 }
+#' Copy first line of CSV file and assign endtick.
+#' 
+#' @param sip 
+#' @param indir 
+#' @param outdir 
+#' @param endtick 
+#' @return altered CSV files
+#' 
+#' @author Sascha Holzhauer
+#' @export
+make_demand_static <- function(sip,  indir = simp$dirs$param$getparamdir(simp, "demand"),
+		outdir = indir, endtick = simp$sim$endtick, tickcolumnname = "Year", filepattern = "*.csv") {
+	
+	futile.logger::flog.info("Processing files in %s...",
+			indir,
+			name = "craftyr.utils.demand.static")
+	
+	shbasic::sh.ensurePath(outdir)
+	for (file in list.files(indir, pattern = filepattern)) {
+		#file <- list.files(indir, pattern="*.csv")[1]
+		
+		futile.logger::flog.info("Processing %s...",
+				file,
+				name = "craftyr.utils.demand.static")
+		
+		data <- read.csv(paste(indir, file, sep="/"))
+		
+		data <- rbind(data[1,], data[1,])
+		data[2, tickcolumnname] <- endtick
+		
+		outfile <- paste(outdir, file, sep="/")
+		
+		futile.logger::flog.info("Writing to %s...",
+				outfile,
+				name = "craftyr.utils.demand.static")
+		
+		write.csv(data, outfile, row.names = FALSE)
+	}
+	futile.logger::flog.info("Processed %d files!",
+			length(list.files(indir, pattern = filepattern)),
+			name = "craftyr.utils.demand.static")
+}

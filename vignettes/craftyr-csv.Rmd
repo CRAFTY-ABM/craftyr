@@ -320,9 +320,13 @@ hl_lines_from_csv(simp, dataname = "dataobjectname",
 library(craftyr)
 simp <- param_getDefaultSimp()
 input_tools_load(simp, "dataAggregateAFTComposition")
-
+dataComp <- dataAggregateAFTComposition
+dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, 
+	lapply(dataComp[,grep("AFT.", colnames(dataComp))], as.character)))
+dataComp <- dataComp[complete.cases(dataComp),]
+colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
+	
 data <-reshape2::melt(dataAggregateAFTComposition, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), direction="long")
-data$value <- as.numeric(levels(data$value)[data$value])
 d <- aggregate(subset(data, select=c("value")), by = list(Agent = data$Agent, Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), "mean", na.rm = TRUE)
 
 ############### substitute AFT names by AFT ID
@@ -526,6 +530,16 @@ hl_normalisedutilities(simp,
 ```	
 		
 #### Total Productivity
+
+### From Single Files
+
+#### AFT Composition
+Reads single CSV file with AFT composition and produces timeline figure.
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_aftcomposisition_file(simp, csvfilename, title = "AftComposition", 
+		figurefilename = "AftComposition") 
 
 ### Comparisons
 To compare different data sets, according sip lists need to be defined:
