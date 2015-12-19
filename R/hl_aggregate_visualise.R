@@ -645,7 +645,7 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 			data <- data[complete.cases(data) & data$PreAllocLandUseIndex %in% aftIDs,]
 			
 			if(skipemptybins) {
-				data <- data[data$Above != 0 & data$Below != 0,]
+				data <- data[!(data$Above == 0 & data$Below == 0),]
 			}
 			
 			if (grepl("%", maxcompetitiveness)) {
@@ -847,4 +847,36 @@ hl_normalisedutilities <- function(simp,
 			linetype_column = "Type",
 			filename = filenameNormalisedResiduals,
 			alpha=simp$fig$alpha)
+}
+#' Reads single CSV file with AFT composition and produces timeline figure
+#' 
+#' @param simp 
+#' @param csvfilename 
+#' @param title 
+#' @param figurefilename 
+#' @return figure
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_aftcomposisition_file <- function(simp, csvfilename, title = "AftComposition", 
+		figurefilename = "AftComposition") {
+	dataComp <- utils::read.csv(csvfilename, na.strings = simp$csv$nastrings)
+
+	dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, 
+					lapply(dataComp[,grep("AFT.", colnames(dataComp))], as.character)))
+	dataComp <- dataComp[complete.cases(dataComp),]
+	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
+	
+	data <-reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick"), direction="long")
+	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, Tick= data$Tick), "mean", na.rm = TRUE)
+	
+	############### substitute AFT names by AFT ID
+	aftNumbers <- names(simp$mdata$aftNames)
+	names(aftNumbers) <- simp$mdata$aftNames
+	d$AFT <- aftNumbers[as.character(d$AFT)]
+	
+	visualise_lines(simp, d, "value", title = title,
+			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+			filename = figurefilename,
+			alpha=0.7)
 }

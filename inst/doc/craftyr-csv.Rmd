@@ -212,7 +212,7 @@ library(craftyr)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_LandUseIndex_rbinded")
 
-# aggregate regions:
+########### aggregate regions:
 csv_LandUseIndex_rbinded$AftNumbers <- csv_LandUseIndex_rbinded$LandUseIndex
 aftData <- aggregate(subset(csv_LandUseIndex_rbinded, select=c("AftNumbers")),
 		by = list(ID = csv_LandUseIndex_rbinded[,"Runid"],
@@ -320,12 +320,16 @@ hl_lines_from_csv(simp, dataname = "dataobjectname",
 library(craftyr)
 simp <- param_getDefaultSimp()
 input_tools_load(simp, "dataAggregateAFTComposition")
-
+dataComp <- dataAggregateAFTComposition
+dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, 
+	lapply(dataComp[,grep("AFT.", colnames(dataComp))], as.character)))
+dataComp <- dataComp[complete.cases(dataComp),]
+colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
+	
 data <-reshape2::melt(dataAggregateAFTComposition, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), direction="long")
-data$value <- as.numeric(levels(data$value)[data$value])
 d <- aggregate(subset(data, select=c("value")), by = list(Agent = data$Agent, Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), "mean", na.rm = TRUE)
 
-# substitute AFT names by AFT ID
+############### substitute AFT names by AFT ID
 aftNumbers <- names(simp$mdata$aftNames)
 names(aftNumbers) <- simp$mdata$aftNames
 d$AFT <- aftNumbers[as.character(d$AFT)]
@@ -349,7 +353,7 @@ input_tools_load(simp, "csv_aggregateServiceDemand")
 
 data <- convert_aggregate_meltsupplydemand(simp, csv_aggregateServiceDemand)
 
-# Aggregate regions:
+############## Aggregate regions:
 data <- aggregate(subset(data, select=c("Value")),
 		by = list(ID = data[,"Runid"],
 				Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
@@ -371,7 +375,7 @@ hl_aggregate_demandsupply(simp)
 
 #### Take Overs (Giving in)
 ```{r, eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"}
-# TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
+#################### TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
 library(craftyr)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_aggregateTakeOvers")
@@ -526,6 +530,44 @@ hl_normalisedutilities(simp,
 ```	
 		
 #### Total Productivity
+
+### From Single Files
+
+#### AFT Composition
+Reads single CSV file with AFT composition and produces timeline figure.
+
+High level:
+```{r, eval=FALSE, results="hide"}
+hl_aftcomposisition_file(simp, csvfilename, title = "AftComposition", 
+		figurefilename = "AftComposition") 
+
+### Comparisons
+To compare different data sets, according sip lists need to be defined:
+
+```{r, eval=FALSE, results="hide"}
+source("./simp44.R")
+simp1 <- simp
+simp1$sim$shortid <- "SD.9"
+
+source("./simp45.R")
+simp2 <- simp
+simp2$sim$shortid <- "SD.4"
+
+source("./simp46.R")
+simp3 <- simp
+simp3$sim$shortid <- "SD.55"
+simps <- list(simp1, simp2, simp3)
+```
+
+#### AFT Composition
+```{r, eval=FALSE, results="hide"}
+hl_comp_aggregate_aftcompositions(simp, simps, dataname="dataAggregateAFTComposition")
+```
+
+#### Demand and Supply
+```{r, eval=FALSE, results="hide"}
+hl_comp_demandsupply(simp, simps, dataname="dataAggregateSupplyDemand")
+```
 
 #  Output (write) CSV Data
 

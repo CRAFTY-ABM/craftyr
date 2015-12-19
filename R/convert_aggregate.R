@@ -144,16 +144,21 @@ convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseInde
 	afts <- as.numeric(names(simp$mdata$aftNames))
 	
 	cdata <- cdata[,c("LandUseIndex", grouping, "Tick")]
+	rownames(cdata) <- NULL
 	
 	transitions <- plyr::ddply(cdata, grouping, function(cd) {
+		# cd <- cdata[cdata$Region == "LU",] 
 		results <- list()
 		for (tick in 1:(length(unique(cd$Tick))-1)) {
 			# tick = 1
 			ticks = unique(cd$Tick)[tick:(tick + 1)]
-			result <- sapply(afts, function(fromAFT, ticks) { 
+			result <- sapply(afts, function(fromAFT, ticks) {
+							# fromAFT = afts[3]
 							data <- sapply(afts, 
 								function(fromAFT, toAFT, ticks) {
-									data.frame(number = sum(cdata[cd$Tick == ticks[1], "LandUseIndex"] == fromAFT & 
+									# toAFT = afts[3]
+									data.frame(number = if(fromAFT == toAFT) 0 else 
+														sum(cd[cd$Tick == ticks[1], "LandUseIndex"] == fromAFT & 
 													cd[cd$Tick == ticks[2], "LandUseIndex"] == toAFT),
 												AFT = setNames(simp$mdata$aftNames[as.character(fromAFT)], NULL),
 												toAFT = setNames(simp$mdata$aftNames[as.character(toAFT)], NULL),
