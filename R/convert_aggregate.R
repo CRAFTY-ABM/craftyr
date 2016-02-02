@@ -123,10 +123,15 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 #' 
 #' Scenario, Runid and Region are preserved.
 #' @param simp 
+#' \itemize{
+#'  \code{\link{input_tools_load}}
+#'  \item \code{simp$mdata$aftNames}
+#' }
 #' @param landusedataname
 #' @param grouping adjusts which columns are considered for aggregatation
 #' @return data.frame with previous AFT as row and resulting AFT as column
 #' 
+#' @family takeovers
 #' @author Sascha Holzhauer
 #' @export
 convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded",

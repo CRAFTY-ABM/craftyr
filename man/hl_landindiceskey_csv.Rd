@@ -6,10 +6,10 @@
 hl_landindiceskey_csv(simp)
 }
 \arguments{
-\item{simp}{\begin{itemize}
+\item{simp}{\itemize{
     \item \code{simp$mdata$aftNames}
  \item \code{simp$dirs$output$data}
-    \end{itemize}}
+}}
 }
 \value{
 csv file

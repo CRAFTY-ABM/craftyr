@@ -8,7 +8,10 @@ convert_aggregate_takeovers(simp,
   "Runid", "Region"))
 }
 \arguments{
-\item{simp}{}
+\item{simp}{\itemize{
+ \code{\link{input_tools_load}}
+ \item \code{simp$mdata$aftNames}
+}}
 
 \item{landusedataname}{}
 
@@ -22,5 +25,11 @@ Scenario, Runid and Region are preserved.
 }
 \author{
 Sascha Holzhauer
+}
+\seealso{
+Other takeovers: \code{\link{hl_takeovers_all}};
+  \code{\link{hl_takeovers}};
+  \code{\link{output_visualise_aftFluctuations}};
+  \code{\link{output_visualise_takeovers}}
 }
 

@@ -263,6 +263,7 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 #  #################### TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
+#  
 #  library(craftyr)
 #  simp <- param_getExamplesSimp()
 #  input_tools_load(simp, "csv_aggregateTakeOvers")

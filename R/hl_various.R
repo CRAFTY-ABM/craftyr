@@ -114,10 +114,10 @@ hl_compilerunparams <- function (simp, runidcolumnname = "run") {
 #' Generates AFT key as CSV with columns 'Index' and 'LandUse'
 #' 
 #' @param simp  
-#' \begin{itemize}
+#' \itemize{
 #' 	\item \code{simp$mdata$aftNames}
 #'  \item \code{simp$dirs$output$data}
-#'	\end{itemize}
+#' }
 #' 
 #' @return csv file
 #' 

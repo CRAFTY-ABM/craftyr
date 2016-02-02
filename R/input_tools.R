@@ -331,6 +331,11 @@ input_tools_checkexists <- function(simp, objectName) {
 #' Wrapper for load
 #' 
 #' @param simp 
+#' \itemize{
+#' 	\item \code{simp$sim$id}
+#'  \item \code{simp$dirs$output$data}
+#' 	\item \code{simp$sim$version} (\code{if is.null(simp$sim$id)}
+#' }
 #' @param objectName 
 #' 
 #' @author Sascha Holzhauer

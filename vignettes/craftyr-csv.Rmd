@@ -374,8 +374,14 @@ hl_aggregate_demandsupply(simp)
 ```
 
 #### Take Overs (Giving in)
+Visualize take overs due to giving in as arrows between columns of AFTs.
+Use [CRAFTY outputter TakeoverCellOutputter](https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-TakeoverCellOutputter)
+to output the data from CRAFTY. To visualise all take overs (giving in and giving up),
+see below (using cell data).
+
 ```{r, eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"}
 #################### TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
+
 library(craftyr)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_aggregateTakeOvers")
