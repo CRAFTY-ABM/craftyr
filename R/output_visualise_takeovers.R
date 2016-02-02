@@ -1,14 +1,27 @@
 #' Visualise takeovers of land uses as transition plot
+#' 
 #' @param simp SIMulation Properties
+#' \itemize{
+#' 	\item evtl. simp$sim$starttick or simp$tech$mintick
+#' 	\item evtl. simp$sim$endtick or simp$tech$maxtick
+#' 	\item simp$sim$runids
+#'  \item simp$mdata$aftNames
+#' 	\item simp$dirs$output$figures
+#' 	\item simp$fig$init
+#' 	\item simp$sim$id
+#' 	\item simp$colours$AFT
+#' 	\item simp$fig$close
+#' }
 #' @param data takeover data with column "Tick" and one for each AFT (afts flow from row to column)
 #' @param startpopulation needs to contain a column 'Number' which contains agent numbers of the start tick
 #' @param starttick first tick to consider 
 #' @param endtick  last tick to consider
-#' @param tickinterval Note: tickinterval is based on starttick which defaults to 0!
+#' @param tickinterval interval between transition columns. Note: tickinterval is based on starttick which defaults to 0!
 #' @param type_of_arrow 
-#' @param transitionThreshold 
+#' @param transitionthreshold minimum number of transitions to show an arrow
 #' @return plots figure
 #' 
+#' @family takeovers
 #' @author Sascha Holzhauer
 #' @export
 output_visualise_takeovers <- function(simp,
@@ -125,6 +138,7 @@ output_visualise_takeovers <- function(simp,
 #' @param filename  
 #' @return plot
 #' 
+#' @family takeovers
 #' @author Sascha Holzhauer
 #' @export
 output_visualise_aftFluctuations <- function(simp,

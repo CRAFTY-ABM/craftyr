@@ -33,4 +33,10 @@ Visualise AFT fluctuations
 \author{
 Sascha Holzhauer
 }
+\seealso{
+Other takeovers: \code{\link{convert_aggregate_takeovers}};
+  \code{\link{hl_takeovers_all}};
+  \code{\link{hl_takeovers}};
+  \code{\link{output_visualise_takeovers}}
+}
 

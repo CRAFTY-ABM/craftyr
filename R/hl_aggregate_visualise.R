@@ -276,20 +276,24 @@ hl_volatility <- function(simp, dataname = "csv_aggregated_cellvolatility",
 			colourcol = "Type", titleprefix = "Cell Volatility", filenameprefix = "CellVolatility", 
 			percent = percent)
 }
-#' Transition plot of AFT take overs due to giving in
+#' Transition plot of AFT take overs due to giving in.
 #' 
+#' @inheritParams output_visualise_takeovers
 #' @param simp 
+#' \itemize{
+#' 	\item \code{\link{input_tools_load}}
+#' 	\item \code{\link{output_visualise_takeovers}}
+#' }
 #' @param runid 
-#' @param dataname 
-#' @param starttick 
-#' @param tickinterval 
-#' @param endtick 
-#' @param datanametakeovers
-#' @param transitionthreshold
+#' @param dataname data name of aggregated cell data - used to derive total AFT numbers.
+#' @param datanametakeovers data name for take over data (usually from 
+#' \href{https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-TakeoverCellOutputter}{CRAFTY outputter TakeoverCellOutputter}).
+#' 			and imported via \code{\link{input_csv_data}}).
 #' @param aftnames AFT names (defaults to simp$mdata$aftNames without the first entry which is usually
 #' 				   'Unmanaged' and not considered in stored take over data)
 #' @return transition plot
 #' 
+#' @family takeovers
 #' @author Sascha Holzhauer
 #' @export
 hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
@@ -336,17 +340,27 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 		warning(paste("There is no AFT giving in data in rData with name", datanametakeovers, "for ID", simp$sim$id))
 	}
 }
-#' Transition plot of AFT take overs (both due to giving in and giving up)
+#' Transition plot of AFT take overs (both due to giving in and giving up).
+#' 
+#' In case you want only take overs due to giving in, considers \code{\link{hl_takeovers}} with data from 
+#' \href{https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-TakeoverCellOutputter}{CRAFTY outputter TakeoverCellOutputter}.
+#' 
+#' According CRAFTY outputter is \href{https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-CellTable}{CellTable}.  Applies 
+#' \code{\link{convert_aggregate_takeovers}} to derive take overs from cell data if not yet present.
 #' 
 #' @param simp 
+#' \itemize{
+#' 	\item \code{simp$mdata$aftNames}
+#'  \item \code{simp$dirs$output$data}
+#'	}
+#' @inheritParams hl_takeovers
 #' @param runid 
-#' @param dataname 
-#' @param starttick 
-#' @param tickinterval 
-#' @param endtick 
-#' @param datanametakeovers 
+#' @param landusedataname data name for land use indices
+#' @param datanametakeovers data name for giving in take overs 
+#' @param grouping passed to \code{\link{convert_aggregate_takeovers}}
 #' @return transition plot
 #' 
+#' @family takeovers
 #' @author Sascha Holzhauer
 #' @export
 hl_takeovers_all <- function(simp, runid = simp$sim$runids[1], landusedataname = "csv_LandUseIndex_rbinded",

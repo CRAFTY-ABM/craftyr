@@ -11,7 +11,18 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
   aftnames = simp$mdata$aftNames[-1])
 }
 \arguments{
-\item{simp}{SIMulation Properties}
+\item{simp}{SIMulation Properties
+\itemize{
+    \item evtl. simp$sim$starttick or simp$tech$mintick
+    \item evtl. simp$sim$endtick or simp$tech$maxtick
+    \item simp$sim$runids
+ \item simp$mdata$aftNames
+    \item simp$dirs$output$figures
+    \item simp$fig$init
+    \item simp$sim$id
+    \item simp$colours$AFT
+    \item simp$fig$close
+}}
 
 \item{data}{takeover data with column "Tick" and one for each AFT (afts flow from row to column)}
 
@@ -21,11 +32,11 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
 
 \item{endtick}{last tick to consider}
 
-\item{tickinterval}{Note: tickinterval is based on starttick which defaults to 0!}
+\item{tickinterval}{interval between transition columns. Note: tickinterval is based on starttick which defaults to 0!}
 
 \item{type_of_arrow}{}
 
-\item{transitionThreshold}{}
+\item{transitionthreshold}{minimum number of transitions to show an arrow}
 }
 \value{
 plots figure
@@ -35,5 +46,11 @@ Visualise takeovers of land uses as transition plot
 }
 \author{
 Sascha Holzhauer
+}
+\seealso{
+Other takeovers: \code{\link{convert_aggregate_takeovers}};
+  \code{\link{hl_takeovers_all}};
+  \code{\link{hl_takeovers}};
+  \code{\link{output_visualise_aftFluctuations}}
 }
 

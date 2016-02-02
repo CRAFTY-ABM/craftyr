@@ -6,7 +6,11 @@
 input_tools_load(simp, objectName, ...)
 }
 \arguments{
-\item{simp}{}
+\item{simp}{\itemize{
+    \item \code{simp$sim$id}
+ \item \code{simp$dirs$output$data}
+    \item \code{simp$sim$version} (\code{if is.null(simp$sim$id)}
+}}
 
 \item{objectName}{}
 }
