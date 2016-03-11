@@ -1,4 +1,8 @@
-#' Visualise takeovers of land uses as transition plot
+#' Visualise takeovers of land uses as transition plot (aka sankey diagram)
+#' 
+#' In-between transitions are summed (in case tickinterval > 1), e.g. if single data points are given,
+#' the transition Farmer (2010) > Forester (2011) > Farmer (2012) counts as two flows 
+#' Farmer (2010) > Forester (2011) and Forester (2011) > Farmer (2012).
 #' 
 #' @param simp SIMulation Properties
 #' \itemize{
