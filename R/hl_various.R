@@ -29,6 +29,8 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 #' 
 #' Considers the \code{simp$sim$version} in column version and the 
 #' the \code{simp$sim$runids[1]} in column '1st Run ID' or between '1st Run ID' and 'Last Run ID'. 
+#' Prints the last entry in case there are multiple matches.
+#' 
 #' @param simp 
 #' @param filename 
 #' @param rows
@@ -68,6 +70,8 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 	if (!is.null(rows)) {
 		rinfo <- rinfo[,1:rows]
 	}
+	rinfo <- rinfo[nrow(rinfo),]
+			
 	table <- xtable::xtable(t(rinfo),
 			label="model.run.information", 
 			caption="Model run information",

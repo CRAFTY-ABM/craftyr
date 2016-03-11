@@ -135,7 +135,7 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 #' @author Sascha Holzhauer
 #' @export
 convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded",
-		grouping = c("Scenario", "Runid", "Region")) {
+		grouping = c("Scenario", "Runid", "Region"), tickinterval = 1) {
 	# <---- test data
 #	simp <- param_getExamplesSimp()
 #	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
@@ -156,7 +156,7 @@ convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseInde
 		results <- list()
 		for (tick in 1:(length(unique(cd$Tick))-1)) {
 			# tick = 1
-			ticks = unique(cd$Tick)[tick:(tick + 1)]
+			ticks = unique(cd$Tick)[tick:(tick + tickinterval)]
 			result <- sapply(afts, function(fromAFT, ticks) {
 							# fromAFT = afts[3]
 							data <- sapply(afts, 

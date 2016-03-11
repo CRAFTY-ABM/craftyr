@@ -445,9 +445,11 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
 			direction="long")
 
+	operator = if (any(data$value > 1.0)) "sum" else "mean"
+
 	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, 
 					Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), 
-			"sum", na.rm = TRUE)
+			operator, na.rm = TRUE)
 	
 	if (includeunmanaged) {
 		
@@ -470,7 +472,7 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	visualise_lines(simp, d, "value", title = "Aft Composition",
+	visualise_lines(simp, d, "value", title = paste("Aft Composition", if (operator == "mean") " (potentially invalid mean)", sep=""),
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = "AftComposition",
