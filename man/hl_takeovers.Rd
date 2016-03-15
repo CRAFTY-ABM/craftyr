@@ -36,7 +36,7 @@ hl_takeovers(simp, runid = simp$sim$runids[1],
 which is usually 'Unmanaged' (and may not be considered in stored take over data)}
 
 \item{aftaggregation}{named vector with names of existing AFT names and values IDs of new groups. Also consider setting
-\code{simp$colours$aftgroups} to reflect group colors)}
+\code{simp$colours$aftgroups} to reflect group colors). To exclude AFT from being displayed, assign NA.}
 
 \item{grouping}{vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.}
 
