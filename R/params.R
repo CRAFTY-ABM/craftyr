@@ -28,7 +28,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$sim$regionalisation			<- "regionalisation"
 	defsimp$sim$regions					<- c("region")
 	defsimp$sim$runids					<- c("0-0")
-	defsimp$sim$starttick				<- 2010
+	defsimp$sim$starttick				<- 2000
 	defsimp$sim$endtick					<- 2040
 	defsimp$sim$hasregiondir			<- TRUE
 	defsimp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
@@ -116,6 +116,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()
 	defsimp$colours$AFT 			<- settings_colours_getAftColours()
+	defsimp$colours$aftgroups		<- NULL
 	defsimp$colours$Service 		<- settings_colours_getServiceColours()
 	defsimp$colours$Capital 		<- settings_colours_getCapitalColours()
 	defsimp$colours$Region 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
@@ -214,7 +215,7 @@ param_getExamplesSimp <- function() {
 				"Service2" 	 	= "orange1",
 				"Service3" 		= "royalblue2")
 		
-	simp$mdata$aftNames <- c("-1" = "Unmanaged", "1" = "AT1", "2" = "AT2", "3" = "AT3")
+	simp$mdata$aftNames <- c("-1" = "Unmanaged", "0" = "AT1", "1" = "AT2", "2" = "AT3")
 	
 	simp$sim$id <- "Example"
 	simp

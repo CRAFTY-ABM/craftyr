@@ -6,7 +6,8 @@
 #' @param datatype  datatype (e.g. "Capital")
 #' @param dataname dataname (e.g. "Cap1")
 #' @param columns Vector of colum names. If given restricts returned colums to the given headers 
-#' 			(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region)
+#' 			(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region).
+#' 			Note that this applies after the aggregation function has been applied.
 #' @param pertick If TRUE the filename will be complemented by all available ticks 
 #' @param extension file extension of those files to read
 #' @param starttick first tick to consider (only required when \code{pertick == TRUE})

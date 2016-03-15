@@ -120,14 +120,15 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 	}
 }
 #' Extracts numbers of take overs for every pair of AFT for every tick from stored cell csv data
+#' Requires land use indices stored in an object whose name is given by \code{landusedataname}.
 #' 
 #' Scenario, Runid and Region are preserved.
 #' @param simp 
 #' \itemize{
-#'  \code{\link{input_tools_load}}
+#'  \item \code{\link{input_tools_load}}
 #'  \item \code{simp$mdata$aftNames}
 #' }
-#' @param landusedataname
+#' @param landusedataname Name of stored land use indices object
 #' @param grouping adjusts which columns are considered for aggregatation
 #' @return data.frame with previous AFT as row and resulting AFT as column
 #' 
@@ -135,7 +136,7 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 #' @author Sascha Holzhauer
 #' @export
 convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseIndex_rbinded",
-		grouping = c("Scenario", "Runid", "Region"), tickinterval = 1) {
+		grouping = c("Scenario", "Runid", "Region")) {
 	# <---- test data
 #	simp <- param_getExamplesSimp()
 #	cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
@@ -152,11 +153,11 @@ convert_aggregate_takeovers <- function(simp, landusedataname = "csv_LandUseInde
 	rownames(cdata) <- NULL
 	
 	transitions <- plyr::ddply(cdata, grouping, function(cd) {
-		# cd <- cdata[cdata$Region == "LU",] 
+		# cd <- cdata[cdata$Region == "region",] 
 		results <- list()
-		for (tick in 1:(length(unique(cd$Tick))-1)) {
+		for (tick in 1:(length(unique(cd$Tick)) - 1)) {
 			# tick = 1
-			ticks = unique(cd$Tick)[tick:(tick + tickinterval)]
+			ticks = sort(unique(cd$Tick))[tick:(tick + 1)]
 			result <- sapply(afts, function(fromAFT, ticks) {
 							# fromAFT = afts[3]
 							data <- sapply(afts, 

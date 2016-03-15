@@ -7,12 +7,13 @@ hl_takeovers(simp, runid = simp$sim$runids[1],
   dataname = "csv_cell_aggregated", starttick = simp$sim$starttick,
   tickinterval = 5, endtick = simp$sim$endtick,
   datanametakeovers = "csv_aggregateTakeOver", transitionthreshold = 5,
-  aftnames = simp$mdata$aftNames[-1])
+  aftnames = simp$mdata$aftNames, aftaggregation = NULL,
+  grouping = c("Tick", "Scenario", "Runid", "Region"), aftorder = NULL)
 }
 \arguments{
 \item{simp}{\itemize{
-    \item \code{\link{input_tools_load}}
-    \item \code{\link{output_visualise_takeovers}}
+    \item \code{\link[craftyr]{input_tools_load}}
+    \item \code{\link[craftyr]{output_visualise_takeovers}}
 }}
 
 \item{runid}{}
@@ -31,8 +32,15 @@ hl_takeovers(simp, runid = simp$sim$runids[1],
 
 \item{transitionthreshold}{minimum number of transitions to show an arrow}
 
-\item{aftnames}{AFT names (defaults to simp$mdata$aftNames without the first entry which is usually
-'Unmanaged' and not considered in stored take over data)}
+\item{aftnames}{the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT,
+which is usually 'Unmanaged' (and may not be considered in stored take over data)}
+
+\item{aftaggregation}{named vector with names of existing AFT names and values IDs of new groups. Also consider setting
+\code{simp$colours$aftgroups} to reflect group colors)}
+
+\item{grouping}{vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.}
+
+\item{aftorder}{specifies order of buckets in columns from top to bottom. Alphabetical if NULL.}
 }
 \value{
 transition plot

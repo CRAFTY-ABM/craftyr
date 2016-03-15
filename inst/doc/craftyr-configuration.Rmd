@@ -4,7 +4,8 @@ author: "Sascha Holzhauer"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
-  toc: true
+    toc: true
+    toc_depth: 4
 vignette: >
   %\VignetteIndexEntry{Create and adjust CRAFTY configuration files}
   %\VignetteEngine{knitr::rmarkdown}
@@ -22,7 +23,7 @@ simp <- craftyr::param_getDefaultSimp()
 simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
 cellnumdf <- input_csv_param_capitals_cellnumbers(simp = simp, 
 			regionpartfromend = 2, regionpartdevider = "_")
-# order decreasingly according to number of cells:
+ # order decreasingly according to number of cells:
 cellnumdf[order(cellnumdf, decreasing = TRUE)]
 ```
 
@@ -45,6 +46,21 @@ simp$sim$folder 	<- ""
 adjust_changecolumnnames(simp,  indir = simp$dirs$param$getparamdir(simp, "capitals"),
 		colname_old = "Pasture", colname_new = "Grass", filepattern = "*.csv")
 ```
+
+# Execution on Linux-Cluster
+
+1. Copy the script `createQsubScript.py` (see `<R user library>/craftyr/extdata/various/templates/cluster`) 
+	to `./python` and `Eddie_R_TC_template.sh` to `./python/resources` on the cluster
+	(use `file.copy(system.file("extdata/various/templates/cluster", package="craftyr"), 
+	getwd(), overwrite = FALSE, recursive = TRUE)` to copy files to the current working directory).
+
+2. Place the execution script `executeQsub.sh` to `./config/R/<versiondir>/cluster/<task>`.
+
+3. Replace the place holders `<versiondir>` and `<task>` in `executeQsub.sh`.
+
+4. Place the R code to execute in `process.R`.
+
+5. Execute `./config/R/<versiondir>/cluster/<task>/executeQsub.sh` on the cluster.
 
 # Further scripts
 

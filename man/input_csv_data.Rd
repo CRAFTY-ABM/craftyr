@@ -19,7 +19,8 @@ input_csv_data(simp, datatype = NULL, dataname = "Cell", columns = NULL,
 \item{dataname}{dataname (e.g. "Cap1")}
 
 \item{columns}{Vector of colum names. If given restricts returned colums to the given headers
-(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region)}
+(plus X and Y coordinates, and - if (attachfileinfo == TRUE) - Tick, RunId, Scenario, and Region).
+Note that this applies after the aggregation function has been applied.}
 
 \item{pertick}{If TRUE the filename will be complemented by all available ticks}
 

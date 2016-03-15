@@ -10,7 +10,7 @@ hl_comp_demandsupply(simp, simps, dataname = "csv_cell_aggregated",
   ")", sep = ""), visualise = TRUE)
 }
 \arguments{
-\item{simp}{Considered:\itemise{
+\item{simp}{Considered:\itemize{
 \item simp$fig$averagedemand
 }}
 
