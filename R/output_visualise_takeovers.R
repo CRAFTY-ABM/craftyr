@@ -25,7 +25,7 @@
 #' @param transitionthreshold minimum number of transitions to show an arrow
 #' @param aftnames the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT, which is usuallu 'Unmanaged'
 #' @param aftaggregation named vector with names of existing AFT names and values IDs of new groups. Also consider setting
-#' \code{simp$colours$aftgroups} to reflect group colors)
+#' \code{simp$colours$aftgroups} to reflect group colors). To exclude AFT from being displayed, assign NA.
 #' @param grouping vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.
 #' @param aftorder specifies order of buckets in columns from top to bottom. Alphabetical if NULL.
 #' @return plots figure
@@ -65,23 +65,26 @@ output_visualise_takeovers <- function(simp,
 			numdata <- cd[, -nondatacols]
 			colnames(numdata) <- aftaggregation[colnames(numdata)]
 			
-			ndata <- vapply(unique(colnames(numdata)), function(x) 
-						rowSums(numdata[,colnames(numdata) == x, drop=FALSE], na.rm=TRUE),
+			ndata <- vapply(unique(na.omit(colnames(numdata))), function(x) 
+						rowSums(numdata[,sapply(colnames(numdata) == x, isTRUE), drop=FALSE], na.rm=TRUE),
 					FUN.VALUE = numeric(nrow(numdata)))
 			
-			ndata <- do.call(rbind, sapply(unique(cd$AFT), function(x) 
-						rowSums(t(as.matrix(ndata[cd$AFT == x, ,drop=F])), na.rm=F), simplify =F))
+			ndata <- do.call(rbind, sapply(unique(na.omit(cd$AFT)), function(x) 
+						rowSums(t(as.matrix(ndata[sapply(cd$AFT == x, isTRUE), ,drop=F])), na.rm=F), simplify =F))
 			ndata <- cbind(ndata, cd[1, colnames(cd) %in% grouping])
 			ndata$AFT  <- rownames(ndata)
 			ndata
 		})
 
 		startpopulation$Agent <- aftaggregation[startpopulation$Agent]
-		startpopulation <- aggregate(startpopulation$Number, by = list(Agent = startpopulation$Agent), FUN = sum)
+		startpopulation <- startpopulation[complete.cases(startpopulation),]
+		startpopulation <- aggregate(startpopulation$Number, by = list(Agent = na.omit(startpopulation$Agent)), 
+				FUN = sum)
 		names(startpopulation)[names(startpopulation) == "x"] <- "Number"
 
-		aftnames <- setNames(sort(unique(aftaggregation)), 1:length(unique(aftaggregation)))
+		aftnames <- setNames(sort(unique(aftaggregation)), 1:length(unique(startpopulation$Agent)))
 		
+		aftorder <- aftorder[aftorder %in% unique(startpopulation$Agent)]
 		aftcolours <-  if (!is.null(simp$colours$aftgroups)) simp$colours$aftgroups[match(aftorder, 							names(simp$colours$aftgroups))] else 
 					simp$colours$GenericFun(simp, number = length(aftnames))
 	}

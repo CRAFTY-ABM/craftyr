@@ -42,7 +42,7 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
 \item{aftnames}{the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT, which is usuallu 'Unmanaged'}
 
 \item{aftaggregation}{named vector with names of existing AFT names and values IDs of new groups. Also consider setting
-\code{simp$colours$aftgroups} to reflect group colors)}
+\code{simp$colours$aftgroups} to reflect group colors). To exclude AFT from being displayed, assign NA.}
 
 \item{grouping}{vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.}
 
