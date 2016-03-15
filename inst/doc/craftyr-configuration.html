@@ -10,7 +10,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2016-03-10" />
+<meta name="date" content="2016-03-15" />
 
 <title>Create and adjust CRAFTY configuration files</title>
 
@@ -54,9 +54,20 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Create and adjust CRAFTY configuration files</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2016-03-10</em></h4>
+<h4 class="date"><em>2016-03-15</em></h4>
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#manipulate-csv-files">Manipulate CSV files</a><ul>
+<li><a href="#explore-number-of-cells-of-regions-from-capital-csv-files">Explore number of cells of regions (from capital CSV files)</a></li>
+<li><a href="#determine-assignment-to-slots-for-parallel-computing">Determine assignment to slots for parallel computing</a></li>
+<li><a href="#change-column-headers">Change column headers</a></li>
+</ul></li>
+<li><a href="#execution-on-linux-cluster">Execution on Linux-Cluster</a></li>
+<li><a href="#further-scripts">Further scripts</a></li>
+</ul>
+</div>
 
 <div id="manipulate-csv-files" class="section level1">
 <h1>Manipulate CSV files</h1>
@@ -67,7 +78,7 @@ simp &lt;-<span class="st"> </span>craftyr::<span class="kw">param_getDefaultSim
 simp$sim$filepartorder  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;regionalisation&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;regions&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="st">&quot;datatype&quot;</span>)
 cellnumdf &lt;-<span class="st"> </span><span class="kw">input_csv_param_capitals_cellnumbers</span>(<span class="dt">simp =</span> simp, 
             <span class="dt">regionpartfromend =</span> <span class="dv">2</span>, <span class="dt">regionpartdevider =</span> <span class="st">&quot;_&quot;</span>)
-<span class="co"># order decreasingly according to number of cells:</span>
+ <span class="co"># order decreasingly according to number of cells:</span>
 cellnumdf[<span class="kw">order</span>(cellnumdf, <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)]</code></pre>
 </div>
 <div id="determine-assignment-to-slots-for-parallel-computing" class="section level2">
@@ -86,6 +97,16 @@ simp$sim$folder     &lt;-<span class="st"> &quot;&quot;</span>
 <span class="kw">adjust_changecolumnnames</span>(simp,  <span class="dt">indir =</span> simp$dirs$param$<span class="kw">getparamdir</span>(simp, <span class="st">&quot;capitals&quot;</span>),
         <span class="dt">colname_old =</span> <span class="st">&quot;Pasture&quot;</span>, <span class="dt">colname_new =</span> <span class="st">&quot;Grass&quot;</span>, <span class="dt">filepattern =</span> <span class="st">&quot;*.csv&quot;</span>)</code></pre>
 </div>
+</div>
+<div id="execution-on-linux-cluster" class="section level1">
+<h1>Execution on Linux-Cluster</h1>
+<ol style="list-style-type: decimal">
+<li><p>Copy the script <code>createQsubScript.py</code> (see <code>&lt;R user library&gt;/craftyr/extdata/various/templates/cluster</code>) to <code>./python</code> and <code>Eddie_R_TC_template.sh</code> to <code>./python/resources</code> on the cluster (use <code>file.copy(system.file(&quot;extdata/various/templates/cluster&quot;, package=&quot;craftyr&quot;),  getwd(), overwrite = FALSE, recursive = TRUE)</code> to copy files to the current working directory).</p></li>
+<li><p>Place the execution script <code>executeQsub.sh</code> to <code>./config/R/&lt;versiondir&gt;/cluster/&lt;task&gt;</code>.</p></li>
+<li><p>Replace the place holders <code>&lt;versiondir&gt;</code> and <code>&lt;task&gt;</code> in <code>executeQsub.sh</code>.</p></li>
+<li><p>Place the R code to execute in <code>process.R</code>.</p></li>
+<li><p>Execute <code>./config/R/&lt;versiondir&gt;/cluster/&lt;task&gt;/executeQsub.sh</code> on the cluster.</p></li>
+</ol>
 </div>
 <div id="further-scripts" class="section level1">
 <h1>Further scripts</h1>

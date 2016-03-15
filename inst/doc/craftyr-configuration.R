@@ -4,7 +4,7 @@
 #  simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
 #  cellnumdf <- input_csv_param_capitals_cellnumbers(simp = simp,
 #  			regionpartfromend = 2, regionpartdevider = "_")
-#  # order decreasingly according to number of cells:
+#   # order decreasingly according to number of cells:
 #  cellnumdf[order(cellnumdf, decreasing = TRUE)]
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------

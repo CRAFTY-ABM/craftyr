@@ -8,7 +8,8 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
   simp$tech$mintick, endtick = if (!is.null(simp$sim$endtick))
   simp$sim$endtick else simp$tech$maxtick, tickinterval = 1,
   type_of_arrow = "grid", transitionthreshold = 0,
-  aftnames = simp$mdata$aftNames[-1])
+  aftnames = simp$mdata$aftNames, aftaggregation = NULL,
+  grouping = c("Tick", "Scenario", "Runid", "Region"), aftorder = NULL)
 }
 \arguments{
 \item{simp}{SIMulation Properties
@@ -37,6 +38,15 @@ output_visualise_takeovers(simp, data, startpopulation = NULL,
 \item{type_of_arrow}{}
 
 \item{transitionthreshold}{minimum number of transitions to show an arrow}
+
+\item{aftnames}{the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT, which is usuallu 'Unmanaged'}
+
+\item{aftaggregation}{named vector with names of existing AFT names and values IDs of new groups. Also consider setting
+\code{simp$colours$aftgroups} to reflect group colors)}
+
+\item{grouping}{vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.}
+
+\item{aftorder}{specifies order of buckets in columns from top to bottom. Alphabetical if NULL.}
 }
 \value{
 plots figure

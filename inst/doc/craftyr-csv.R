@@ -5,7 +5,7 @@ simp <- param_getExamplesSimp()
 futile.logger::flog.threshold(futile.logger::DEBUG, name='craftyr.input.csv')
 
 cdata <- input_csv_data(simp, dataname = NULL, datatype = "Cell", columns = "LandUseIndex",
-		pertick = TRUE, starttick = 2010, endtick = 2020, tickinterval = 10,
+		pertick = TRUE, starttick = 2000, endtick = 2020, tickinterval = 10,
 		attachfileinfo = TRUE, bindrows = TRUE)
 csv_LandUseIndex_rbinded <- cdata
 input_tools_save(simp, "csv_LandUseIndex_rbinded")
@@ -137,7 +137,7 @@ library(craftyr)
 simp <- param_getExamplesSimp()
 input_tools_load(simp, "csv_LandUseIndex_rbinded")
 
-########### aggregate regions:
+ # aggregate regions:
 csv_LandUseIndex_rbinded$AftNumbers <- csv_LandUseIndex_rbinded$LandUseIndex
 aftData <- aggregate(subset(csv_LandUseIndex_rbinded, select=c("AftNumbers")),
 		by = list(ID = csv_LandUseIndex_rbinded[,"Runid"],
@@ -304,16 +304,27 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 #  library(craftyr)
 #  simp <- param_getExamplesSimp()
 #  
-#  dataTakeOversAll <- convert_aggregate_takeovers(simp,
+#  csv_dataTakeOversAll <- convert_aggregate_takeovers(simp,
 #  	landusedataname = "csv_LandUseIndex_rbinded")
-#  input_tools_save(simp, "dataTakeOversAll")
-#  	
+#  input_tools_save(simp, "csv_dataTakeOversAll")
+#  
 #  hl_takeovers(simp, runid = simp$sim$runids[1],
 #  		dataname 			= "csv_cell_aggregated",
 #  		starttick 			= 2000,
 #  		tickinterval 		= 5,
 #  		endtick 			= 2020,
-#  		datanametakeovers 	= "csv_aggregateTakeOver")
+#  		datanametakeovers 	= "csv_dataTakeOversAll")
+
+## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
+#  aftaggregation <- simp$mdata$aftNames
+#  data.entry(simp$mdata$aftNames, aftaggregation, Modes=list("character", "character"))
+#  hl_takeovers(simp, runid = simp$sim$runids[1],
+#  		dataname 			= "csv_cell_aggregated",
+#  		starttick 			= 2000,
+#  		tickinterval 		= 5,
+#  		endtick 			= 2020,
+#  		datanametakeovers 	= "csv_dataTakeOversAll",
+#  		aftaggregation		= aftaggregation)
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_takeovers_all(simp, landusedataname = "csv_LandUseIndex_rbinded",

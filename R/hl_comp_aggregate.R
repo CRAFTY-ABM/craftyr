@@ -84,7 +84,7 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 }
 #' Read supply and demand and plot for given runid
 #' 
-#' @param simp Considered:\itemise{
+#' @param simp Considered:\itemize{
 #'	\item simp$fig$averagedemand
 #'	}
 #' @param runid 

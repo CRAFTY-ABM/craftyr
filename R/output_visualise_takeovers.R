@@ -23,6 +23,11 @@
 #' @param tickinterval interval between transition columns. Note: tickinterval is based on starttick which defaults to 0!
 #' @param type_of_arrow 
 #' @param transitionthreshold minimum number of transitions to show an arrow
+#' @param aftnames the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT, which is usuallu 'Unmanaged'
+#' @param aftaggregation named vector with names of existing AFT names and values IDs of new groups. Also consider setting
+#' \code{simp$colours$aftgroups} to reflect group colors)
+#' @param grouping vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.
+#' @param aftorder specifies order of buckets in columns from top to bottom. Alphabetical if NULL.
 #' @return plots figure
 #' 
 #' @family takeovers
@@ -36,51 +41,106 @@ output_visualise_takeovers <- function(simp,
 		tickinterval = 1,
 		type_of_arrow = "grid",
 		transitionthreshold = 0,
-		aftnames = simp$mdata$aftNames[-1]) {
+		aftnames = simp$mdata$aftNames,
+		aftaggregation = NULL,
+		grouping = c("Tick", "Scenario", "Runid", "Region"),
+		aftorder = NULL) {
 	
+	# aftorder = c("Cons", "Farm", "Mult", "Pass", "Prod", "Recr", "UNMANAGED", "Other")
 	# TODO allow for multiple runids (changes to startpopulation and plot as facet eg.)
 	ticks = seq(starttick, endtick, tickinterval)
-	data[data <= transitionthreshold] <- 0
+	
+	nondatacols <- na.omit(match(c(grouping, "AFT"), colnames(data)))
+	
+	aftindex <- names(simp$colours$AFT) %in% names(aftnames)[aftnames %in% colnames(data)]
+	aftcolours <- simp$colours$AFT[aftindex]
+	
+	# aggregate AFT into groups
+	if (!is.null(aftaggregation)) {
+		
+		data$AFT <- aftaggregation[match(data$AFT, names(aftaggregation))]
+		data <- plyr::ddply(data, grouping, function(cd) {
+					#cd <- data
+			
+			numdata <- cd[, -nondatacols]
+			colnames(numdata) <- aftaggregation[colnames(numdata)]
+			
+			ndata <- vapply(unique(colnames(numdata)), function(x) 
+						rowSums(numdata[,colnames(numdata) == x, drop=FALSE], na.rm=TRUE),
+					FUN.VALUE = numeric(nrow(numdata)))
+			
+			ndata <- do.call(rbind, sapply(unique(cd$AFT), function(x) 
+						rowSums(t(as.matrix(ndata[cd$AFT == x, ,drop=F])), na.rm=F), simplify =F))
+			ndata <- cbind(ndata, cd[1, colnames(cd) %in% grouping])
+			ndata$AFT  <- rownames(ndata)
+			ndata
+		})
+
+		startpopulation$Agent <- aftaggregation[startpopulation$Agent]
+		startpopulation <- aggregate(startpopulation$Number, by = list(Agent = startpopulation$Agent), FUN = sum)
+		names(startpopulation)[names(startpopulation) == "x"] <- "Number"
+
+		aftnames <- setNames(sort(unique(aftaggregation)), 1:length(unique(aftaggregation)))
+		
+		aftcolours <-  if (!is.null(simp$colours$aftgroups)) simp$colours$aftgroups[match(aftorder, 							names(simp$colours$aftgroups))] else 
+					simp$colours$GenericFun(simp, number = length(aftnames))
+	}
+	
+	data[, -nondatacols][data[, -nondatacols] <= transitionthreshold] <- 0 
 	
 	if (length(unique(data[["AFT"]])) != length(startpopulation$Agent)) {
-		R.oo::throw.default(sprintf("Agents in start population (%s) do not match agents in data (%)!"),
+		R.oo::throw.default(sprintf("Agents in start population (%s) do not match agents in data (%s)!",
 				paste(startpopulation$Agent, collapse="/"),
-				paste(unique(data[["AFT"]]), collapse="/"))
+				paste(unique(data[["AFT"]]), collapse="/")))
 	}
 	
 	for (run_id in simp$sim$runids) {
-		cols <- colnames(data)
+		# run_id <- simp$sim$runids[1]
 		trans <- aggregate(data[,colnames(data) %in% aftnames], by=list( 
 						Tick=data[["Tick"]], AFT=data[["AFT"]]), FUN=sum)
 		
-		population <- startpopulation$Number
+		population <- setNames(startpopulation$Number, startpopulation$Agent)
 		
 		transitions <- list()
-		populations <- data.frame(population)
-
+		
 		validticks <- ticks[ticks %in% unique(data[["Tick"]])]
 		
 		if (length(validticks) == 0) {
-			R.oo:throw.default(sprintf("Requested ticks (%s) do not match available ticks (%s)!",
+			R.oo::throw.default(sprintf("Requested ticks (%s) do not match available ticks (%s)!",
 							paste(ticks, collapse=","),
 							paste(unique(data[["Tick"]]), collapse=",")
 							))
 		}
 		
 		for (tick in validticks) {
+			# tick <-  validticks[1]
 			t <- aggregate(subset(trans, Tick >= tick & Tick < tick + tickinterval, select=aftnames), 
 					by = list(
-							AFT=trans[trans$Tick >= tick & trans$Tick < tick + tickinterval,"AFT"]),
+							AFT=trans[trans$Tick >= tick & trans$Tick < tick + tickinterval, "AFT"]),
 					FUN=sum)
 			
 			rownames(t) <- t$AFT
-			
-			aftNumbers <- names(aftnames)
-			names(aftNumbers) <- aftnames
+			t <- as.table(as.matrix(t[, -c(1)]))
 			
 			# order data according to AFT numbers
-			t <- t[order(aftNumbers[as.character(t$AFT)]),]
-			t <- as.table(as.matrix(t[, -c(1)]))
+			if (!is.null(aftorder)) {
+				t <- t[match(aftorder, colnames(t)),]
+				t <- t[,match(aftorder, rownames(t))]
+				
+				population <- population[match(aftorder, names(population))]
+				
+			} else if (is.null(aftaggregation)) {
+				aftNumbers <- names(aftnames)
+				names(aftNumbers) <- aftnames
+				
+				t <- t[order(aftNumbers[colnames(t)]),]
+				t <- t[,order(aftNumbers[rownames(t)])]
+				
+				population <- population[order(aftNumbers[as.character(names(population))])]
+			}
+			populations <- data.frame(population)
+			
+			
 			
 			transitions[[as.character(tick)]] <-  t
 			
@@ -88,7 +148,7 @@ output_visualise_takeovers <- function(simp,
 			pop2 <- population - rowSums(t) + colSums(t)
 			maxPop <- max(sum(pop1), sum(pop2))
 			population <- pop2
-			
+
 			populations <- cbind(populations, pop2)
 		}
 		populations <- populations / maxPop
@@ -99,8 +159,6 @@ output_visualise_takeovers <- function(simp,
 		simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "takeovers", sep="/"), filename = filename)
 		
 		# TODO integerate absolute AFT numbers
-		# TODO enable the combination of AFTs into groups
-		aftindex <- names(simp$colours$AFT) %in% names(aftnames)[aftnames %in% colnames(data)]
 		
 		shGmisc::transitionPlot(transitions,
 				cex = 1.2,
@@ -108,7 +166,7 @@ output_visualise_takeovers <- function(simp,
 				type_of_arrow = type_of_arrow, 
 				#min_lwd = unit(2, "mm"), 
 				#max_lwd = unit(10, "mm"),
-				fill_start_box = as.matrix(data.frame(simp$colours$AFT[aftindex], simp$colours$AFT[aftindex])),
+				fill_start_box = as.matrix(data.frame(aftcolours, aftcolours)),
 				box_prop = as.matrix(populations),
 				
 				box_label = c(ticks, endtick),
@@ -129,7 +187,7 @@ output_visualise_takeovers <- function(simp,
 #					box_label_pos = "bottom",
 #					box_width = 1/6)
 		
-	simp$fig$close()
+		simp$fig$close()
 	}
 }
 #' Visualise AFT fluctuations

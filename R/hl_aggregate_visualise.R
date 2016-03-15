@@ -220,7 +220,7 @@ hl_demandsupply <- function(simp, runid = simp$sim$id, dataname = "csv_cell_aggr
 #' @param titleprefix
 #' @param filenameprefix 
 #' @param percent data.frame with frist column containing the grouping (and named with the grouping variable) 
-#' 	the 2nd column values shall be considered as 100% for
+#' 	the 2nd column values shall be considered as 100\% for
 #' @return plot (and rData) 
 #' 
 #' @author Sascha Holzhauer
@@ -281,16 +281,16 @@ hl_volatility <- function(simp, dataname = "csv_aggregated_cellvolatility",
 #' @inheritParams output_visualise_takeovers
 #' @param simp 
 #' \itemize{
-#' 	\item \code{\link{input_tools_load}}
-#' 	\item \code{\link{output_visualise_takeovers}}
+#' 	\item \code{\link[craftyr]{input_tools_load}}
+#' 	\item \code{\link[craftyr]{output_visualise_takeovers}}
 #' }
 #' @param runid 
 #' @param dataname data name of aggregated cell data - used to derive total AFT numbers.
 #' @param datanametakeovers data name for take over data (usually from 
 #' \href{https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-TakeoverCellOutputter}{CRAFTY outputter TakeoverCellOutputter}).
 #' 			and imported via \code{\link{input_csv_data}}).
-#' @param aftnames AFT names (defaults to simp$mdata$aftNames without the first entry which is usually
-#' 				   'Unmanaged' and not considered in stored take over data)
+#' @param aftnames the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT, 
+#'  which is usually 'Unmanaged' (and may not be considered in stored take over data)
 #' @return transition plot
 #' 
 #' @family takeovers
@@ -299,7 +299,10 @@ hl_volatility <- function(simp, dataname = "csv_aggregated_cellvolatility",
 hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_aggregated",
 		starttick = simp$sim$starttick, tickinterval=5, endtick = simp$sim$endtick,
 		datanametakeovers = "csv_aggregateTakeOver", transitionthreshold = 5, 
-		aftnames = simp$mdata$aftNames[-1]) {
+		aftnames = simp$mdata$aftNames,
+		aftaggregation = NULL,
+		grouping = c("Tick", "Scenario", "Runid", "Region"),
+		aftorder = NULL) {
 	input_tools_load(simp, dataname)
 	dataAgg <- get(dataname)
 	
@@ -335,7 +338,10 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 				tickinterval=tickinterval,
 				type_of_arrow = "gradient2sided",
 				transitionthreshold = transitionthreshold,
-				aftnames = aftnames)
+				aftnames = aftnames,
+				aftaggregation = aftaggregation,
+				grouping = grouping,
+				aftorder = aftorder)
 	} else {
 		warning(paste("There is no AFT giving in data in rData with name", datanametakeovers, "for ID", simp$sim$id))
 	}

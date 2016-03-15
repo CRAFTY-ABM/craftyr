@@ -25,7 +25,7 @@ hl_lines_from_csv(simp, dataname, datatype, datacolumns = NULL,
 \item{filenameprefix}{}
 
 \item{percent}{data.frame with frist column containing the grouping (and named with the grouping variable)
-the 2nd column values shall be considered as 100% for}
+the 2nd column values shall be considered as 100\% for}
 }
 \value{
 plot (and rData)
