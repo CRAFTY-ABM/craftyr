@@ -33,7 +33,7 @@
 
 # Send mail when job is aborted or terminates
 #$ -m ae
-#$ -M Sascha.Holzhauer@ed.ac.uk
+#$ -M your@email
 
 echo "####################################################"
 echo "Job started on " `hostname` `date`
