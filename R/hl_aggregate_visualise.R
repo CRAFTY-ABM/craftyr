@@ -302,7 +302,8 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 		aftnames = simp$mdata$aftNames,
 		aftaggregation = NULL,
 		grouping = c("Tick", "Scenario", "Runid", "Region"),
-		aftorder = NULL) {
+		aftorder = NULL,
+		type_of_arrow = "gradient2sided") {
 	input_tools_load(simp, dataname)
 	dataAgg <- get(dataname)
 	
@@ -336,7 +337,7 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 				starttick = starttick,
 				endtick=endtick,
 				tickinterval=tickinterval,
-				type_of_arrow = "gradient2sided",
+				type_of_arrow = type_of_arrow,
 				transitionthreshold = transitionthreshold,
 				aftnames = aftnames,
 				aftaggregation = aftaggregation,
