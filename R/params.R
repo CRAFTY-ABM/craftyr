@@ -65,7 +65,9 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$csv$tickinterval_agg	<- 1
 	defsimp$csv$tickinterval_cell	<- 10
 	defsimp$csv$nastrings			<- "?"
-
+	defsimp$csv$cname_cap_x			<- "x"
+	defsimp$csv$cname_cap_y			<- "y"
+	
 	### Model Data ################################################################
 	
 	defsimp$mdata <- list()
@@ -112,6 +114,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$averagedemand  <- FALSE
 	defsimp$fig$numticks		<- 8
 	defsimp$fig$maxnumtypes		<- 3
+	defsimp$fig$maptitle		<- NULL
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()
@@ -124,6 +127,16 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$colours$GenericFun		<- settings_colours_getColorSet
 	defsimp$colours$binarycolours 	<- c("skyblue1", "black")
 	defsimp$colours$defaultset		<- "Dark2"
+	
+	defsimp$fills <- list()
+	defsimp$fills$AFT 				<- settings_colours_getAftColours()
+	defsimp$fills$Service 			<- settings_colours_getServiceColours()
+	defsimp$fills$Capital 			<- settings_colours_getCapitalColours()
+	defsimp$fills$Region 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
+	defsimp$fills$Runid 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
+	defsimp$fills$GenericFun		<- settings_colours_getColorSet
+	defsimp$fills$binarycolours 	<- c("skyblue1", "black")
+	defsimp$fills$defaultset		<- "Dark2"
 	
 	### Parameter Creation ###########################################################
 	defsimp$paramcreation$startrun	<- -1
@@ -174,7 +187,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$debug$db		<- NA
 	defsimp$debug$input		<- NA
 	defsimp$debug$output	<- NA
-	
+	defsimp$debug$fig		<- NA
 	
 	result <- modifyList(defsimp, simp)
 	result

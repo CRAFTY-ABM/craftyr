@@ -4,6 +4,9 @@
 #' the transition Farmer (2010) > Forester (2011) > Farmer (2012) counts as two flows 
 #' Farmer (2010) > Forester (2011) and Forester (2011) > Farmer (2012).
 #' 
+#' There does not seem to be a straigh-forward way to convert a gTree object back to a ggplot2 object...
+#' (http://stackoverflow.com/questions/29583849/r-saving-a-plot-in-an-object)
+#' 
 #' @param simp SIMulation Properties
 #' \itemize{
 #' 	\item evtl. simp$sim$starttick or simp$tech$mintick
@@ -28,10 +31,13 @@
 #' \code{simp$colours$aftgroups} to reflect group colors). To exclude AFT from being displayed, assign NA.
 #' @param grouping vector of names of columns that describe the dataset but to not contain counts. Column \code{AFT} does not need to be considered here.
 #' @param aftorder specifies order of buckets in columns from top to bottom. Alphabetical if NULL.
+#' @param returnplot if true the ggplot object is returned
 #' @return plots figure
 #' 
 #' @family takeovers
 #' @author Sascha Holzhauer
+#' 
+#' @importFrom magrittr "%>%"
 #' @export
 output_visualise_takeovers <- function(simp,
 		data,
@@ -44,7 +50,12 @@ output_visualise_takeovers <- function(simp,
 		aftnames = simp$mdata$aftNames,
 		aftaggregation = NULL,
 		grouping = c("Tick", "Scenario", "Runid", "Region"),
-		aftorder = NULL) {
+		aftorder = NULL,
+		returnplot = FALSE) {
+	
+	if (returnplot) {
+		R.oo::throw.default("A ggplot2 object cannot be returned from this function!")
+	}
 	
 	# aftorder = c("Cons", "Farm", "Mult", "Pass", "Prod", "Recr", "UNMANAGED", "Other")
 	# TODO allow for multiple runids (changes to startpopulation and plot as facet eg.)
@@ -103,7 +114,7 @@ output_visualise_takeovers <- function(simp,
 						Tick=data[["Tick"]], AFT=data[["AFT"]]), FUN=sum)
 		
 		population <- setNames(startpopulation$Number, startpopulation$Agent)
-		
+		populations <- data.frame(population)
 		transitions <- list()
 		
 		validticks <- ticks[ticks %in% unique(data[["Tick"]])]
@@ -141,9 +152,6 @@ output_visualise_takeovers <- function(simp,
 				
 				population <- population[order(aftNumbers[as.character(names(population))])]
 			}
-			populations <- data.frame(population)
-			
-			
 			
 			transitions[[as.character(tick)]] <-  t
 			
@@ -161,7 +169,38 @@ output_visualise_takeovers <- function(simp,
 								unique(data$Region)),"_", starttick, "-", endtick, "_", simp$sim$id, sep="")) 
 		simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "takeovers", sep="/"), filename = filename)
 		
+		
+		
 		# TODO integerate absolute AFT numbers
+
+
+#		# <--- new Gmisc class:
+#		library(Gmisc)
+#		
+#		transitionsPlot <- transitions[[1]] %>%
+#				getRefClass("Transition")$new(label=c(ticks[1], ticks[2]))
+#		
+#		
+#		transitionsPlot$title 			<- "AFT transitionsPlot"
+#		transitionsPlot$box_label_pos 	<- "bottom"
+#		transitionsPlot$arrow_type 		<- "gradient2sided"
+#		transitionsPlot$max_lwd 		<- grid::unit(.05, "npc")
+#		transitionsPlot$box_width 		<- 1/(length(transitions)*4)
+#		transitionsPlot$box_label_cex	<- 1.2
+#		transitionsPlot$box_cex			<- 1.3
+#		transitionsPlot$title_cex		<- 1.4
+#		transitionsPlot$fill_clr		<- as.matrix(data.frame(aftcolours, aftcolours))
+#		#transitionsPlot$lwd_prop_type	<- "box"
+#
+#		
+#		#for (col in 3:length(transitionsPlot)) {
+#	#		table(data$Charnley_class_1yr, data$Charnley_class_2yr, data$Sex) %>%
+#	#				transitionsPlot$addtransitionsPlot(label="2 years after")
+#	#	}
+#		
+#		transitionsPlot$render()
+#		############# ---> 
+
 		
 		shGmisc::transitionPlot(transitions,
 				cex = 1.2,
@@ -177,7 +216,6 @@ output_visualise_takeovers <- function(simp,
 				box_label_cex = 1.2,
 				box_width = 1/(length(transitions)*4),
 				main = "AFT Transitions")
-		
 #			transitionPlot(transitions[[1]],
 #					overlap_add_width = 1.3,
 #					type_of_arrow = "grid", 
@@ -200,7 +238,8 @@ output_visualise_takeovers <- function(simp,
 #' @param endtick 
 #' @param tickinterval 
 #' @param title 
-#' @param filename  
+#' @param filename 
+#' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
 #' @family takeovers
@@ -212,7 +251,8 @@ output_visualise_aftFluctuations <- function(simp,
 		endtick = if(!is.null(simp$sim$endtick)) simp$sim$endtick else simp$tech$maxtick, 
 		tickinterval = 1,
 		title = "AFT Fluctuations",
-		filename = title) {
+		filename = title,
+		returnplot = FALSE) {
 	
 	df <- data[data$Tick == 2010,]
 	fluctuations <- plyr::ddply(data, Runid~Tick, function(df) {
@@ -227,9 +267,11 @@ output_visualise_aftFluctuations <- function(simp,
 	names(aftNumbers) <- simp$mdata$aftNames
 	fluctuations$AFT <- aftNumbers[levels(fluctuations$AFT)[fluctuations$AFT]]
 
-	visualise_lines(simp, fluctuations, "sum", title = title,
+	p1 <- visualise_lines(simp, fluctuations, "sum", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = filename,
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }

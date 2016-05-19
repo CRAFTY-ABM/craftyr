@@ -1,12 +1,17 @@
-#' Reads competition functions for each service
+#' Reads competition functions for each service.
+#' 
 #' @param simp SIMulation Properties
-#' @param aft
+#' @param srcfilename Filename of competition XML file without extention.
+#' @param srcfilepath path for competition XML file. Applies \code{simp$dirs$param$getparamdir}
+#' to obtain path if NULL.
 #' @return data.frame containing productivities  
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_xml_param_competition <- function(simp, srcfilename = "Competition_linear") {
-	filepath <- paste(simp$dirs$param$getparamdir(simp, datatype="competition"), 
+input_xml_param_competition <- function(simp, srcfilepath = NULL, srcfilename = "Competition_linear") {
+	
+	filepath <- paste(if(is.null(srcfilepath)) simp$dirs$param$getparamdir(simp, datatype="competition")
+					 else srcfilepath, 
 			"/", srcfilename, ".xml", sep="")
 	
 	xmlParsed <- XML::xmlParse(file=filepath)
@@ -20,20 +25,22 @@ input_xml_param_competition <- function(simp, srcfilename = "Competition_linear"
 	return(functions)
 }
 get_function <- function(data) {
+	# read params from run.csv by runid
+	runid = as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+						simp$sim$runids[1]})
+	
+	rundata <- read.csv(file=paste(simp$dirs$data, simp$sim$version, "Runs.csv", sep="/"))
+	rundata <- rundata[rundata$run == runid,]
+	
 	if (data["curve.class"] %in% "com.moseph.modelutils.curve.LinearFunction") {
-		return(function(x) {x*as.numeric(data["curve.b"]) + as.numeric(data["curve.a"])})
+		return(function(x) {x*get_xmlfunction_parameter(data, rundata, parameter = "b", default = 1.0) + 
+							get_xmlfunction_parameter(data, rundata, "a", 0.0)})
 	} else if (data["curve.class"] %in% "com.moseph.modelutils.curve.ExponentialFunction") {
-		return(function(x) {as.numeric(data["curve.A"]) + 
-							(as.numeric(data["curve.B"])*exp(as.numeric(data["curve.C"])*x))})
+		return(function(x) {
+					get_xmlfunction_parameter(data, rundata, "A", 0.0) +
+					get_xmlfunction_parameter(data, rundata, "B", 1.0) *
+					exp(get_xmlfunction_parameter(data, rundata, "C", 1.0)*x)})
 	} else if (data["curve.class"] %in% "com.moseph.modelutils.curve.SigmoidFunction") {
-		# read params from run.csv by runid
-		
-		runid = as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
-							simp$sim$runids[1]})
-		
-		rundata <- read.csv(file=paste(simp$dirs$data, simp$sim$version, "Runs.csv", sep="/"))
-		rundata <- rundata[rundata$run == runid,]
-		
 		# defaults need to comply with those in com.moseph.modelutils.curve.SigmoidFunction
 		a = get_xmlfunction_parameter(data, rundata, "A", 1.0)
 		h = get_xmlfunction_parameter(data, rundata, "H", 1.0)
@@ -55,7 +62,6 @@ get_function <- function(data) {
 					fun
 				})
 
-
 	} else {
 		futile.logger::flog.warn("Curve in %s not supported!",
 					filename,
@@ -75,10 +81,15 @@ get_function <- function(data) {
 #' @author Sascha Holzhauer
 #' @export
 get_xmlfunction_parameter <- function(data, rundata, parameter, default) {
-	 value = default;
-	 if(!is.na(data[paste("curve.", parameter, sep="")])) {
-	 	if (grepl("@", data[paste("curve.", parameter, sep="")])) {
-			value =  as.numeric(rundata[, paste("Comp_", data[".attrs.service"], "_", parameter, sep="")])
+	value = default;
+	if(!is.na(data[paste("curve.", parameter, sep="")])) {
+		elementname = data[paste("curve.", parameter, sep="")]
+	 	if (grepl("@", elementname)) {
+			paramname =  stringr::str_trim(strsplit(elementname, split="[,\\)]")[[1]][2]) #  grep(",", elementname, value=F)
+			if (!paramname %in% colnames(rundata)) {
+				R.oo::throw.default("Rundata does not contain column ", paramname, "!")
+			}
+			value =  as.numeric(rundata[, paramname])
 		} else {
 			value = as.numeric(data[paste("curve.", parameter, sep="")])
 		}

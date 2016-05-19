@@ -1,4 +1,4 @@
-#' Concenate the filename from basedir, scenario, world, run_id, year as well as datatype and dataname.
+#' Concatenate the filename from basedir, scenario, world, run_id, year as well as datatype and dataname.
 #' Region, datatype, and dataname are only considered if given as parameters.
 #' 
 #' @param scenario
@@ -113,7 +113,8 @@ input_raster_output <- function(simp,
 				result
 			}, files, listnames, SIMPLIFY = FALSE)
 }
-#' Read a number of raster files and combine them in a list of data.
+#' Read a number of raster files of several years and combine them in a list of data.
+#' 
 #' @param scenario
 #' @param world
 #' @param basedir
@@ -162,7 +163,10 @@ readRasterDataYears <- function(scenario = lix$scenario, world = pix$world,
 	}
 	rasterData
 }
-#' Read raster
+#' Read raster of several years of several runIDs.
+#' 
+#' deprecated? looks similar to input_raster_output but does not support SIMP
+#' 
 #' @param scenario
 #' @param world
 #' @param basedir
@@ -204,7 +208,8 @@ readingRasterData_collateRuns <- function(scenario = lix$scenario, world = pix$w
 	output
 }
 
-#' Do title
+#' Collate runs and measure in data.frame
+#' 
 #' @param scenario
 #' @param world
 #' @param basedir

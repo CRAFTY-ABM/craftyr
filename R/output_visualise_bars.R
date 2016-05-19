@@ -15,6 +15,7 @@
 #' @param ggplotaddons vector of ggplot objects to add
 #' @param x_column
 #' @param position passed to geom_bar
+#' @param returnplot if true the ggplot object is returned
 #' @return ggplot2 line visualisation
 #' @example demo/example_visualise_lines_csv_allocation.R
 #'
@@ -23,8 +24,8 @@
 visualise_bars <- function(simp, data, y_column, title = NULL,
 		fill_column = NULL, fill_legendtitle = fill_column, fill_legenditemnames = NULL,
 		facet_column = NULL, facet_ncol = 4, filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
-		alpha=1.0, ggplotaddons = NULL, x_column = "ID", position = "dodge") {
-
+		alpha=1.0, ggplotaddons = NULL, x_column = "ID", position = "dodge", returnplot = FALSE) {
+	
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
 	}
@@ -52,9 +53,10 @@ visualise_bars <- function(simp, data, y_column, title = NULL,
 							fill = fill_column), stat="identity", position = position) +
 			facetElem  +
 		 	scaleFillElem +
-			{if (title != "") ggplot2::labs(title = title) else NULL} +
+			{if (!is.null(title) && title != "") ggplot2::labs(title = title) else NULL} +
 			(if (x_column == fill_column) ggplot2::scale_x_discrete(breaks=NULL) else NULL) +
 			ggplotaddons
 	print(p1)
 	simp$fig$close()
+	if (returnplot) return(p1)
 }

@@ -11,6 +11,7 @@ hl_printAgentProductionParameters <- function(simp, filenameprefix = "AftProduct
 	
 	# for each AFT
 	for (aft in simp$mdata$aftNames[-1]) {
+		# aft = simp$mdata$aftNames[2]
 		# get productivity table 
 		data <- input_csv_param_productivities(simp, aft, filenameprefix = filenameprefix,
 				filenamepostfix = filenamepostfix)
@@ -28,6 +29,37 @@ hl_printAgentProductionParameters <- function(simp, filenameprefix = "AftProduct
 				include.rownames = FALSE,
 				table.placement = "H")
 	}
+}
+#' Plot AFT's production as bar plot
+#' 
+#' @param simp 
+#' @param filenameprefix 
+#' @param filenamepostfix 
+#' @param heading 
+#' @param returnplot if true the ggplot object is returned
+#' @return bar plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_plotAgentProductionParameters <- function(simp, filenameprefix = "AftProduction_",
+		filenamepostfix = "_multi_medium", ggplotaddons = NULL, returnplot = FALSE) {
+	
+	# for each AFT
+	prodData <- data.frame()
+	for (aft in simp$mdata$aftNames[-1]) {
+		# aft = simp$mdata$aftNames[2]
+		# get productivity table 
+		data <- input_csv_param_productivities(simp, aft, filenameprefix = filenameprefix,
+				filenamepostfix = filenamepostfix)
+		prodData <- rbind(prodData, data.frame(data[, c("X", "Production")], AFT = aft, row.names= NULL))
+	}
+	colnames(prodData)[colnames(prodData) == "X"] <- "Service"
+	p1 <- visualise_bars(simp, prodData, y_column="Production", title = "",
+		fill_column = "Service", fill_legenditemnames = NULL,
+		facet_column = "AFT", facet_ncol = length(unique(prodData$AFT)), filename = "AFTproductions",
+		alpha=1.0, ggplotaddons = ggplotaddons, x_column = "Service", position = "dodge",
+		returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Print agent parameters
 #' @param simp 
@@ -71,17 +103,24 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 			include.rownames = FALSE,
 			table.placement = "H")
 }
-#' Read and plot compotition functions
+#' Read and plot competition functions
 #' @param simp 
-#' @param srcfilename competition XML file
+#' @param srcfilename competition XML file. Will be generated from \code{simp} if missing.
+#' @param srcfilepath obtained from Links.csv by default. Assign \code{NULL} to apply
+#' \code{simp$dirs$param$getparamdir}.
+#' @param filename filename for figure
+#' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
 #' @inheritParams visualise_competition_funcs
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_printCompetitionFunctions <- function(simp, srcfilename = NULL, xrange = c(-3,3), yrange = c(-1,1),
-		filename = "competitionFunctions", runidcolumnname="run") {
+hl_printCompetitionFunctions <- function(simp, srcfilename = NULL, 
+		srcfilepath = dirname(paste(simp$dirs$output$data, simp$sim$folder, hl_getRunParameter(simp, "Competition_xml"), 
+				sep="/")),
+		xrange = c(-3,3), yrange = c(-1,1),
+		 filename = "competitionFunctions", runidcolumnname="run", returnplot = FALSE) {
 	if(is.null(srcfilename)) {
 		paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 							simp$sim$runids[1]})
@@ -90,6 +129,38 @@ hl_printCompetitionFunctions <- function(simp, srcfilename = NULL, xrange = c(-3
 										"Competition_xml"])))
 	}
 	
-	functions <- input_xml_param_competition(simp, srcfilename = srcfilename)
-	visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename)
-} 
+	functions <- input_xml_param_competition(simp, srcfilename = srcfilename, srcfilepath = srcfilepath)
+	p1 <- visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename, returnplot = returnplot)
+	if (returnplot) return(p1)
+}
+#' Print run parameters
+#' @param simp 
+#' @param filenameprefix 
+#' @param filenamepostfix 
+#' @return print xtable
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_printRunParameters <- function(simp) {
+	
+	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+						simp$sim$runids[1]})
+	
+	futile.logger::flog.info("Print run parameter table for run ID %d",
+			paramid,
+			name = "craftyr.hl_params.R")
+	
+	runParamData <- input_csv_param_runs(simp)
+	runParamData <- runParamData[runParamData$run == paramid,]
+	
+	# print table
+	table <- xtable::xtable(t(runParamData),
+			label= "param.run",
+			caption= "Run Parameters",
+			align=c("r", "p{13cm}")
+	)
+	
+	print(table, sanitize.colnames.function = identity,
+			include.rownames = TRUE,
+			table.placement = "H")
+}

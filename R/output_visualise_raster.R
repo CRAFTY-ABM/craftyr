@@ -12,6 +12,7 @@
 #' @param ncol number of columns of facet wrap. Defauls to the number of rasters in the first dataframe
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
 #' @param legenditemnames names for legend items
+#' @param returnplot if true the ggplot object is returned
 #' @return raster visualisation
 #' @example demo/example_visualise_cells_raster_aft.R
 #'
@@ -21,24 +22,38 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 		title = "", filenamepostfix = title, legendtitle = "",
 		factorial= FALSE, omitaxisticks = FALSE, ncol = if (is.list(inforasterdata)) length(inforasterdata[[1]][,1]) else length(inforasterdata[,1]), 
 		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL,
-		theme = visualisation_raster_nobackground) {
+		theme = visualisation_raster_nobackground, returnplot = FALSE) {
 	
 	futile.logger::flog.info("Print raster data...",
 			name="craftyr.visualise.raster")
 	
+
 	if(is.data.frame(inforasterdata)) {
 		inforasterdata <- list("Something" = inforasterdata)
+	} else {
+		if(is.null(names(inforasterdata))) {
+			R.oo::throw.default("List elements need to be named!")	
+		}
 	}
 	
 	data <- NULL
 	listlen <- length(inforasterdata)
 	data <- mapply(function(infoRasterDataVector, listname) {
 						idata <- apply(infoRasterDataVector, MARGIN=1, function(infoRaster) {
-							s <- data.frame(raster::rasterToPoints(infoRaster[["Raster"]]), 
-									ID = paste(if (listlen > 1) listname else "", infoRaster[[idcolumn]]))
+							if (any(!is.na(raster::getValues(infoRaster[["Raster"]])))) {
+								points <- raster::rasterToPoints(infoRaster[["Raster"]])
+							} else {
+								futile.logger::flog.warn("Raster (%s) contains only NA!",
+										infoRaster[[idcolumn]],
+										name = "craftyr.output_visualise_raster.R")
+								points <- matrix(c(0,0,NA), nrow=1)
+							}
+							s <- data.frame(points, 
+									ID = paste(if (listlen > 1) listname else "", infoRaster[[idcolumn]], sep=""))
 							colnames(s) <- c("X", "Y", "Values", "ID")
 							s
 						})
+						str(idata)
 						do.call(rbind, idata)
 		}, inforasterdata, names(inforasterdata), SIMPLIFY = FALSE)
 	d <- do.call(rbind, data)
@@ -73,7 +88,7 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 	
 	
 	p1 <- ggplot2::ggplot()+
-			ggplot2::layer(geom="raster", data=d, mapping=ggplot2::aes(X,Y,fill=Values)) +
+			ggplot2::geom_raster(data=d, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
 			(if (title != "") ggplot2::labs(title = title)) + 
@@ -84,8 +99,13 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 			ggplotaddon
 	print(p1)
 	simp$fig$close()
+	if (returnplot) return(p1)
 }
 #' Writes a list of raster data as single raw (only the raster data) ggplot2 plot files
+#' 
+#' There does not seem to be a straigh-forward way to convert a gTree object back to a ggplot2 object...
+#' (http://stackoverflow.com/questions/29583849/r-saving-a-plot-in-an-object)
+#' 
 #' @param simp SIMulation Properties
 #' @param rasterdata if a list, elements must be named differently
 #' @param datanames vector of names of the same length as rasterData
@@ -94,6 +114,7 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 #' @param omitaxisticks omit axis ticks if true
 #' @param ncol number of columns of facet wrap
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
+#' @param returnplot if true the ggplot object is returned
 #' @return raster visualisation files
 #' @example demo/example_visualise_cells_raster_aft_raw.R
 #'
@@ -102,8 +123,12 @@ visualise_raster_printPlots <- function(simp, inforasterdata, idcolumn = "Tick",
 visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, legendtitle = "", 
 		factorial= FALSE, omitaxisticks = FALSE, ncol = 1, coloursetname=simp$colours$defaultset, 
 		legenditemnames = NULL,
-		theme = visualisation_raster_legendonlytheme) {
+		theme = visualisation_raster_legendonlytheme, returnplot = FALSE) {
 
+	if (returnplot) {
+		R.oo::throw.default("A ggplot2 object cannot be returned from this function!")
+	}
+	
 	if(is.data.frame(rasterdata)) {
 		rasterdata <- list(rasterdata)
 	}
@@ -139,7 +164,7 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 			}
 			
 			p1 <- ggplot2::ggplot()+
-				ggplot2::layer(geom="raster", data=s, mapping=ggplot2::aes(X,Y,fill=Values)) +
+				ggplot2::geom_raster(data=s, mapping=ggplot2::aes(X,Y,fill=Values)) +
 				scaleFillElem +
 				theme() +
 				ggplot2::scale_x_continuous(expand=c(0,0)) + ggplot2::scale_y_continuous(expand=c(0,0)) +
@@ -168,7 +193,6 @@ visualisation_raster_printRawPlots_theme_nothing <- function(base_size = 12, bas
 					rect             = ggplot2::element_blank(),
 					line             = ggplot2::element_blank(),
 					text             = ggplot2::element_blank(),
-					axis.ticks.margin = grid::unit(0, "lines"),
 					legend.position = "none",
 					panel.background = ggplot2::element_blank(),
 					panel.grid.major = ggplot2::element_blank(),
@@ -183,7 +207,7 @@ visualisation_raster_printRawPlots_theme_nothing <- function(base_size = 12, bas
 					axis.title.y = ggplot2::element_blank(),
 					axis.line = ggplot2::element_blank(),
 					axis.ticks.length = grid::unit(0,"null"),
-					axis.ticks.margin = grid::unit(0,"null")
+					axis.text = ggplot2::element_text(margin = grid::unit(0,"null"))
 			)
 }
 
@@ -198,7 +222,6 @@ visualisation_raster_legendonlytheme <- function(base_size = 11, base_family = "
 	library(ggplot2)  # correct (see stack exchange question) for %+replace%
 	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
 			ggplot2::theme(
-					axis.ticks.margin = grid::unit(0, "lines"),
 					panel.background = ggplot2::element_blank(),
 					panel.grid.major = ggplot2::element_blank(),
 					panel.grid.minor = ggplot2::element_blank(),
@@ -213,7 +236,7 @@ visualisation_raster_legendonlytheme <- function(base_size = 11, base_family = "
 					axis.title.y = ggplot2::element_blank(),
 					axis.line = ggplot2::element_blank(),
 					axis.ticks.length = grid::unit(0,"null"),
-					axis.ticks.margin = grid::unit(0,"null")
+					axis.text = ggplot2::element_text(margin = grid::unit(0,"null"))
 			)
 }
 # check that it is a complete theme

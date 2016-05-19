@@ -6,12 +6,11 @@
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_tools_getModelInputDir <- function(simp, datatype) {
-	if (is.null(datatype)) {
-		R.oo::throw.default("Parameter 'datatype' may not be null!")
-	}
+input_tools_getModelInputDir <- function(simp, datatype = NULL) {
 	return <- paste(simp$dirs$data,
-					if (datatype %in% c("capitals")) {
+					if (is.null(datatype)) { 
+						simp$sim$folder
+					} else if (datatype %in% c("capitals")) {
 						paste(simp$sim$folder,"worlds", simp$sim$worldname,
 							if(!is.null(simp$sim$regionalisation)) paste("regionalisations", 
 									simp$sim$regionalisation, sep="/"), "capitals", sep="/")
@@ -245,6 +244,21 @@ input_tools_getFilenameListRepetitions <- function(simp,
 	reps <- if (reps < 1) 1 else reps
 	rep(do.call(paste, c(filenameList, sep="")), each=reps)
 }
+#' Construct a list of filenames
+#' 
+#' @param simp considered elements: \itemize{
+#' 				\item{\code{simp$sim$filepartorder}}
+#' 				\item{\code{simp$sim$scenario}}
+#' 				\item{\code{simp$sim$regionalisation}}
+#' 				\item{\code{simp$sim$runids}}
+#' 				\item{\code{simp$sim$regions}}}
+#' @param datatype 
+#' @param dataname 
+#' @param order 
+#' @param considertick 
+#' @return 
+#' 
+#' @author Sascha Holzhauer
 input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = NULL, 
 		order = simp$sim$filepartorder, considertick = TRUE) {
 	vectors <- list("scenario" = simp$sim$scenario,
@@ -300,7 +314,7 @@ input_tools_getModelInputFilenames <- function(simp, folders = input_tools_getMo
 #' Wrapper for save
 #' 
 #' @param simp 
-#' @param object 
+#' @param object object name as character
 #' 
 #' @author Sascha Holzhauer
 #' @export
@@ -333,8 +347,8 @@ input_tools_checkexists <- function(simp, objectName) {
 #' @param simp 
 #' \itemize{
 #' 	\item \code{simp$sim$id}
-#'  \item \code{simp$dirs$output$data}
-#' 	\item \code{simp$sim$version} (\code{if is.null(simp$sim$id)}
+#'  \item \code{simp$dirs$output$rdata}
+#' 	\item \code{simp$sim$version} (if \code{is.null(simp$sim$id)})
 #' }
 #' @param objectName 
 #' 
@@ -371,4 +385,34 @@ input_tools_buildsimplist <- function(runs, randomseed = 0) {
 		simps <- append(simps, list(anothersimp))
 	}
 	simps
+}
+#' Read a value from Links.cav according to simp and the given ID
+#' @param simp 
+#' @param id  
+#' @return value in Links.csv
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_getLinksValue <- function(simp, id = "CapitalFolder") {
+	linksdata <- read.csv(file=paste(simp$dirs$output$data, "/", simp$sim$folder, "/Links.csv", sep=""))
+	return(linksdata[linksdata$ID == id, "Value"])
+}
+#' Load, combine, and store data objects
+#' 
+#' @param simp used for saving
+#' @param simps list of simp 
+#' @param fromdataname character
+#' @param todataname character
+#' @return stored RData object
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_loadstorecombined <- function(simp, simps, fromdataname, todataname = fromdataname) {
+	combined <- data.frame()
+	for (s in simps) {
+		input_tools_load(s, objectName=fromdataname)
+		combined <- rbind(combined, get(fromdataname))
+	}
+	assign(todataname, combined)
+	input_tools_save(simp, todataname)
 }

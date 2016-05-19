@@ -4,11 +4,14 @@
 #' @param xrange Vector of two. The x range to plot
 #' @param yrange Vector of two. The y range to plot
 #' @param filename filename for figure
-#' @return plot
+#' @param returnplot if true the ggplot object is returned
+#' @return plot if \code{returnplot == true}
 #' 
 #' @author Sascha Holzhauer
 #' @export
-visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrange = c(-1,1), filename = "competitionFunctions") {
+visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrange = c(-1,1), 
+		filename = "competitionFunctions",
+		returnplot = FALSE) {
 	
 	futile.logger::flog.debug("Print competition functions for services...",
 			name="craftyr.visualise.competition")
@@ -27,9 +30,12 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 	
 	f <- ggplot2::ggplot(data.frame(x = xrange, y = yrange), aes(x))
 	f <- f + stat_functions +
+			ggplot2::xlab("Residual demand") +
+			ggplot2::ylab("Benefit") +
 			ggplot2::scale_colour_manual("Services", values = simp$colours$Service)
 	print(f)
 	simp$fig$close()
+	if (returnplot) return(f)
 }
 #' Histogram of competitiveness per AFT: stacked: below/above GU threshold
 #' 
@@ -42,6 +48,7 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 #' @param title plot title
 #' @param ggplotaddons list of ggplot2 elements
 #' @param setfigdims if \code{TRUE} \code{simp$fig$height} and \code{simp$fig$width} are set appropriately
+#' @param returnplot if true the ggplot object is returned
 #' @return facet histogram plot 
 #' 
 #' @author Sascha Holzhauer
@@ -49,8 +56,7 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$mdata$aftNames) - 1,
 		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
 		numbins = 20, binwidth = diff(range(data$PreAllocCompetitiveness))/numbins, title = NULL,
-		ggplotaddons = NULL, setfigdims = TRUE, storename = NULL) {
-	
+		ggplotaddons = NULL, setfigdims = TRUE, storename = NULL, returnplot = FALSE) {
 	
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
@@ -91,6 +97,7 @@ visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$
 	
 	print(p1)
 	simp$fig$close()
+	if (returnplot) return(p1)
 }
 #' Histogram of competitiveness per AFT: stacked: below/above GU threshold
 #' 
@@ -104,6 +111,7 @@ visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$
 #' @param ggplotaddons 
 #' @param setfigdims 
 #' @param storename 
+#' @param returnplot if true the ggplot object is returned
 #' @return bar plot
 #' 
 #' @author Sascha Holzhauer
@@ -111,8 +119,7 @@ visualise_competition_prealloc <- function(simp, data, facet_ncol = length(simp$
 visualise_competition_preallocTable <- function(simp, data, facet_ncol = length(simp$mdata$aftNames) - 1,
 		filename = paste("PreAllocationCompetition", simp$sim$id, sep="_"),
 		numbins = 20, binwidth = NULL, title = NULL,
-		ggplotaddons = NULL, setfigdims = TRUE, storename = NULL) {
-	
+		ggplotaddons = NULL, setfigdims = TRUE, storename = NULL, returnplot = FALSE) {
 	
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
@@ -186,4 +193,5 @@ visualise_competition_preallocTable <- function(simp, data, facet_ncol = length(
 	
 	print(p1)
 	simp$fig$close()
+	if (returnplot) return(p1)
 }

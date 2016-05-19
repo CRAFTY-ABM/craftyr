@@ -397,6 +397,29 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 #  		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype"))
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
+#  convert_aggregate_demand(simp)
+#  convert_aggregate_supply(simp, celldataname = "dataAgg")
+#  
+#  ################ store percental supply (regarding demand)
+#  input_tools_load(simp, objectName="csv_aggregated_demand")
+#  input_tools_load(simp, objectName="csv_aggregated_supply")
+#  colnames(csv_aggregated_demand)[colnames(csv_aggregated_demand) == "variable"] <- "Service"
+#  dataAggregatedPercentalSupply <- merge(csv_aggregated_supply, csv_aggregated_demand)
+#  dataAggregatedPercentalSupply$PercentalSupply <- 100 * dataAggregatedPercentalSupply$TotalProduction /
+#  		dataAggregatedPercentalSupply$Demand
+#  input_tools_save(simp, "dataAggregatedPercentalSupply")
+#  
+#  visualise_actions(simp, dataname = "dataActions",
+#  	monitordataname = "dataAggregatedPercentalSupply",
+#  	monitorvars = simp$mdata$services,
+#  	monitorColours = simp$colours$Service,
+#  	colour_column = "Service",
+#  	size_column = NULL,
+#  	measure_name = "PercentalSupply",
+#  	actionColours = c("DoNothing" = "grey", "RegionalSubsidyPa_CCereal" = simp$colours$Service["Cereal"],
+#  			"RegionalSubsidyPa_Forester" = simp$colours$Service["Timber"]))
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_aftcomposisition_file(simp, csvfilename, title = "AftComposition",
 #  		figurefilename = "AftComposition")
 #  

@@ -1,9 +1,4 @@
 \documentclass[a4paper]{article}
-\usepackage[margin=0.5in]{geometry}
-\usepackage{varioref}
-\usepackage[pdftex]{hyperref}
-\usepackage{float}
-\usepackage{cprotect}
 
 <<configdef, echo=FALSE, results='hide'>>=
 source(simp$simpDefinition)

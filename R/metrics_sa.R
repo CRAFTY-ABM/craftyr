@@ -78,7 +78,8 @@ visualisation_sa_multi <- function(dataName,
 		scores,
 		legendName = "Scenarios",
 		legendLabels = NULL, 
-		main = NULL) {
+		main = NULL,
+		returnplot = FALSE) {
 	lix$outdir <<- paste(pix$path_names["out_dir_figure"][[1]], "/", paste(c(lix$scenario, lix$comp$scenario), 
 					collapse="~") , sep="")
 	lix$filename <<- paste(if (length(runIds)==1) runIds[1] else "MultiRun", "_", dataName, "_CompareSpA",
@@ -99,6 +100,6 @@ visualisation_sa_multi <- function(dataName,
 #		g <- g + scale_colour_discrete(name = legendName, labels=legendLabels)
 #	}
 	print(g); 
-	
 	dev.off()
+	if (returnplot) return(g)
 }

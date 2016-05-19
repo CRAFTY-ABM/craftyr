@@ -3,12 +3,13 @@
 #' Usually, does not include the number of unmanaged cells.
 #' @param simp 
 #' @param dataname 
+#' @param returnplot if true, return ggplot object
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated") {
-	input_tools_load(simp, dataname)
+	input_tools_load(simp, dataname, returnplot = FALSE)
 	data <- get(dataname)
 	
 	aftData <- data[, colnames(data) %in% c("Tick", "LandUseIndex", "Runid", "Region", "AFT")]
@@ -26,7 +27,7 @@ hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated") {
 		## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 	
-	visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
+	p1 <- visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -34,7 +35,9 @@ hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated") {
 			linetype_legenditemnames = simp$sim$rundesc,
 			filename = paste("TotalAftComposition", 
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Load, aggregate and visualise production per service and AFT
 #' 
@@ -42,12 +45,13 @@ hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated") {
 #' @param dataname
 #' @param facet_ncol
 #' @param normaliseByAftNumber
+#' @param returnplot if true the ggplot object is returned
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_ncol=2, 
-		normaliseByAftNumber = TRUE) {
+		normaliseByAftNumber = TRUE, returnplot = FALSE) {
 	
 	input_tools_load(simp, dataname)
 	data <- get(dataname)
@@ -75,7 +79,7 @@ hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_n
 	prodData$Service <- simp$mdata$conversion$services[prodData$Service]
 	prodData$AFT <- simp$mdata$aftNames[match(prodData$AFT, names(simp$mdata$aftNames))]
 	
-	visualise_lines(simp, prodData, "Production", title = "Service Production",
+	p1 <- visualise_lines(simp, prodData, "Production", title = "Service Production",
 			colour_column = "Service",
 			#colour_legenditemnames = simp$mdata$services,
 			linetype_column = "ID",
@@ -85,18 +89,21 @@ hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_n
 			facet_ncol = facet_ncol,
 			filename = paste("ServiceProduction", 
 					shbasic::shbasic_condenseRunids(data.frame(prodData)[, "ID"]), sep="_"),
-			alpha=simp$fig$alpha)
+			alpha=simp$fig$alpha,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Load from csv data, aggregate, and plot AFT competitiveness
 #' 
 #' @param simp 
-#' @param dataname 
+#' @param dataname
+#' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
-	input_tools_load(simp, dataname)
+	input_tools_load(simp, dataname, returnplot = FALSE)
 	data <- get(dataname)
 	
 	aftData <- data[data$LandUseIndex != as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames=="Unmanaged"]), 
@@ -111,7 +118,7 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 		## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 		
-	visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness (invalid mean!)",
+	p1 <- visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness (invalid mean!)",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -119,7 +126,9 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 			linetype_legenditemnames = simp$sim$rundesc,
 			filename = paste("TotalCompetitivenessInvalid", 
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Load from csv data, aggregate, and plot AFT competitiveness per region
 #' 
@@ -131,7 +140,8 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 #' @author Sascha Holzhauer
 #' @export
 hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", facet_ncol = 4) {
-	input_tools_load(simp, dataname)
+	input_tools_load(simp, dataname, returnplot = FALSE)
+	
 	data <- get(dataname)
 	
 	aftData <- data[data$LandUseIndex != as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames=="Unmanaged"]), 
@@ -158,7 +168,7 @@ hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", 
 		linetype_legenditemnames = NULL
 		facet_column = "Region"
 	}
-	visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness",
+	p1 <- visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = linetype_column,
@@ -168,18 +178,21 @@ hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", 
 			facet_ncol = facet_ncol,
 			filename = paste("TotalCompetitivenessPerRegion", 
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Read supply and demand and plot for given runid
 #' 
 #' @param simp 
 #' @param runid 
 #' @param dataname 
+#' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_demandsupply <- function(simp, runid = simp$sim$id, dataname = "csv_cell_aggregated") {
+hl_demandsupply <- function(simp, runid = simp$sim$runids, dataname = "csv_cell_aggregated", returnplot = FALSE) {
 	convert_aggregate_demand(simp)
 	convert_aggregate_supply(simp, celldataname = dataname)
 	
@@ -202,11 +215,13 @@ hl_demandsupply <- function(simp, runid = simp$sim$id, dataname = "csv_cell_aggr
 	combined <- rbind(datDemand, datSupply)
 	combined <- aggregate(subset(combined, select=c("Value")),
 			by =list(Tick=combined[, "Tick"], ID=combined[,"Type"], Service = combined[,"Variable"]), FUN=sum)
-	visualise_lines(simp, combined, "Value", title = paste("Demand & Supply", simp$sim$rundesc[runid]),
+	p1 <- visualise_lines(simp, combined, "Value", title = paste("Demand & Supply", simp$sim$rundesc[runid]),
 			colour_column = "Service",
 			linetype_column = "ID",
 			filename = paste("TotalDemandAndSupply_",simp$sim$rundesc[runid], sep=""),
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Read data and visualise datacolumns as lines
 #' 
@@ -221,12 +236,14 @@ hl_demandsupply <- function(simp, runid = simp$sim$id, dataname = "csv_cell_aggr
 #' @param filenameprefix 
 #' @param percent data.frame with frist column containing the grouping (and named with the grouping variable) 
 #' 	the 2nd column values shall be considered as 100\% for
+#' @param returnplot if true the ggplot object is returned
 #' @return plot (and rData) 
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_lines_from_csv <- function(simp, dataname, datatype, datacolumns = NULL, linetypecol = "ID",
-		colourcol = "Type", titleprefix = NULL, filenameprefix = NULL, percent = NULL) {
+		colourcol = "Type", facetcol = NULL, titleprefix = NULL, filenameprefix = NULL, percent = NULL,
+		returnplot = FALSE) {
 	
 	if (!input_tools_checkexists(simp, dataname)) {
 		
@@ -252,10 +269,13 @@ hl_lines_from_csv <- function(simp, dataname, datatype, datacolumns = NULL, line
 	}
 	
 	
-	visualise_lines(simp, data, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
+	p1 <- visualise_lines(simp, data, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
 			colour_column = colourcol,
 			linetype_column = linetypecol,
-			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""))
+			facet_column = facetcol,
+			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""),
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Read cell volatility data and visualise CellVolatility and NumVolatileCells as lines
 #' 
@@ -263,18 +283,20 @@ hl_lines_from_csv <- function(simp, dataname, datatype, datacolumns = NULL, line
 #' @param dataname 
 #' @param datatype 
 #' @param datacolumns 
+#' @param returnplot if true the ggplot object is returned
 #' @return plot (and rData)
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_volatility <- function(simp, dataname = "csv_aggregated_cellvolatility", 
 		datatype = "AggregateCellVolatility", datacolumns = c("CellVolatility", "NumVolatileCells"),
-		percent = NULL) {
+		percent = NULL, returnplot = FALSE) {
 	
-	hl_lines_from_csv(simp, dataname = dataname, 
+	p1 <- hl_lines_from_csv(simp, dataname = dataname, 
 			datatype = datatype, datacolumns = datacolumns, linetypecol = "Region",
 			colourcol = "Type", titleprefix = "Cell Volatility", filenameprefix = "CellVolatility", 
-			percent = percent)
+			percent = percent, returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Transition plot of AFT take overs due to giving in.
 #' 
@@ -291,6 +313,7 @@ hl_volatility <- function(simp, dataname = "csv_aggregated_cellvolatility",
 #' 			and imported via \code{\link{input_csv_data}}).
 #' @param aftnames the AFTs to show. E.g., use \code{simp$mdata$aftNames[-1]} to omit the first AFT, 
 #'  which is usually 'Unmanaged' (and may not be considered in stored take over data)
+#' @param returnplot if true the ggplot object is returned
 #' @return transition plot
 #' 
 #' @family takeovers
@@ -303,7 +326,9 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 		aftaggregation = NULL,
 		grouping = c("Tick", "Scenario", "Runid", "Region"),
 		aftorder = NULL,
-		type_of_arrow = "gradient2sided") {
+		type_of_arrow = "gradient2sided",
+		returnplot = FALSE) {
+	
 	input_tools_load(simp, dataname)
 	dataAgg <- get(dataname)
 	
@@ -321,6 +346,13 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 	dataTakeOvers <- get(datanametakeovers)
 	
 	if(any(aftnames %in% names(dataTakeOvers))) {
+		
+		if (any(!aftnames %in% names(dataTakeOvers))) {
+			R.oo::throw.default("Defined AFT name (", 
+					paste(aftnames[!aftnamess %in% names(dataTakeOvers)], collapse=", "),
+					") not in take over data!")
+		}
+		
 		dat <- aggregate(subset(dataTakeOvers, select=aftnames), by = list(
 						Tick=dataTakeOvers[, "Tick"],
 						Runid=dataTakeOvers[, "Runid"],
@@ -331,7 +363,7 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 		colnames(startPopulation)[colnames(startPopulation) == "AFT"] <- "Number"
 		
 		# TODO cells that go to unmanaged are not considered...
-		output_visualise_takeovers(simp,
+		p1 <- output_visualise_takeovers(simp,
 				data = dat, 
 				startpopulation = startPopulation,
 				starttick = starttick,
@@ -342,7 +374,9 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 				aftnames = aftnames,
 				aftaggregation = aftaggregation,
 				grouping = grouping,
-				aftorder = aftorder)
+				aftorder = aftorder,
+				returnplot = returnplot)
+		if (returnplot) return(p1)
 	} else {
 		warning(paste("There is no AFT giving in data in rData with name", datanametakeovers, "for ID", simp$sim$id))
 	}
@@ -365,6 +399,7 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 #' @param landusedataname data name for land use indices
 #' @param datanametakeovers data name for giving in take overs 
 #' @param grouping passed to \code{\link{convert_aggregate_takeovers}}
+#' @param returnplot if true the ggplot object is returned
 #' @return transition plot
 #' 
 #' @family takeovers
@@ -373,18 +408,22 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 hl_takeovers_all <- function(simp, runid = simp$sim$runids[1], landusedataname = "csv_LandUseIndex_rbinded",
 		starttick = simp$sim$starttick, tickinterval=10, endtick = simp$sim$endtick,
 		datanametakeovers = "csv_aggregateTakeOver", dataname = "csv_cell_aggregated",
-		grouping = c("Scenario", "Runid", "Region")) {
+		grouping = c("Scenario", "Runid", "Region"),
+		type_of_arrow = c("gradient2sided", "grid", "simple", "gradient"),
+		returnplot = FALSE) {
 	
+	type_of_arrow <- match.arg(type_of_arrow)
 	if (!shbasic::sh_tools_issaved(simp, datanametakeovers)) {
 		assign(datanametakeovers, convert_aggregate_takeovers(simp, landusedataname = landusedataname, 
 						grouping = grouping))
 		input_tools_save(simp, datanametakeovers)
 	}
 	
-	hl_takeovers(simp, runid = simp$sim$runids[1], dataname = dataname,
+	p1 <- hl_takeovers(simp, runid = simp$sim$runids[1], dataname = dataname,
 			starttick = starttick, tickinterval = tickinterval, endtick = endtick,
-			datanametakeovers = datanametakeovers, aftnames = simp$mdata$aftNames)
-		
+			datanametakeovers = datanametakeovers, aftnames = simp$mdata$aftNames,
+			type_of_arrow = type_of_arrow, returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' AFT take over fluctations as timeline
 #' 
@@ -395,13 +434,15 @@ hl_takeovers_all <- function(simp, runid = simp$sim$runids[1], landusedataname =
 #' @param tickinterval 
 #' @param endtick 
 #' @param datanametakeovers 
+#' @param returnplot if true the ggplot object is returned
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 		starttick = simp$sim$starttick, tickinterval=5, endtick = simp$sim$endtick,
-		datanametakeovers = "csv_aggregateTakeOver") {
+		datanametakeovers = "csv_aggregateTakeOver", returnplot = FALSE) {
+	
 	input_tools_load(simp, dataname)
 	dataAgg <- get(dataname)
 	
@@ -409,18 +450,26 @@ hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 	dataTakeOvers <- get(datanametakeovers)
 	simp$mdata$aftNames <- simp$mdata$aftNames[-1]
 	
-	if(any(aftnames %in% names(dataTakeOvers))) {
+	if(any(simp$mdata$aftNames %in% names(dataTakeOvers))) {
+		if (any(!simp$mdata$aftNames %in% names(dataTakeOvers))) {
+			R.oo::throw.default("Defined AFT name (", 
+					paste(simp$mdata$aftNames[!simp$mdata$aftNames %in% names(dataTakeOvers)], collapse=", "),
+					") not in take over data!")
+		}
+		
 		dat <- aggregate(subset(dataTakeOvers, select=simp$mdata$aftNames), by = list(
 						Tick=dataTakeOvers[, "Tick"],
 						Runid=dataTakeOvers[, "Runid"],
 						AFT=dataTakeOvers[,"AFT"]),
 				FUN=sum)
 		
-		output_visualise_aftFluctuations(simp,
+		p1 <- output_visualise_aftFluctuations(simp,
 				data = dat,
 				starttick = starttick + 1,
 				endtick = endtick - 1,
-				tickinterval = tickinterval)
+				tickinterval = tickinterval,
+				returnplot = returnplot)
+		if (returnplot) return(p1)
 	} else {
 		warning(paste("There is no AFT giving in data in rData with name", datanametakeovers, "for ID", simp$sim$id))
 	}
@@ -432,13 +481,61 @@ hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 #' @param includeunmanaged if \code{TRUE} the number of unmanaged cells is plotted, too. It is derived from the
 #' 			total number of cells obtained
 #' @param aggcelldataname
+#' @param returnplot if true the ggplot object is returned
 #' @return timelien plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTComposition", 
-		includeunmanaged = FALSE, aggcelldataname = "dataAgg") {
-	# dataname = "dataAggregateAFTComposition"
+		includeunmanaged = FALSE, aggcelldataname = "dataAgg", returnplot = FALSE) {
+	
+	d <- input_processAftComposition(simp, dataname = dataname)
+	operator = if (any(d$value > 1.0)) "sum" else "mean"
+	
+	if (includeunmanaged) {
+		
+		input_tools_load(simp, aggcelldataname)
+		aggcelldata <- get(aggcelldataname)
+		
+		cellnum <- sum(aggcelldata[aggcelldata$Tick == aggcelldata$Tick[1], "AFT"])
+		
+		d <-  plyr::ddply(d, "Tick", function(df, cellnum) {
+					rbind(df, data.frame(AFT = "Unmanaged",
+									Tick = unique(df$Tick),
+									Runid = unique(df$Runid),
+									Scenario = unique(df$Scenario),
+									value = cellnum - sum(df$value)))
+				}, cellnum = cellnum)
+		
+	}
+	# substitute AFT names by AFT ID
+	aftNumbers <- names(simp$mdata$aftNames)
+	names(aftNumbers) <- simp$mdata$aftNames
+	d$AFT <- aftNumbers[as.character(d$AFT)]
+	
+	p1 <- visualise_lines(simp, d, "value", title = paste("Aft Composition", if (operator == "mean") " (potentially invalid mean)", sep=""),
+			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
+			linetype_column = "Runid",
+			filename = "AftComposition",
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
+}
+#' Yearly aggregated AFT competitiveness
+#' 
+#' @param simp 
+#' @param dataname
+#' @param includeunmanaged if \code{TRUE} the number of unmanaged cells is plotted, too. It is derived from the
+#' 			total number of cells obtained
+#' @param aggcelldataname
+#' @param returnplot if true the ggplot object is returned
+#' @return timeline plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_aggregate_aftcompetitiveness <- function(simp, dataname = "csv_aggregateAFTCompetitiveness", 
+		includeunmanaged = FALSE, aggcelldataname = "dataAgg", returnplot = FALSE) {
+	
 	input_tools_load(simp, dataname)
 	dataComp <- get(dataname)
 	
@@ -479,21 +576,24 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	visualise_lines(simp, d, "value", title = paste("Aft Composition", if (operator == "mean") " (potentially invalid mean)", sep=""),
+	p1 <- visualise_lines(simp, d, "value", title = paste("Aft Competitiveness", if (operator == "mean") " (potentially invalid mean)", sep=""),
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
-			filename = "AftComposition",
+			filename = "AftCompetitiveness",
 			alpha=0.7)
+	if(returnplot) return(p1)
 }
 #' Yearly aggregated demand and supply
 #' 
 #' @param simp 
 #' @param dataname
+#' @param returnplot if true the ggplot object is returned
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDemand") {
+hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDemand",
+		title = "Aggregated Service Supply & Demand", returnplot = FALSE) {
 	input_tools_load(simp, dataname)
 	data <- convert_aggregate_meltsupplydemand(simp, get(dataname))
 	
@@ -504,7 +604,7 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 					Service=data[,"Service"], Type=data[,"Type"]),
 			FUN=sum)
 	
-	visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand",
+	p1 <- visualise_lines(simp, data, "Value", title = title,
 			colour_column = "Service",
 			# TODO use simp$mdata$services or document setting NULL
 			colour_legenditemnames = simp$mdata$conversion$services,
@@ -513,6 +613,37 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 			filename = paste("AggregateServiceDemand", 
 					shbasic::shbasic_condenseRunids(data.frame(data)[, "ID"]), simp$sim$id, sep="_"),
 			alpha=0.7)
+	if(returnplot) return(p1)
+}
+#' Yearly aggregated demand
+#' 
+#' @param simp 
+#' @param dataname
+#' @param returnplot if true the ggplot object is returned
+#' @return timeline plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_aggregate_demand <- function(simp, dataname = "csv_aggregated_demand", ggplotaddons = NULL,
+	returnplot = FALSE) {
+	
+	convert_aggregate_demand(simp)
+	input_tools_load(simp, dataname)
+	data <- get(dataname)
+	
+	# aggregate regions:
+	data <- aggregate(subset(data, select=c("Demand")),
+			by = list(Tick=data[, "Tick"],
+					Service=data[,"variable"]),
+			FUN=sum)
+	
+	p <- visualise_lines(simp, data, y_column="Demand", title = "",
+			colour_column = "Service",
+			# TODO use simp$mdata$services or document setting NULL
+			colour_legenditemnames = simp$mdata$conversion$services,
+			filename = paste("AggregateServiceDemand", simp$sim$id, sep="_"),
+			alpha=0.7, ggplotaddons = ggplotaddons)
+	if (returnplot) return(p)
 }
 #' Bar plot of number of takeovers per number of trials
 #' 
@@ -524,12 +655,14 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 #' @param numboxes number of bins
 #' @param numberrange vector of two: considered range of numbers
 #' @param trialrange vector of two: considered range of trials
+#' @param returnplot if true the ggplot object is returned
 #' @return plot 
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_gistatistics_singleRegion <- function(simp, dataname = "csv_aggregateGiStatistics", 
-		regions = simp$sim$regions, facet_ncol = 1, numboxes = NULL, numberrange = NULL, trialrange = NULL) {
+		regions = simp$sim$regions, facet_ncol = 1, numboxes = NULL, numberrange = c(-Inf,Inf), trialrange = NULL,
+		returnplot = FALSE) {
 	
 	input_tools_load(simp, "csv_aggregateGiStatistics")
 	
@@ -575,10 +708,11 @@ hl_gistatistics_singleRegion <- function(simp, dataname = "csv_aggregateGiStatis
 		melteddat <- reshape2::melt(dat, variable.name="AFT", id.vars= c("Trials", "Runid"), 
 				direction="long", value.name = "Number")
 		
-		visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
+		p1 <- visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
 				facet_column = "AFT", facet_ncol = facet_ncol, fill_column = "AFT",
 				alpha=1.0, x_column = "Trials", ggplotaddons = ggplot2::theme(legend.position="none",
 						axis.text.x = element_text(angle = 90, hjust = 1)))
+		if (returnplot) return(p1)
 	}
 }
 #' Bar plot of number of takeovers per number of trials
@@ -587,13 +721,14 @@ hl_gistatistics_singleRegion <- function(simp, dataname = "csv_aggregateGiStatis
 #' @param simp 
 #' @param dataname 
 #' @param region 
-#' @param facet_ncol 
+#' @param facet_ncol
+#' @param returnplot if true the ggplot object is returned
 #' @return plot 
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_gistatistics_singleAFT <- function(simp, dataname = "csv_aggregateGiStatistics",
-		regions = simp$sim$regions, facet_ncol = 1) {
+		regions = simp$sim$regions, facet_ncol = 1, returnplot = FALSE) {
 
 	input_tools_load(simp, "csv_aggregateGiStatistics")
 	
@@ -608,9 +743,11 @@ hl_gistatistics_singleAFT <- function(simp, dataname = "csv_aggregateGiStatistic
 					Runid=csv_aggregateGiStatistics[, "Runid"]),
 			FUN=sum)
 		
-	visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
+	p1 <- visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In Statistics",
 			facet_column = "Region", facet_ncol = facet_ncol, fill_column = "Region",
-			alpha=1.0, x_column = "Trials", ggplotaddons = ggplot2::theme(legend.position="none"))
+			alpha=1.0, x_column = "Trials", ggplotaddons = ggplot2::theme(legend.position="none"),
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Visualise pre-allocation competitiveness per AFT
 #' 
@@ -619,6 +756,7 @@ hl_gistatistics_singleAFT <- function(simp, dataname = "csv_aggregateGiStatistic
 #' @param maxcompetitiveness either an absoulte value or a percentage given as string (e.g. "90%"). The latter
 #' 			selects the lowest X percent.
 #' @param afts AFTs to display (as vector of names)
+#' @param returnplot if true the ggplot object is returned
 #' @return facet histogram plot 
 #' 
 #' @inheritParams visualise_competition_prealloc
@@ -636,7 +774,8 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 		setfigdims = TRUE,
 		afts = simp$mdata$aftNames,
 		checkexists = FALSE,
-		skipemptybins = TRUE) {
+		skipemptybins = TRUE,
+		returnplot = FALSE) {
 	
 	storename <- paste("PreAllocationCompetitionPlot", paste(afts, collapse="-"), numbins, sep="_")
 	if (checkexists && input_tools_checkexists(simp, storename)) {
@@ -650,7 +789,8 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 			}
 			simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "bars", sep="/"), filename = filename)
 			
-			print(get(storename))
+			p1 <- get(storename)
+			print(p1)
 			
 			simp$fig$close()
 		})
@@ -663,7 +803,7 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 		# check for table/data.frame
 		if("Above" %in% colnames(data) && "Below" %in% colnames(data)) {
 			
-			suppressWarnings(data$Comp <- as.numeric(levels(data$Comp)[data$Comp]))
+			suppressWarnings(data$Comp <- as.numeric(if (is.factor(data$Comp)) levels(data$Comp)[data$Comp] else data$Comp))
 			aftIDs = as.numeric(names(simp$mdata$aftNames)[match(afts, simp$mdata$aftNames)])
 			data <- data[complete.cases(data) & data$PreAllocLandUseIndex %in% aftIDs,]
 			
@@ -679,7 +819,7 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 			data <- data[data$Comp <= maxcompetitiveness,]
 			
 			
-			visualise_competition_preallocTable(simp, data, facet_ncol = facet_ncol, filename = filename,
+			p1 <- visualise_competition_preallocTable(simp, data, facet_ncol = facet_ncol, filename = filename,
 					numbins = numbins, title = title, ggplotaddons = ggplotaddons, setfigdims = setfigdims, 
 					storename = if(checkexists) storename else NULL)
 		} else {
@@ -690,6 +830,9 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 							as.numeric(levels(data$PreAllocGivingUpThreshold)[data$PreAllocGivingUpThreshold]))
 			
 			data <- data[complete.cases(data),]
+			if(length(data[,1]) == 0) {
+				R.oo::throw.default("There is no competitiveness data to plot!")
+			}
 			
 			if (grepl("%", maxcompetitiveness)) {
 				maxcompetitiveness <- quantile(data$PreAllocCompetitiveness, 
@@ -709,11 +852,12 @@ hl_competitiveness_prealloc <- function(simp, dataname = "csv_preAlloc_rbinded",
 			
 			data <- data[data$AFT %in% afts,]
 			
-			visualise_competition_prealloc(simp, data, facet_ncol = facet_ncol, filename = filename,
+			p1 <- visualise_competition_prealloc(simp, data, facet_ncol = facet_ncol, filename = filename,
 					numbins = numbins, title = title, ggplotaddons = ggplotaddons, setfigdims = setfigdims, 
 					storename = if(checkexists) storename else NULL)
 		}
 	}
+	if (returnplot) return(p1)
 }
 #' Visualise pre-allocation competitiveness per AFT
 #' 
@@ -734,10 +878,11 @@ hl_competitiveness_preallocPerAft <- function(simp, dataname = "csv_preAlloc_rbi
 		setfigdims = TRUE,
 		afts = simp$mdata$aftNames[-1],
 		checkexists = FALSE,
-		skipemptybins = TRUE) {
+		skipemptybins = TRUE,
+		returnplot = FALSE) {
 	
 	lapply(afts, function(aft) {
-				hl_competitiveness_prealloc(
+				p1 <- hl_competitiveness_prealloc(
 						simp,
 						dataname = dataname,
 						maxcompetitiveness = maxcompetitiveness,
@@ -749,7 +894,9 @@ hl_competitiveness_preallocPerAft <- function(simp, dataname = "csv_preAlloc_rbi
 						setfigdims = setfigdims,
 						afts = aft,
 						checkexists = checkexists,
-						skipemptybins = skipemptybins)})	
+						skipemptybins = skipemptybins,
+						returnplot = returnplot)
+				if (returnplot) return(p1)})	
 }
 #' Read stored landuse data, calculate and visualise spatial autocorrelation score
 #' 
@@ -765,6 +912,7 @@ hl_competitiveness_preallocPerAft <- function(simp, dataname = "csv_preAlloc_rbi
 #' @param colourcol 
 #' @param titleprefix 
 #' @param filenameprefix 
+#' @param returnplot if true the ggplot object is returned
 #' @return lines plot
 #' 
 #' @author Sascha Holzhauer
@@ -774,8 +922,9 @@ hl_aggregate_sa <- function(simp, celldataname = "csv_LandUseIndex_rbinded",
 		linetypecol = "Region", type = "Moran",
 		regions = simp$sim$regions,
 		colourcol = NULL, titleprefix = paste("SpatialAutocorrelation (", type, ")", sep=""), 
-			filenameprefix = paste("SpatialAutocorrelation", type, sep="_")) {
-
+			filenameprefix = paste("SpatialAutocorrelation", type, sep="_"),
+			returnplot = FALSE) {
+	
 	input_tools_load(simp, objectName = celldataname)
 	data <- get(celldataname)
 	
@@ -790,29 +939,34 @@ hl_aggregate_sa <- function(simp, celldataname = "csv_LandUseIndex_rbinded",
 						Region = region)}, tick = tick, data = data, type = type))
 			}, data = data, type = type, regions = regions))
 
-	visualise_lines(simp, scoresdata, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
+	p1 <- visualise_lines(simp, scoresdata, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
 			colour_column = colourcol,
 			linetype_column = linetypecol,
-			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""))
+			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""),
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
-#' Visualise stored metric LandUseConnectivity as timelines
+#' Visualise stored metric LandUseConnectivity as timelines. Stores RData from CSV if not done yet.
 #' 
 #' @param simp 
 #' @param dataname 
 #' @param datatype 
-#' @param datacolumns 
+#' @param datacolumns
+#' @param returnplot if true the ggplot object is returned
 #' @return plot (and rData)
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_connectedness <- function(simp, dataname = "csv_aggregated_connectivity", 
 		datatype = "LandUseConnectivity", aftcolumns = simp$mdata$aftNames[-1],
-		percent = NULL) {
+		percent = NULL, returnplot = FALSE) {
+
 	# dataname = "dataAggregateConnectivity"
-	craftyr::hl_lines_from_csv(simp, dataname = dataname, 
+	p1 <- craftyr::hl_lines_from_csv(simp, dataname = dataname, 
 			datatype = datatype, datacolumns = aftcolumns, linetypecol = "Region",
 			colourcol = "Type", titleprefix = "Connectedness", filenameprefix = "Connectedness288", 
-			percent = percent)
+			percent = percent, returnplot = FALSE)
+	if (returnplot) return(p1)
 }
 #' Read and plot normalised per-cell residuals
 #' 
@@ -821,6 +975,7 @@ hl_connectedness <- function(simp, dataname = "csv_aggregated_connectivity",
 #' @param filenamePlotPercellDemand 
 #' @param filenameNormalisedResiduals 
 #' @param capitalfilepartorder 
+#' @param returnplot if true the ggplot object is returned
 #' @return plot(s)
 #' 
 #' @author Sascha HolzhauerVar1
@@ -829,7 +984,8 @@ hl_normalisedutilities <- function(simp,
 		filenamemarginalutils = paste(simp$dirs$output$rdata, "MarginalUtilitiesPerCell.csv", sep = "/"),
 		filenamePlotPercellDemand = NULL,
 		filenameNormalisedResiduals = paste("NormalisedResiduals", simp$sim$runid, sep="_"),
-		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype")) {
+		capitalfilepartorder = c("regionalisation", "U", "regions", "U", "datatype"),
+		returnplot = FALSE) {
 	
 	marginalUtils <- shbasic::sh_tools_loadorsave(SIP = simp, 
 			OBJECTNAME = "csv_MarginalUtilitites_melt",
@@ -854,22 +1010,25 @@ hl_normalisedutilities <- function(simp,
 	data$Value <- data$Value / sum(num$Cells)
 	
 	if (!is.null(filenamePlotPercellDemand)) {
-		visualise_lines(simp, data, "Value", title = "Per-cell Demand & Supply",
+		p1 <- visualise_lines(simp, data, "Value", title = "Per-cell Demand & Supply",
 				colour_column = "Service",
 				linetype_column = "Type",
 				filename = filenamePlotPercellDemand,
-				alpha=simp$fig$alpha)
+				alpha=simp$fig$alpha,
+				returnplot = returnplot)
 	}
 	
 	# merge data
 	data <- data[data$Type == "Demand",]
 	normalised <- merge(marginalUtils, data)
 	normalised$Value <-  normalised$V / normalised$Value
-	visualise_lines(simp, normalised, "Value", title = "Demand-normalised per-cell Utilities",
+	p1 <- visualise_lines(simp, normalised, "Value", title = "Demand-normalised per-cell Utilities",
 			colour_column = "Service",
 			linetype_column = "Type",
 			filename = filenameNormalisedResiduals,
-			alpha=simp$fig$alpha)
+			alpha=simp$fig$alpha,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Reads single CSV file with AFT composition and produces timeline figure
 #' 
@@ -877,12 +1036,13 @@ hl_normalisedutilities <- function(simp,
 #' @param csvfilename 
 #' @param title 
 #' @param figurefilename 
+#' @param returnplot if true the ggplot object is returned
 #' @return figure
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftcomposisition_file <- function(simp, csvfilename, title = "AftComposition", 
-		figurefilename = "AftComposition") {
+		figurefilename = "AftComposition", returnplot = FALSE) {
 	dataComp <- utils::read.csv(csvfilename, na.strings = simp$csv$nastrings)
 
 	dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, 
@@ -898,8 +1058,10 @@ hl_aftcomposisition_file <- function(simp, csvfilename, title = "AftComposition"
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	visualise_lines(simp, d, "value", title = title,
+	p1 <- visualise_lines(simp, d, "value", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			filename = figurefilename,
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }

@@ -2,12 +2,13 @@
 #' 
 #' @param simp 
 #' @param dataname name of stored CSV LandUseIndex data
+#' @param returnplot if true the ggplot object is returned
 #' @return map plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
-		firsttick = 2010, secondtick = 2040, ncol = 1, ggplotaddon = NULL) {
+		firsttick = 2010, secondtick = 2040, ncol = 1, ggplotaddon = NULL, returnplot = FALSE) {
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
 	
@@ -15,14 +16,14 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	cdata$Scenario <- NULL
 	
 	runid <- unique(cdata$Runid)
-	
-	if (!paste(secondtick, runid, sep=".") %in% names(cdata)) {
+
+	if (!paste(secondtick, runid, sep=".") %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
 		futile.logger::flog.error("Data does not contain second tick (%d)!",
 				secondtick,
 				name = "craftyr.hl_maps.R")
 	}
 	
-	if (!paste(secondtick, runid, sep=".") %in% names(cdata)) {
+	if (!paste(secondtick, runid, sep=".") %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
 		futile.logger::flog.error("Data does not contain first tick (%d)!",
 				firsttick,
 				name = "craftyr.hl_maps.R")
@@ -54,22 +55,24 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 		
 	toplot <- c(toplot, list(first), list(second), list(diffcells))
 	
-	visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
-			title = "EU-Hetero", legendtitle = "AFTs",
+	p1 <- visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
+			title = simp$fig$maptitle, legendtitle = "AFTs",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
 			legenditemnames = simp$mdata$aftNames, coloursetname="AFT",
 			ggplotaddon = ggplotaddon)
+	if (returnplot) return(p1)
 }
 #' AFT map for 2010 and 2040 with differences (placed horicontally) for multiple Runids
 #' 
 #' @param simp 
 #' @param dataname 
+#' @param returnplot if true the ggplot object is returned
 #' @return map plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
-		firsttick = 2010, secondtick = 2040) {
+		firsttick = 2010, secondtick = 2040, returnplot= FALSE) {
 	
 	input_tools_load(simp, dataname)
 	cdata <- get(dataname)
@@ -99,10 +102,11 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 		toplot <- c(toplot, list(first), list(second), list(diffcells))
 	}
 	
-	visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
-			title = "EU-Hetero", legendtitle = "AFTs",
+	p1 <- visualise_cells_printPlots(simp, toplot, idcolumn = "ID",
+			title = "LandUseMap", legendtitle = "AFTs",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = 3,
 			legenditemnames = simp$mdata$aftNames, coloursetname="AFT")
+	if (returnplot) return(p1)
 }
 #' Plot changes between ticks for a specific (combination of) land use(s)
 #' 
@@ -113,13 +117,14 @@ hl_aftmap_multi <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 #' @param endtick 
 #' @param ncol 
 #' @param ggplotaddon 
+#' @param returnplot if true the ggplot object is returned
 #' @return figure file / plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinded", selectedAFT = 1, 
 		regions = simp$sim$regions, starttick = 2010, endtick = 2040, ncol = 1, title = "AFT-Changes", 
-		ggplotaddon = NULL, addcountryshapes = FALSE, plotunchanged = TRUE) {
+		ggplotaddon = NULL, addcountryshapes = FALSE, plotunchanged = TRUE, returnplot = FALSE) {
 
 #	# <--- test data:
 #	simp <- param_getExamplesSimp()
@@ -165,8 +170,8 @@ hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinde
 	cdata <- lapply(cdata, function(x) {x$Runid <- NULL; x})
 	cdata <- lapply(cdata, function(x) {x$Tick <- NULL; x})
 
-	hl_aftmap_changes(simp, cdata, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, regions = regions,
-			addcountryshapes = FALSE, plotunchanged = TRUE)
+	hl_aftmap_changes(simp, cdata, ncol = ncol, title = title, ggplotaddon = ggplotaddon, regions = regions,
+			addcountryshapes = addcountryshapes, plotunchanged = plotunchanged, returnplot = returnplot)
 }
 #' Plot changes between runs of a specific tick for a particular (combination of) land use(s)
 #' 
@@ -177,14 +182,16 @@ hl_aftmap_changes_temporal <- function(simp, dataname = "csv_LandUseIndex_rbinde
 #' @param endtick 
 #' @param ncol 
 #' @param ggplotaddon 
+#' @param returnplot if true the ggplot object is returned
 #' @return figure file / plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", ids, outdirs, 
 		selectedAFTGroups = as.list(as.numeric(names(simp$mdata$aftNames))), regions = simp$sim$regions,
-		tick = 2040, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
-		addcountryshapes = FALSE, plotunchanged = TRUE) {
+		tick = 2040, ncol = 1, title = paste(title, "_", paste(simp$mdata$aftNames[as.character(aftgroup)],
+		collapse="-"), sep=""), ggplotaddon = NULL, 
+		addcountryshapes = FALSE, plotunchanged = TRUE, returnplot = FALSE) {
 	
 	# <--- test data:
 #	simp <- craftyr::param_getExamplesSimp()
@@ -252,10 +259,10 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 					dat[!dat$LandUseIndex %in% 100, "LandUseIndex"] <- 0 
 					dat}, simplify=FALSE)
 		
-		hl_aftmap_changes(simp, cdata_aft, ncol = 1, 
-				title = paste(title, "_", paste(simp$mdata$aftNames[as.character(aftgroup)], collapse="-"), sep=""), 
+		hl_aftmap_changes(simp, cdata_aft, ncol = ncol, 
+				title = title, 
 				ggplotaddon = ggplotaddon, regions = regions,
-			addcountryshapes = addcountryshapes, plotunchanged = plotunchanged)
+			addcountryshapes = addcountryshapes, plotunchanged = plotunchanged, returnplot = returnplot)
 	}
 }
 #' Plot changes between ticks for a specific (combination of) land use(s)
@@ -263,14 +270,15 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 #' @param simp 
 #' @param cdata list of celldata to compare
 #' @param ncol 
-#' @param ggplotaddon 
+#' @param ggplotaddon
+#' @param returnplot if true the ggplot object is returned
 #' @return figure file / plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
 		regions = simp$sim$regions,
-		addcountryshapes = FALSE, plotunchanged = TRUE) {
+		addcountryshapes = FALSE, plotunchanged = TRUE, returnplot = FALSE) {
 	
 	resultcells <- list()
 	for (i in 2:length(cdata)) {
@@ -295,13 +303,14 @@ hl_aftmap_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggpl
 	if(addcountryshapes) {
 		countryshapeelem <- input_shapes_countries(simp, countries2show = regions)
 	}
-	visualise_cells_printPlots(simp, celldata = resultcells, idcolumn = "ID",
+	p1 <- visualise_cells_printPlots(simp, celldata = resultcells, idcolumn = "ID",
 			title = title, legendtitle = "AFTs",
 			factorial= TRUE, omitaxisticks = TRUE, ncol = ncol,
 			legenditemnames = c("-100" = "removed", "100" = "added", "50" = "remaining", "99" = "other"), 
 			coloursetname="changes",
 			theme = if (simp$fig$plottitle) visualisation_raster_legendandtitle else visualisation_raster_legendonlytheme,
 			ggplotaddon = list(ggplotaddon, countryshapeelem, ggplot2::coord_equal()))
+	if (returnplot) return(p1)
 }
 #' Ggplot2 theme that plots legend and title only
 #' 
@@ -314,7 +323,6 @@ visualisation_raster_legendandtitle <- function(base_size = 11, base_family = "H
 	library(ggplot2)  # correct (see stack exchange question) for %+replace%
 	ggplot2::theme_bw(base_size = base_size, base_family = base_family) %+replace%
 			ggplot2::theme(
-					axis.ticks.margin = grid::unit(0, "lines"),
 					panel.background = ggplot2::element_blank(),
 					panel.grid.major = ggplot2::element_blank(),
 					panel.grid.minor = ggplot2::element_blank(),
@@ -328,6 +336,6 @@ visualisation_raster_legendandtitle <- function(base_size = 11, base_family = "H
 					axis.title.y = ggplot2::element_blank(),
 					axis.line = ggplot2::element_blank(),
 					axis.ticks.length = grid::unit(0,"null"),
-					axis.ticks.margin = grid::unit(0,"null")
+					axis.text = ggplot2::element_text(margin = grid::unit(0,"null"))
 			)
 }
