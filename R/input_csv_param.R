@@ -110,7 +110,14 @@ input_csv_param_initialAllocation <- function(simp, aftColumn = "LandUseIndex",
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, aftColumn)])
 }
 #' Reads demand values from CSV data for potentially multiple regions
-#' @param simp SIMulation Properties
+#' @param simp SIMulation Properties. Considered elements:\itemize{
+#' 				\item{\code{simp$sim$filepartorder}}
+#' 				\item{\code{simp$sim$scenario}}
+#' 				\item{\code{simp$sim$regionalisation}}
+#' 				\item{\code{simp$sim$runids}}
+#' 				\item{\code{simp$sim$regions}}
+#' 				\item{\code{simp$dirs$param$getparamdir}}
+#' 				\item{\code{simp$sim$filepartorder_demands}}}
 #' @return list of data.frames containing demand values, and the filename of their origin  
 #' 
 #' @author Sascha Holzhauer
@@ -139,8 +146,15 @@ input_csv_param_demand <- function(simp) {
 #' @export
 input_csv_param_productivities <- function(simp, aft, filenameprefix = "AftProduction_",
 		filenamepostfix = "_multi_medium") {
-	filename <- paste(simp$dirs$param$getparamdir(simp, datatype="productivities"), "/", aft, 
-			"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
+	# try to retrieve filename from AFT param CSV:
+	aftParamIds <- hl_getAgentParamId(simp)
+	aftparamdata <- input_csv_param_agents(simp, aft)
+	filename <- aftparamdata[match(aftParamIds,aftparamdata$aftParamId), "productionCsvFile"]
+	filename <- paste(simp$dirs$param$getparamdir(simp), as.character(filename), sep="/")
+	if (!file.exists(filename)) {
+		filename <- paste(simp$dirs$param$getparamdir(simp, datatype="productivities"), "/", aft, 
+				"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
+	}
 	
 	shbasic::sh.checkFilename(filename)
 	capitalData <- utils::read.csv(filename)

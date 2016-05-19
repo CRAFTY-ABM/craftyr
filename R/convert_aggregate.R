@@ -22,7 +22,10 @@ convert_aggregate_meltsupplydemand <- function(simp, data) {
 #' Tries to load demand from stored rData (usually from separate supply and demand CSV outputs).
 #' If rData not present at \code{sourcedataname} it uses param data.
 #' 
-#' @param simp 
+#' @param simp considered elements: \itemize{
+#' 			\item{\code{simp$mdata$conversion$services}}
+#' 			\item{\code{\link{input_tools_load}}}
+#' 			\item{\code{\link{input_csv_param_demand}}}}
 #' @param checkexists 
 #' @param demanddataname 
 #' @return -
@@ -72,7 +75,9 @@ convert_aggregate_demand <- function(simp, checkexists = TRUE,
 #' Tries to load supply from stored rData (usually from separate supply and demand CSV outputs).
 #' If rData not present at \code{sourcedataname} it uses cell data.
 #' 
-#' @param simp 
+#' @param simp considered elements: \itemize{
+#' 			\item{\code{simp$mdata$conversion$services}}
+#' 			\item{\code{\link{input_tools_load}}}}
 #' @param celldataname aggregated cell CSV data
 #' @param checkexists 
 #' @param supplydataname 

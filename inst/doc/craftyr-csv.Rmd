@@ -96,7 +96,9 @@ input_tools_save(simp, "csv_cell_aggregated")
 
 ## Source: Cell Table (Pre-Allocation Competitiveness)
 
-Read CSV data of pre-allocation competitiveness and transfer to data.frame of frequencies
+Read CSV data of pre-allocation competitiveness and transfer to data.frame of frequencies.
+Requires the output of giving-up threshold, pre-allocation LandUseIndex and pre-allocation competitiveness with the Cell Table outputter 
+(addPreAllocCompetitiveness="true" addPreAllocGuThreshold="true" addPreAllocLandUse="true").  
 
 ```{r, eval=FALSE}
 library(craftyr)
@@ -555,6 +557,36 @@ hl_normalisedutilities(simp,
 ```	
 		
 #### Total Productivity
+
+
+
+#### Actions
+
+To evaluate the effect of actions it is valuable to show selected actions along with a measure they may affect:
+
+```{r, eval=FALSE, results="hide"}
+convert_aggregate_demand(simp)
+convert_aggregate_supply(simp, celldataname = "dataAgg")
+
+################ store percental supply (regarding demand)
+input_tools_load(simp, objectName="csv_aggregated_demand")
+input_tools_load(simp, objectName="csv_aggregated_supply")
+colnames(csv_aggregated_demand)[colnames(csv_aggregated_demand) == "variable"] <- "Service"
+dataAggregatedPercentalSupply <- merge(csv_aggregated_supply, csv_aggregated_demand)
+dataAggregatedPercentalSupply$PercentalSupply <- 100 * dataAggregatedPercentalSupply$TotalProduction / 
+		dataAggregatedPercentalSupply$Demand
+input_tools_save(simp, "dataAggregatedPercentalSupply")
+
+visualise_actions(simp, dataname = "dataActions",
+	monitordataname = "dataAggregatedPercentalSupply",
+	monitorvars = simp$mdata$services,
+	monitorColours = simp$colours$Service,
+	colour_column = "Service",
+	size_column = NULL,
+	measure_name = "PercentalSupply",
+	actionColours = c("DoNothing" = "grey", "RegionalSubsidyPa_CCereal" = simp$colours$Service["Cereal"],
+			"RegionalSubsidyPa_Forester" = simp$colours$Service["Timber"]))
+```	
 
 ### From Single Files
 

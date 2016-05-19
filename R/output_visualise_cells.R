@@ -14,6 +14,7 @@ library(ggplot2)  # correct (see stack exchange question) for %+replace%
 #' @param ncol number of columns of facet wrap. Defauls to the number of rasters in the first dataframe
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
 #' @param legenditemnames names for legend items
+#' @param returnplot if true the ggplot object is returned
 #' @return raster visualisation
 #' @example demo/example_visualise_cells_csv_aft.R
 #'
@@ -23,7 +24,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 		title = "", filenamepostfix = title, legendtitle = "",
 		factorial= FALSE, omitaxisticks = FALSE, ncol = if (!is.data.frame(celldata)) length(celldata) else 1, 
 		coloursetname=simp$colours$defaultset, legenditemnames = NULL, ggplotaddon = NULL,
-		theme = visualisation_raster_legendonlytheme) {
+		theme = visualisation_raster_legendonlytheme, returnplot = FALSE) {
 	
 	futile.logger::flog.debug("Print cell data...",
 			name="craftyr.visualise.cells")
@@ -83,11 +84,16 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 				}
 				df
 			})
+	
 	#ggplotaddon <- countryshapeelem
+	facetelem <- NULL
+	if (length(unique(celldata$ID)) > 1) {
+		facetelem <- ggplot2::facet_wrap(~ID, ncol = ncol)
+	}
 
 	p1 <- ggplot2::ggplot()+
-			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
-			ggplot2::facet_wrap(~ID, ncol = ncol) +
+			ggplot2::geom_raster(mapping=ggplot2::aes(X, Y, fill=Values), data=celldata) +
+			facetelem +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
 			(if (title != "") ggplot2::labs(title = title)) +
 			theme() +
@@ -97,24 +103,35 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 			ggplotaddon
 	print(p1)
 	simp$fig$close()
+	if (returnplot) return(p1)
 }
-#' Writes a list of raster data as single raw (only the raster data) ggplot2 plot files
+#' Prints a list of data.frames as raw ggplot2 facet plot.
+#' 
+#' There does not seem to be a straigh-forward way to convert a gTree object back to a ggplot2 object...
+#' (http://stackoverflow.com/questions/29583849/r-saving-a-plot-in-an-object)
+#' 
 #' @param simp SIMulation Properties
-#' @param rasterdata if a list, elements must be named differently
-#' @param datanames vector of names of the same length as rasterData
+#' @param celldata (list of) data.frames contain info and X and X coordinates. If a list of data.frames,
+#'  elements must be named differently
+#' @param idcolumn column used to separate and name rasters, refering to column names (set with colnames()) of the data.frame(s).
+#' @param valuecolumn
+#' @param title name of plot
+#' @param filenamepostfix appended to the default output filename @seealso output_tools_getDefaultFilename
 #' @param factorial true if raster values are factorial (affects colour palette)
-#' @param omitaxisticks omit axis ticks if true
-#' @param ncol number of columns of facet wrap
+#' @param ncol number of columns of facet wrap. Defauls to the number of rasters in the first dataframe
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
-#' @return raster visualisation files
-#' @example demo/example_visualise_cells_raster_aft_raw.R
+#' @param returnplot if true the ggplot object is returned
 #'
 #' @author Sascha Holzhauer
 #' @export
 visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", valuecolumn = "LandUseIndex",
 		title = "", filenamepostfix = title,
 		factorial= FALSE, ncol = if (!is.data.frame(celldata)) length(celldata) else 1, 
-		coloursetname=simp$colours$defaultset, ggplotaddon = NULL) {
+		coloursetname=simp$colours$defaultset, ggplotaddon = NULL, returnplot = FALSE) {
+	
+	if (returnplot) {
+		R.oo::throw.default("A ggplot2 object cannot be returned from this function!")
+	}
 	
 	futile.logger::flog.debug("Print cell data...",
 			name="craftyr.visualise.cells")
@@ -158,7 +175,7 @@ visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", val
 	}
 			
 	p1 <- ggplot2::ggplot()+
-			ggplot2::layer(geom="raster", data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
+			ggplot2::geom_raster(data=celldata, mapping=ggplot2::aes(X,Y,fill=Values)) +
 			ggplot2::facet_wrap(~ID, ncol = ncol) +
 			scaleFillElem +
 			ggplot2::scale_x_continuous(expand=c(0,0)) + ggplot2::scale_y_continuous(expand=c(0,0)) +
@@ -169,6 +186,7 @@ visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", val
 	gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p1))
 	ge <- subset(gt$layout, substring(name,1,5) == "panel")
 	
+	printObjects <- list()
 	for (i in 1:length(ge[,1])) {
 		g <- ge[i,]
 		simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", sep="/"), 

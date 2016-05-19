@@ -44,7 +44,9 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 	
 	data <- lapply(fileinfos, function(item) {
 				result <- plyr::ddply(item, "Filename", function(df) {
+							# df <- fileinfos[[1]][1,]
 							return <- tryCatch({
+								futile.logger::flog.debug("Read file %s...", df[,"Filename"], name="craftyr.input.csv")
 								data <- utils::read.csv(df[,"Filename"], na.strings = simp$csv$nastrings)
 								if (length(data[,1]) == 0) {
 									warnings("CSV file ", df[,"Filename"] , " does not contain any rows!")
@@ -125,19 +127,23 @@ input_csv_prealloccomp <- function(simp, datatype = "PreAlloc",
 			pertick = FALSE, attachfileinfo = FALSE, skipXY = TRUE, bindrows = TRUE)
 	
 	ticks <- seq(starttick, endtick, tickinterval)
-	data <- data[data$PreAllocLandUseIndex != "None" && data$Tick %in% ticks,]
+	data <- data[data$PreAllocLandUseIndex != "None" & data$Tick %in% ticks,]
 	data <- data[complete.cases(data),]
 	
 	csv_preAllocTable <- plyr::ddply(.data =  data, c("Tick","PreAllocLandUseIndex"), function(df){
-				# df <- data[data$Tick == 2040 & data$PreAllocLandUseIndex == 2,]
+				# df <- data[data$Tick == 2012 & data$PreAllocLandUseIndex == 2,]
+				aboveTable <- table(df[as.numeric(df$PreAllocCompetitiveness) >= 
+										as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"])
 				belowTable <- table(df[as.numeric(df$PreAllocCompetitiveness) < 
 										as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"])
+		
+				aboveTable = if (nrow(aboveTable) == 0) data.frame("Above" = 0, "Var1" = NA) else 
+							as.data.frame(aboveTable, responseName = "Above", optional=T)
 				
-				tableData = merge(as.data.frame(table(df[as.numeric(df$PreAllocCompetitiveness) >= 
-								as.numeric(df$PreAllocGivingUpThreshold), "PreAllocCompetitiveness"]), 
-								responseName = "Above"),
-						if (nrow(belowTable) == 0) data.frame("Below" = 0, "Var1" = NA) else 
-						as.data.frame(belowTable, responseName = "Below", optional=T), by="Var1", all=T)
+				belowTable = if (nrow(belowTable) == 0) data.frame("Below" = 0, "Var1" = NA) else 
+							as.data.frame(belowTable, responseName = "Below", optional=T)
+				
+				tableData = merge(belowTable, aboveTable, by="Var1", all=T)
 				tableData[is.na(tableData)] <-  0
 				names(tableData)[names(tableData)=="Var1"] <- "Comp"
 				tableData

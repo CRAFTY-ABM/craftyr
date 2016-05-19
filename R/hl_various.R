@@ -3,12 +3,13 @@
 #' Stores data and returns.
 #' @param simp 
 #' @param filename 
+#' @param returnplot if true the ggplot object is returned
 #' @return data.frame
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, "MarginalUtilities.csv", sep="/"),
-		storerdata = TRUE) {
+		storerdata = TRUE, returnplot = FALSE) {
 	utilities = read.csv(filename, colClasses = "numeric")
 	csv_MarginalUtilitites_melt = reshape2::melt(utilities, variable.name="Service", 
 			id.vars= c("Year"), 
@@ -20,10 +21,12 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 		input_tools_save(simp, "csv_MarginalUtilitites_melt")
 	}
 	
-	visualise_lines(simp, csv_MarginalUtilitites_melt, "value", title = "Marginal Utilities",
+	p1 <- visualise_lines(simp, csv_MarginalUtilitites_melt, "value", title = "Marginal Utilities",
 			colour_column = "Service",
 			filename = paste("MarginalUtilities", sep=""),
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Print LaTeX table including run information
 #' 
@@ -39,33 +42,8 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 #' @author Sascha Holzhauer
 #' @export
 hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
-	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
-				simp$sim$runids[1]}) 
-	randomseed <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][2] else NULL)
-				
-	if (tools::file_ext(filename) == "ods") {
-		require(readODS)
-		runinfo <- read.ods(filename)[[1]][,1:simp$tech$runinfocolnumber]
-		colnames(runinfo) <- runinfo[2,]
-		runinfo <- runinfo[-c(1,2),]
-		rinfo <- runinfo[runinfo["Version"] == simp$sim$version &
-						runinfo["1st Run ID"] == paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
-		
-		if (length(rinfo[,1]) == 0) {
-			rinfo <- runinfo[runinfo["Version"] == simp$sim$version & runinfo["1st Run ID"] <= paramid &
-							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
-		}
-	} else if(tools::file_ext(filename) == "csv") {
-		runinfo <- read.csv(filename, skip = 1)
-		rinfo <- runinfo[runinfo$Version == simp$sim$version,]
-	} else {
-		R.oo::throw.default("File extension ", tools::file_ext(filename)," not supported!")
-	}
 	
-	if (length(rinfo[,1]) == 0) {
-		R.oo::throw.default("Runinfo table ", filename," does not contain a row for version ", 
-						simp$sim$version, " and paramID ", paramid, "(random seed: ", randomseed, ")!", sep="")
-	}
+	rinfo <- hl_getRunInfo(simp, filename = simp$dirs$output$runinfo)
 	
 	if (!is.null(rows)) {
 		rinfo <- rinfo[,1:rows]
@@ -81,6 +59,45 @@ hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows 
 	print(table, sanitize.colnames.function = identity,
 			sanitize.rownames.function = identity,
 			table.placement = "H")
+}
+#' Return data in RunInfo table for runid defined in simp.
+#' 
+#' @param simp 
+#' @param filename 
+#' @return data.frame
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getRunInfo <-  function(simp, filename = simp$dirs$output$runinfo) {
+	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+						simp$sim$runids[1]}) 
+	randomseed <- if(grepl('-', simp$sim$runids[1])) as.numeric(strsplit(simp$sim$runids[1], '-')[[1]][2]) else NULL
+	
+	if (tools::file_ext(filename) == "ods") {
+		require(readODS)
+		runinfo <- read.ods(filename, sheet = 1)[,1:simp$tech$runinfocolnumber]
+		colnames(runinfo) <- runinfo[2,]
+		runinfo <- runinfo[-c(1,2),]
+		rinfo <- runinfo[runinfo["Version"] == simp$sim$version &
+						runinfo["1st Run ID"] == paramid & (if(!is.null(randomseed)) 
+								runinfo["Random Seed"]== randomseed else TRUE), ]
+		
+		if (length(rinfo[,1]) == 0) {
+			rinfo <- runinfo[runinfo["Version"] == simp$sim$version & runinfo["1st Run ID"] <= paramid &
+							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
+		}
+	} else if(tools::file_ext(filename) == "csv") {
+		runinfo <- read.csv(filename, skip = 1)
+		rinfo <- runinfo[runinfo$Version == simp$sim$version,]
+	} else {
+		R.oo::throw.default("File extension ", tools::file_ext(filename)," not supported!")
+	}
+	
+	if (length(rinfo[,1]) == 0) {
+		R.oo::throw.default("Runinfo table ", filename," does not contain a row for version ", 
+				simp$sim$version, " and paramID ", paramid, "(random seed: ", randomseed, ")!", sep="")
+	}
+	return(rinfo)
 }
 #' Print LaTeX table including run parameters
 #' 
@@ -144,14 +161,28 @@ hl_landindiceskey_csv <- function(simp) {
 #' @author Sascha Holzhauer
 #' @export
 hl_getAgentParamId <- function(simp, agentParamColumn = "aftParamId", runIdColumn="run") {
+	futile.logger::flog.debug("Fetch agent param ID",
+				name = "craftyr.hl_various.R")
+		
+	return(hl_getRunParameter(simp, parameter = agentParamColumn, runIdColumn=runIdColumn))
+}
+#' Fetch agent param ID from Runs.csv for paramId in given simp
+#' 
+#' @param simp 
+#' @param parameter parameter (colname) to fetch 
+#' @param runIdColumn 
+#' @return parameter value for param ID defined in given \code{simp$sim$runids}.
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getRunParameter <- function(simp, parameter, runIdColumn="run") {
 	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 						simp$sim$runids[1]})
 	
-	futile.logger::flog.debug("Fetch agent param ID for param ID %d",
-				paramid,
-				name = "craftyr.hl_various.R")
-		
+	futile.logger::flog.debug("Fetch Run parameter for param ID %d",
+			paramid,
+			name = "craftyr.hl_various.R")
+	
 	runData <- input_csv_param_runs(simp)
-	agentParamId <- runData[runData[, runIdColumn] == paramid, agentParamColumn]
-	return(agentParamId)
+	return(runData[runData[, runIdColumn] == paramid, parameter])
 }

@@ -1,14 +1,18 @@
 #' Load, aggregate and visualise AFT composition data of several runs to compare
 #' 
 #' @param simp
-#' @param simps list of simp that shall be compared. \code{simp$sim$shortid} is combined with Runid to distinguish data!
+#' @param simps list of simp that shall be compared. See \code{\link{input_tools_load}} for relevant entries in
+#' 			\code{simp}). \code{simp$sim$shortid} is combined with \code{Runid} in data to distinguish data!
 #' @param dataname name of aggregated data from cell data
 #' @param title title for plot
+#' @param returnplot if true the ggplot object is returned
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggregated") {
+hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggregated",
+		returnplot = FALSE) {
+	
 	data <- data.frame()
 	for (p in simps) {
 		input_tools_load(p, dataname)
@@ -32,7 +36,7 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 	## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 	
-	visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
+	p1 <- visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -40,12 +44,15 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 			linetype_legenditemnames = simp$sim$rundesc,
 			filename = paste("TotalAftComposition", 
 					shbasic::shbasic_condenseRunids(data.frame(aftData)[, "ID"]), sep="_"),
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Compare Yearly aggregated AFT composition
 #' 
 #' @param simp 
 #' @param dataname 
+#' @param returnplot if true the ggplot object is returned
 #' @return timelien plot
 #' 
 #' @author Sascha Holzhauer
@@ -53,7 +60,8 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggregateAFTComposition", 
 		filename = paste("AftComposition_", 
 			if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
-			title = "Aft Composition")	 {
+			title = "Aft Composition", returnplot = FALSE)	 {
+	
 	dataComp <- data.frame()
 	for (p in simps) {
 		input_tools_load(p, dataname)
@@ -76,17 +84,31 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	visualise_lines(simp, d, "value", title = title,
+	p1 <- visualise_lines(simp, d, "value", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = filename,
-			alpha=0.7)
+			alpha=0.7,
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }
 #' Read supply and demand and plot for given runid
 #' 
+#' Change IDs to meaningful names by setting \code{simp$sim$shortid} for \code{simps}
+#' 
 #' @param simp Considered:\itemize{
-#'	\item simp$fig$averagedemand
+#'		\item{\code{simp$fig$averagedemand}}
+#' 		\item{\code{simp$sim$rundesc}}
+#' 		\item{\code{simp$sim$id}}
+#' 		\item{\code{\link{visualise_lines}}}}
 #'	}
+#' @param simps list of simp that shall be compared. Relevant entries in
+#' 			\code{simp}:\itemize{
+#' 				\item{\code{p$sim$shortid}}
+#' 				\item{\code{\link{convert_aggregate_demand}}}
+#' 				\item{\code{\link{convert_aggregate_supply}}}
+#' 				\item{\code{\link{input_tools_load}}}}
+#' 			\code{simp$sim$shortid} is combined with \code{Runid} in data to distinguish data!
 #' @param runid 
 #' @param dataname aggregated demand and supply (from aggregated CSV)
 #' @param title title for plot
@@ -109,10 +131,12 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated",
 		input_tools_load(p, "csv_aggregated_demand")
 		input_tools_load(p, "csv_aggregated_supply")
 		
-		csv_aggregated_demand$Type <- paste("Demand", p$sim$shortid, sep="-")
+		shortID <- shbasic::shbasic_substitute(simp, p$sim$shortid)
+		
+		csv_aggregated_demand$Type <- paste("Demand", shortID, sep="-")
 		aggregated_demand <- rbind(aggregated_demand, csv_aggregated_demand)
 		
-		csv_aggregated_supply$Type <- paste("Supply", p$sim$shortid, sep="-")
+		csv_aggregated_supply$Type <- paste("Supply", shortID, sep="-")
 		aggregated_supply <- rbind(aggregated_supply, csv_aggregated_supply)
 	}
 	
@@ -160,6 +184,7 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated",
 #' @param agentparam 
 #' @param aft 
 #' @param ggplotparams 
+#' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
@@ -170,7 +195,8 @@ hl_comp_demandsupplygap_agentparams <- function(simp, simps = input_tools_builds
 				if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
 		title = paste("Demand/Supply Gap", if(!is.null(paste(simp$sim$rundesc))) 
 					paste(simp$sim$rundesc, collapse = "/"), sep=" - "),
-		agentparam = "givingUpProb", aft = simp$mdata$aftNames[2], ggplotparams = NULL) {
+		agentparam = "givingUpProb", aft = simp$mdata$aftNames[2], ggplotparams = NULL,
+		returnplot = FALSE) {
 			
 	runs <- do.call(c, lapply(simps, function(x) x$sim$shortid))
 	
@@ -192,9 +218,11 @@ hl_comp_demandsupplygap_agentparams <- function(simp, simps = input_tools_builds
 	data$Tick <- agentparams[data$ID]
 	
 	# Draw figure
-	visualise_lines(simp, data, "Value", title = title,
+	p1 <- visualise_lines(simp, data, "Value", title = title,
 			colour_column = "Service",
 			filename = filename,
 			alpha=0.7,
-			ggplotparams = list(ggplot2::xlab(agentparam), ggplotparams))
+			ggplotparams = list(ggplot2::xlab(agentparam), ggplotparams),
+			returnplot = returnplot)
+	if (returnplot) return(p1)
 }

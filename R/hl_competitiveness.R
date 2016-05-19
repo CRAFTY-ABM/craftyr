@@ -7,6 +7,7 @@
 #' @param demandfilename 
 #' @param dirtoproduction 
 #' @param productionfilenamepattern 
+#' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
 #' @author Sascha Holzhauer
@@ -20,8 +21,9 @@ hl_plotCompetitiveness <- function(simp,
 			demandfilename = paste(simp$sim$regionalisation, "_", simp$sim$scenario, "_", simp$sim$regions, 
 					"_demand.csv", sep=""),
 			dirtoproduction = paste(simp$dirs$data, "/production/", sep=""),
-			productionfilenamepattern = "<AFT>/AftProduction_<AFT>.csv"
-		) {
+			productionfilenamepattern = "<AFT>/AftProduction_<AFT>.csv",
+			returnplot = FALSE) {
+		
 	capitals <- read.csv(paste(dirtocapitals, capitalfilename, sep="/"))
 
 	demand	<- read.csv(paste(dirtodemand, demandfilename, sep="/"))
@@ -57,6 +59,7 @@ hl_plotCompetitiveness <- function(simp,
 		celldata <- rbind(celldata, cbind(as.data.frame(compet), AFT = aft))
 	}
 	
-	visualise_cells_printPlots(simp, list(celldata), idcolumn = "AFT", valuecolumn = "Competitiveness",
-			title = "Competitiveness", ncol = 3)
+	p1 <- visualise_cells_printPlots(simp, list(celldata), idcolumn = "AFT", valuecolumn = "Competitiveness",
+			title = "Competitiveness", ncol = 3, returnplot = returnplot)
+	if (returnplot) return(p1)
 }

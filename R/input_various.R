@@ -15,3 +15,35 @@ input_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdat
 	csv_MarginalUtilitites_melt$ID <- simp$sim$runid
 	csv_MarginalUtilitites_melt
 }
+
+#' Proceses/Aggregates stored, aggregated AFT composistion data. Checks wether data contains absolute numbers or
+#' proportions.
+#' 
+#' @param simp 
+#' @param dataname  
+#' @return data.frame
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_processAftComposition <- function(simp, dataname = "csv_aggregateAFTComposition") {
+	
+	input_tools_load(simp, dataname)
+	dataComp <- get(dataname)
+	
+	# filter rows with "?"s
+	dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, lapply(dataComp[,grep("AFT.", 
+											colnames(dataComp))], as.character)))
+	dataComp <- dataComp[complete.cases(dataComp),]
+	
+	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
+	
+	data <- reshape2::melt(dataComp, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), 
+			direction="long")
+	
+	operator = if (any(data$value > 1.0)) "sum" else "mean"
+	
+	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, 
+					Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), 
+			operator, na.rm = TRUE)
+	return(d)
+}
