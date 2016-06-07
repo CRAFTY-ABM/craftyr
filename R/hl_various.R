@@ -28,39 +28,8 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 			returnplot = returnplot)
 	if (returnplot) return(p1)
 }
-#' Print LaTeX table including run information
-#' 
-#' Considers the \code{simp$sim$version} in column version and the 
-#' the \code{simp$sim$runids[1]} in column '1st Run ID' or between '1st Run ID' and 'Last Run ID'. 
-#' Prints the last entry in case there are multiple matches.
-#' 
-#' @param simp 
-#' @param filename 
-#' @param rows
-#' @return xtable plot
-#' 
-#' @author Sascha Holzhauer
-#' @export
-hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
-	
-	rinfo <- hl_getRunInfo(simp, filename = simp$dirs$output$runinfo)
-	
-	if (!is.null(rows)) {
-		rinfo <- rinfo[,1:rows]
-	}
-	rinfo <- rinfo[nrow(rinfo),]
-			
-	table <- xtable::xtable(t(rinfo),
-			label="model.run.information", 
-			caption="Model run information",
-			align=c("r", "p{13cm}")
-	)
-	
-	print(table, sanitize.colnames.function = identity,
-			sanitize.rownames.function = identity,
-			table.placement = "H")
-}
 #' Return data in RunInfo table for runid defined in simp.
+#' Considers \code{}
 #' 
 #' @param simp 
 #' @param filename 
@@ -84,7 +53,7 @@ hl_getRunInfo <-  function(simp, filename = simp$dirs$output$runinfo) {
 		
 		if (length(rinfo[,1]) == 0) {
 			rinfo <- runinfo[runinfo["Version"] == simp$sim$version & runinfo["1st Run ID"] <= paramid &
-							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) | runinfo["Random Seed"]== randomseed), ]
+							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) || runinfo[,"Random Seed"]== randomseed), ]
 		}
 	} else if(tools::file_ext(filename) == "csv") {
 		runinfo <- read.csv(filename, skip = 1)
@@ -98,39 +67,6 @@ hl_getRunInfo <-  function(simp, filename = simp$dirs$output$runinfo) {
 				simp$sim$version, " and paramID ", paramid, "(random seed: ", randomseed, ")!", sep="")
 	}
 	return(rinfo)
-}
-#' Print LaTeX table including run parameters
-#' 
-#' Considers the \code{simp$sim$version} in column run. 
-#' @param simp 
-#' @param runidcolumnname
-#' @return xtable plot
-#' 
-#' @author Sascha Holzhauer
-#' @export
-hl_compilerunparams <- function (simp, runidcolumnname = "run") {
-	
-	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
-						simp$sim$runids[1]})
-	
-	runData <- input_csv_param_runs(simp)
-	
-	runData <- runData[runData[runidcolumnname] == paramid, ]
-		
-	
-	if (length(runData[,1]) == 0) {
-		R.oo::throw.default("Run parameter table does not contain a row for version " + 
-						paramid, "!", sep="")
-	}
-	
-	table <- xtable::xtable(t(runData),
-			label="model.run.parameters", 
-			caption="Model run parameters",
-			align=c("r", "p{13cm}")
-	)
-	
-	print(table, sanitize.colnames.function = identity,
-			table.placement = "H")
 }
 #' Generates AFT key as CSV with columns 'Index' and 'LandUse'
 #' 
@@ -185,4 +121,119 @@ hl_getRunParameter <- function(simp, parameter, runIdColumn="run") {
 	
 	runData <- input_csv_param_runs(simp)
 	return(runData[runData[, runIdColumn] == paramid, parameter])
+}
+#' Extracts BaseDirAdaptation from Scenario.xml (empty string if not defined)
+#' 
+#' @param simp  
+#' @return BaseDirAdaptation
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getBaseDirAdaptation <- function(simp) {
+	
+	xmlParsed <- XML::xmlParse(file=paste(simp$dirs$param$getparamdir(simp), "Scenario.xml", sep="/"))
+	xml_data  <- XML::xmlToList(xmlParsed)
+	basediradaptation <- xml_data[[".attrs"]]["basedirAdaptation"]
+	
+	return(if(!is.na(basediradaptation)) basediradaptation else "")
+}
+#' List required capital files for the given configuration
+#' 
+#' @param simp 
+#' @param ID 
+#' @param cellInitialiserColName 
+#' @param relativeToDataDir  
+#' @return vector of filenames
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getCapitalDataFile <- function(simp, ID=NULL, cellInitialiserColName = "CellInitialisers",
+		relativeToDataDir = TRUE) {
+	# get worldLoaderFile
+	xml_data <- XML::xmlToList(XML::xmlParse(file=paste(simp$dirs$param$getparamdir(simp), "Scenario.xml", sep="/")))
+	worldLoaderFile <- paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
+			xml_data[["worldLoaderFile"]], sep="/")
+	
+	# get Region CSV
+	world_xml_data <- XML::xmlToList(XML::xmlParse(worldLoaderFile))
+	world_xml_data <- unlist(world_xml_data)
+	world_data <- read.csv(paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
+		get_xmlfunction_parameter(unlist(world_xml_data), "regionCSV", ""), sep="/"))
+	
+	# get CellInitialisers XML
+	if (is.null(ID)) ID = world_data$ID[1]
+	cellinit_xml <- paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
+			input_tools_getParamValue(simp, world_data[world_data$ID == ID, cellInitialiserColName]), sep="/")
+
+	# get file name(s)
+	cellinit_xml_data <- XML::xmlToList(XML::xmlParse(file=cellinit_xml))
+	
+	filenames = paste(if(!relativeToDataDir) simp$dirs$param$getparamdir(simp) else simp$sim$folder, 
+			craftyr:::hl_getBaseDirAdaptation(simp), cellinit_xml_data["csvFile"], sep="/")
+	
+	# subsitute
+	filenames <- gsub("%w", simp$sim$world, filenames, fixed=TRUE)
+	filenames <- gsub("%k", simp$sim$regionalisation, filenames, fixed=TRUE)
+	
+	return(sapply(simp$sim$regions, function(region) gsub("%r", region, filenames, fixed=TRUE)))
+}
+#' List required input files for the given configuration.
+#' 
+#' @param simp  
+#' @return LaTeX formated table
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_printRequiredInputFilesTable <- function(simp) {
+	files <- data.frame()
+	files <- rbind(files, data.frame(Type = "Services", Data = paste(simp$mdata$services, collapse=", ")))
+	files <- rbind(files, data.frame(Type = "Capitals", Data = paste(simp$mdata$capitals, collapse=", ")))
+	
+	capData <- hl_getCapitalDataFile(simp)
+	rownames(capData) <- NULL
+	files <- rbind(files, data.frame(Type = "Capital Data", Data = capData))
+	files <- rbind(files, data.frame(Type = "Capital changes", Data = "see 'Capital Changes'"))
+	files <- rbind(files, data.frame(Type = "Demand", Data = "see 'Service demand'"))
+	files <- rbind(files, data.frame(Type = "Benefit functions", Data = "see 'Benefit Functions'"))
+	files <- rbind(files, data.frame(Type = "Allocation model", Data = "see 'Run parameters'"))
+	files <- rbind(files, data.frame(Type = "Institutions", Data = "see table 'Run parameters'"))
+	files <- rbind(files, data.frame(Type = "AFT production", Data = "see 'Agent Production Parameters'"))
+	files <- rbind(files, data.frame(Type = "AFT sensitivities", Data = "see 'Agent Production Parameters'"))
+	files <- rbind(files, data.frame(Type = "Social Network", Data = "see 'Run parameters'"))
+	
+	table <- xtable::xtable(files,
+			label="model.input.files", 
+			caption="Model input files",
+			align=c("r", "r", "p{13cm}")
+	)
+	
+	print(table, sanitize.colnames.function = identity,
+			sanitize.rownames.function = identity,
+			include.rownames = FALSE,
+			table.placement = "H")
+}
+#' List required input files for the given configuration.
+#' 
+#' @param simp  
+#' @return LaTeX formated table
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_printCapitalChangesTable <- function(simp) {
+	# find relevant factors:
+	# Get (relevant) institutions
+	
+	# TODO parse institution XMLs
+	
+	capchanges <- read.csv(paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
+					as.character(input_csv_param_runs(simp, paramid = TRUE)[1,"capitalFactorsCSV"]), sep="/"))
+		
+	table <- xtable::xtable(capchanges,
+			label="model.input.capitalchanges", 
+			caption="Factors of change for capitals")
+	
+	print(table, sanitize.colnames.function = identity,
+			sanitize.rownames.function = identity,
+			include.rownames = FALSE,
+			table.placement = "H")
 }

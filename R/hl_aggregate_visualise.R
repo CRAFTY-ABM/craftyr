@@ -102,8 +102,9 @@ hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_n
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
-	input_tools_load(simp, dataname, returnplot = FALSE)
+hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated", returnplot = FALSE) {
+	
+	input_tools_load(simp, dataname)
 	data <- get(dataname)
 	
 	aftData <- data[data$LandUseIndex != as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames=="Unmanaged"]), 
@@ -139,8 +140,8 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated") {
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", facet_ncol = 4) {
-	input_tools_load(simp, dataname, returnplot = FALSE)
+hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", facet_ncol = 4, returnplot = FALSE) {
+	input_tools_load(simp, dataname)
 	
 	data <- get(dataname)
 	
@@ -334,6 +335,14 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 	
 	startPopulation <- data.frame(names(aftnames), 0)
 	names(startPopulation) <- c("Agent", "AFT")
+	
+	if (sum(dataAgg$Tick == starttick)==0) {
+		R.oo::throw.default(paste("No data for starttick ", starttick, "!", sep=""))
+	}
+	if (sum(dataAgg$Runid == runid)==0) {
+		R.oo::throw.default(paste("No data for Run ID ", runid, "!", sep=""))
+	}
+	
 	sp <- aggregate(subset(dataAgg, select=c("AFT"),
 					subset = dataAgg$Tick==starttick && dataAgg$Runid == runid), by = list(
 					Agent = dataAgg[dataAgg$Tick == starttick && dataAgg$Runid == runid,"LandUseIndex"]), FUN=sum)
@@ -349,7 +358,7 @@ hl_takeovers <- function(simp, runid = simp$sim$runids[1], dataname = "csv_cell_
 		
 		if (any(!aftnames %in% names(dataTakeOvers))) {
 			R.oo::throw.default("Defined AFT name (", 
-					paste(aftnames[!aftnamess %in% names(dataTakeOvers)], collapse=", "),
+					paste(aftnames[!aftnames %in% names(dataTakeOvers)], collapse=", "),
 					") not in take over data!")
 		}
 		

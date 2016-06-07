@@ -22,8 +22,7 @@ visualise_actions <- function(simp,
 		dataname = "dataActions", 
 		monitordataname = "dataAggregateConnectivity",
 		monitorvars = simp$mdata$aftNames[-1],
-		monitorColours = setNames(simp$colours$AFT[names(simp$colours$AFT) %in% names(simp$mdata$aftNames)],
-				simp$mdata$aftNames[match(names(monitorColours) ,as.numeric(names(monitorColours)))]),
+		monitorColours = NULL,
 		title = "Institutional Action",
 		filename = NULL,
 		x_column = "Tick",
@@ -58,11 +57,17 @@ visualise_actions <- function(simp,
 #	size_column = NULL
 #	measure_name = "TotalProduction"
 	
+	if (is.null(monitorColours)) {
+		monitorColours <- simp$colours$AFT[names(simp$colours$AFT) %in% names(simp$mdata$aftNames)]
+		monitorColours <- setNames(monitorColours,
+				simp$mdata$aftNames[match(names(monitorColours) ,as.numeric(names(monitorColours)))])
+	}
+	
 	input_tools_load(simp, dataname)
 	actionData <- get(dataname)
 	
 	if(length(actionData) == 0) {
-		R.oo::trow.default("Action data is empty!")
+		R.oo::throw.default("Action data is empty!")
 	}
 	
 	input_tools_load(simp, monitordataname)
@@ -105,7 +110,10 @@ visualise_actions <- function(simp,
 	}
 	
 	if(length(actionColours) != length(levels(data$Action[!is.na(data$Action)]))) {
-		R.oo::throw.default("Number of colours in actionColours does not match required number!")
+		R.oo::throw.default(sprintf("Number of colours in actionColours (%d) does not match required number (%d)! Defined actions: %s",
+						length(actionColours),
+						length(levels(data$Action[!is.na(data$Action)])),
+						paste(levels(data$Action[!is.na(data$Action)]), collapse="/")))
 	}
 	actionColours <- setNames(actionColours, levels(data$Action[!is.na(data$Action)]))
 	actionColours <- actionColours[1:length(levels(data$Action[!is.na(data$Action)]))]

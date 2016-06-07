@@ -46,8 +46,8 @@ hl_table_demand <- function(simp, dataname = "csv_aggregateServiceDemand", latex
 	
 	if (latex) {
 		table <- xtable::xtable(d,
-				label= "data.supply", 
-				caption= "Service supply"
+				label= "data.demand", 
+				caption= "Service demand"
 		)
 		
 		print(table, sanitize.colnames.function = identity,

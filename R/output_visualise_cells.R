@@ -95,7 +95,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 			ggplot2::geom_raster(mapping=ggplot2::aes(X, Y, fill=Values), data=celldata) +
 			facetelem +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=simp$fig$facetlabelsize)) +
-			(if (title != "") ggplot2::labs(title = title)) +
+			(if (!is.null(title) && title != "") ggplot2::labs(title = title)) +
 			theme() +
 			scaleFillElem +
 			omitaxistickselem +

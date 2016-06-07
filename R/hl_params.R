@@ -117,7 +117,9 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 #' @author Sascha Holzhauer
 #' @export
 hl_printCompetitionFunctions <- function(simp, srcfilename = NULL, 
-		srcfilepath = dirname(paste(simp$dirs$output$data, simp$sim$folder, hl_getRunParameter(simp, "Competition_xml"), 
+		srcfilepath = dirname(paste(simp$dirs$output$data, simp$sim$folder,
+						hl_getBaseDirAdaptation(simp),
+						hl_getRunParameter(simp, "Competition_xml"), 
 				sep="/")),
 		xrange = c(-3,3), yrange = c(-1,1),
 		 filename = "competitionFunctions", runidcolumnname="run", returnplot = FALSE) {
@@ -133,15 +135,52 @@ hl_printCompetitionFunctions <- function(simp, srcfilename = NULL,
 	p1 <- visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename, returnplot = returnplot)
 	if (returnplot) return(p1)
 }
-#' Print run parameters
+#' Print LaTeX table including run information
+#' 
+#' Considers the \code{simp$sim$version} in column version and the 
+#' the \code{simp$sim$runids[1]} in column '1st Run ID' or between '1st Run ID' and 'Last Run ID'. 
+#' Prints the last entry in case there are multiple matches.
+#' 
 #' @param simp 
-#' @param filenameprefix 
-#' @param filenamepostfix 
-#' @return print xtable
+#' @param filename 
+#' @param rows
+#' @return xtable plot
+#' 
+#' @seealso hl_getRunInfo
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_printRunParameters <- function(simp) {
+hl_compileruninfos <- function (simp, filename = simp$dirs$output$runinfo, rows = NULL) {
+	
+	rinfo <- hl_getRunInfo(simp, filename = simp$dirs$output$runinfo)
+	
+	if (!is.null(rows)) {
+		rinfo <- rinfo[,1:rows]
+	}
+	rinfo <- rinfo[nrow(rinfo),]
+	
+	table <- xtable::xtable(t(rinfo),
+			label="model.run.information", 
+			caption="Model run information",
+			align=c("r", "p{13cm}")
+	)
+	
+	print(table, sanitize.colnames.function = identity,
+			sanitize.rownames.function = identity,
+			table.placement = "H")
+}
+#' Print LaTeX table including run parameters
+#' 
+#' Considers the \code{simp$sim$version} in column run. 
+#' @param simp 
+#' @param runidcolumnname
+#' @return xtable plot
+#' 
+#' @seealso input_csv_param_runs
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_compilerunparams <- function (simp, runidcolumnname = "run") {
 	
 	paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 						simp$sim$runids[1]})
@@ -150,17 +189,22 @@ hl_printRunParameters <- function(simp) {
 			paramid,
 			name = "craftyr.hl_params.R")
 	
-	runParamData <- input_csv_param_runs(simp)
-	runParamData <- runParamData[runParamData$run == paramid,]
+	runData <- input_csv_param_runs(simp)
 	
-	# print table
-	table <- xtable::xtable(t(runParamData),
-			label= "param.run",
-			caption= "Run Parameters",
-			align=c("r", "p{13cm}")
+	runData <- runData[runData[runidcolumnname] == paramid, ]
+	
+	
+	if (length(runData[,1]) == 0) {
+		R.oo::throw.default("Run parameter table does not contain a row for version " + 
+						paramid, "!", sep="")
+	}
+	
+	table <- xtable::xtable(t(runData),
+			label="model.run.parameters", 
+			caption="Model run parameters",
+			align=c("r", "p{12cm}")
 	)
 	
 	print(table, sanitize.colnames.function = identity,
-			include.rownames = TRUE,
 			table.placement = "H")
 }

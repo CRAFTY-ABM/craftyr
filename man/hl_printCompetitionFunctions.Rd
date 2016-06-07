@@ -6,9 +6,10 @@
 \usage{
 hl_printCompetitionFunctions(simp, srcfilename = NULL,
   srcfilepath = dirname(paste(simp$dirs$output$data, simp$sim$folder,
-  hl_getRunParameter(simp, "Competition_xml"), sep = "/")), xrange = c(-3, 3),
-  yrange = c(-1, 1), filename = "competitionFunctions",
-  runidcolumnname = "run", returnplot = FALSE)
+  hl_getBaseDirAdaptation(simp), hl_getRunParameter(simp, "Competition_xml"),
+  sep = "/")), xrange = c(-3, 3), yrange = c(-1, 1),
+  filename = "competitionFunctions", runidcolumnname = "run",
+  returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}

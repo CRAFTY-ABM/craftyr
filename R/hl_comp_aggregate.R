@@ -67,6 +67,11 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 		input_tools_load(p, dataname)
 		d <- get(dataname)
 		d$Runid <- paste(p$sim$shortid, d$Runid, sep="-")
+		if (ncol(d) != nocl(dataComp)) {
+			R.oo::throw.default("Number of columns does not match between runs. Most likely the set of AFTs (%s vs. %s) is not the same!",
+					colnames(d)[! colnames(d) %in% c("Region", "Tick", "Scenario", "Runid")],
+					colnames(dataComp)[! colnames(dataComp) %in% c("Region", "Tick", "Scenario", "Runid")])
+		}
 		dataComp <- rbind(dataComp, d)		
 	}
 	
@@ -223,6 +228,57 @@ hl_comp_demandsupplygap_agentparams <- function(simp, simps = input_tools_builds
 			filename = filename,
 			alpha=0.7,
 			ggplotparams = list(ggplot2::xlab(agentparam), ggplotparams),
+			returnplot = returnplot)
+	if (returnplot) return(p1)
+}
+#' Supply and Demand gap depending on AFT param
+#' 
+#' Plots the gap between demand and supply for various runs with
+#' agent param as dependent variable.
+#'
+#' @param simp 
+#' @param simps 
+#' @param dataname 
+#' @param filename 
+#' @param title 
+#' @param agentparam 
+#' @param aft 
+#' @param ggplotparams 
+#' @param returnplot if true the ggplot object is returned
+#' @return plot
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_comp_percentalsupply_perService <- function(simp, simps = input_tools_buildsimplist(111:112),
+		dataname = "csv_cell_aggregated", 
+		filename = paste("SupplyDemandGap_", 
+				if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+		title = paste("Demand/Supply Gap", if(!is.null(paste(simp$sim$rundesc))) 
+					paste(simp$sim$rundesc, collapse = "/"), sep=" - "),
+		ggplotaddons = NULL,
+		service = "Cereal",
+		returnplot = FALSE) {
+	
+	# Get supply demand gap
+	supplydemand <- hl_comp_demandsupply(simp, simps, dataname=dataname, visualise = FALSE)
+	#supplydemand <- supplydemand[supplydemand$Tick == max(supplydemand$Tick),]
+	supplydemand$Type <- gsub("[-0-9]", "", supplydemand$ID)
+	supplydemand$ID <- gsub("[-A-Za-z]", "", supplydemand$ID)
+	
+	data <- reshape2::dcast(supplydemand, formula=ID+Service+Tick~Type, value.var="Value")
+	if (!service %in% data$Service) {
+		R.oo::throw.default("There is service ", service, "!")
+	}
+	data <- data[data$Service == service,]
+	data$Value <- 100 *data$Supply/data$Demand
+	
+	# Draw figure
+	p1 <- visualise_lines(simp, data, "Value", title = title,
+			colour_column = "Service",
+			linetype_column = "ID",
+			filename = filename,
+			alpha=0.7,
+			ggplotaddons = ggplotaddons,
 			returnplot = returnplot)
 	if (returnplot) return(p1)
 }

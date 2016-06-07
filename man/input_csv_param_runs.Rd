@@ -4,7 +4,7 @@
 \alias{input_csv_param_runs}
 \title{Read Runs data (Runs.csv)}
 \usage{
-input_csv_param_runs(simp)
+input_csv_param_runs(simp, paramid = FALSE)
 }
 \arguments{
 \item{simp}{}

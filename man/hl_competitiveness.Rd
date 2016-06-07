@@ -4,7 +4,8 @@
 \alias{hl_competitiveness}
 \title{Load from csv data, aggregate, and plot AFT competitiveness}
 \usage{
-hl_competitiveness(simp, dataname = "csv_cell_aggregated")
+hl_competitiveness(simp, dataname = "csv_cell_aggregated",
+  returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}

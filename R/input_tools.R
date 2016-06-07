@@ -354,7 +354,7 @@ input_tools_checkexists <- function(simp, objectName) {
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_tools_load <- function(simp, objectName,...) {
+input_tools_load <- function(simp, objectName, ...) {
 	
 	futile.logger::flog.info("Loading object %s from %s",
 			objectName,
@@ -386,7 +386,34 @@ input_tools_buildsimplist <- function(runs, randomseed = 0) {
 	}
 	simps
 }
-#' Read a value from Links.cav according to simp and the given ID
+#' Rerieves param value for a param expression.
+#' Consults Links.csv and Runs.csv as appropriate (recursively).
+#' 
+#' @param simp 
+#' @param rawvalue  
+#' @return parameter value
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_getParamValue <- function(simp, rawvalue) {
+	# TODO consider pre- and postfixes!
+	rawvalue = as.character(rawvalue)
+	if (grepl("@@", rawvalue)) {
+		paramname =  stringr::str_trim(strsplit(rawvalue, split="[;\\)]")[[1]][2]) #  grep(",", elementname, value=F)
+		value =  input_tools_getParamValue(simp, input_tools_getLinksValue(simp, id=paramname))
+	} else if (grepl("@", rawvalue)) {
+		rundata <- rundata <- input_tools_getrundata(simp) 
+		paramname =  stringr::str_trim(strsplit(rawvalue, split="[,\\)]")[[1]][2]) #  grep(",", elementname, value=F)
+		if (!paramname %in% colnames(rundata)) {
+			R.oo::throw.default("Rundata does not contain column ", paramname, "!")
+		}
+		value =  input_tools_getParamValue(simp, rundata[, paramname])
+	} else {
+		value = rawvalue
+	} 
+	return(value)
+}
+#' Read a value from Links.cav according to simp and the given ID.
 #' @param simp 
 #' @param id  
 #' @return value in Links.csv
@@ -394,8 +421,13 @@ input_tools_buildsimplist <- function(runs, randomseed = 0) {
 #' @author Sascha Holzhauer
 #' @export
 input_tools_getLinksValue <- function(simp, id = "CapitalFolder") {
+	# TODO consider pre- and postfixes!
 	linksdata <- read.csv(file=paste(simp$dirs$output$data, "/", simp$sim$folder, "/Links.csv", sep=""))
-	return(linksdata[linksdata$ID == id, "Value"])
+	if (!id %in% linksdata$ID) {
+		R.oo::throw.default("Links.csv does not contain column ", id, "!")
+	}
+	value <- as.character(linksdata[linksdata$ID == id, "Value"])
+	return(value)
 }
 #' Load, combine, and store data objects
 #' 
@@ -415,4 +447,18 @@ input_tools_loadstorecombined <- function(simp, simps, fromdataname, todataname 
 	}
 	assign(todataname, combined)
 	input_tools_save(simp, todataname)
+}
+#' Get parameters in Runs.csv for the defined Run ID (in simp)
+#' @param simp  
+#' @return data.frame of parameters in Runs.csv for the defined Run ID.
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_tools_getrundata <-  function(simp) {
+	runid = as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+						simp$sim$runids[1]})
+	
+	rundata <- read.csv(file=paste(simp$dirs$data, simp$sim$folder, "Runs.csv", sep="/"))
+	rundata <- rundata[rundata$run == runid,]
+	return(rundata)
 }

@@ -5,7 +5,7 @@
 \title{Load from csv data, aggregate, and plot AFT competitiveness per region}
 \usage{
 hl_competitivenessPerRegion(simp, dataname = "csv_cell_aggregated",
-  facet_ncol = 4)
+  facet_ncol = 4, returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}

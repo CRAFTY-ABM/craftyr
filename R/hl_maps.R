@@ -17,14 +17,14 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	
 	runid <- unique(cdata$Runid)
 
-	if (!paste(secondtick, runid, sep=".") %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
-		futile.logger::flog.error("Data does not contain second tick (%d)!",
+	if (!firsttick %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
+		futile.logger::flog.error("Data does not contain first tick (%d)!",
 				secondtick,
 				name = "craftyr.hl_maps.R")
 	}
 	
-	if (!paste(secondtick, runid, sep=".") %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
-		futile.logger::flog.error("Data does not contain first tick (%d)!",
+	if (!secondtick %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
+		futile.logger::flog.error("Data does not contain second tick (%d)!",
 				firsttick,
 				name = "craftyr.hl_maps.R")
 	}
