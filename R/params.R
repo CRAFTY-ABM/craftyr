@@ -114,7 +114,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fig$averagedemand  <- FALSE
 	defsimp$fig$numticks		<- 8
 	defsimp$fig$maxnumtypes		<- 3
-	defsimp$fig$maptitle		<- NULL
+	defsimp$fig$maptitle		<- "Map"
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()

@@ -5,7 +5,7 @@
 \title{Regional AFT composition}
 \usage{
 hl_regions_aftcomposition(simp, dataname = "csv_cell_aggregated",
-  facet_ncol = 5)
+  facet_ncol = 5, returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}

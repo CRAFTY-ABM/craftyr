@@ -63,7 +63,7 @@ output_visualise_takeovers <- function(simp,
 	
 	nondatacols <- na.omit(match(c(grouping, "AFT"), colnames(data)))
 	
-	aftindex <- names(simp$colours$AFT) %in% names(aftnames)[aftnames %in% colnames(data)]
+	aftindex <- match(names(aftnames[aftnames %in% colnames(data)]), names(simp$colours$AFT))
 	aftcolours <- simp$colours$AFT[aftindex]
 	
 	# aggregate AFT into groups
@@ -201,7 +201,6 @@ output_visualise_takeovers <- function(simp,
 #		transitionsPlot$render()
 #		############# ---> 
 
-		
 		shGmisc::transitionPlot(transitions,
 				cex = 1.2,
 				overlap_add_width = 1.3,

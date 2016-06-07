@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_tools.R
 \name{input_tools_getLinksValue}
 \alias{input_tools_getLinksValue}
-\title{Read a value from Links.cav according to simp and the given ID}
+\title{Read a value from Links.cav according to simp and the given ID.}
 \usage{
 input_tools_getLinksValue(simp, id = "CapitalFolder")
 }
@@ -15,7 +15,7 @@ input_tools_getLinksValue(simp, id = "CapitalFolder")
 value in Links.csv
 }
 \description{
-Read a value from Links.cav according to simp and the given ID
+Read a value from Links.cav according to simp and the given ID.
 }
 \author{
 Sascha Holzhauer

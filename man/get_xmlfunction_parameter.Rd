@@ -2,18 +2,18 @@
 % Please edit documentation in R/input_xml_param.R
 \name{get_xmlfunction_parameter}
 \alias{get_xmlfunction_parameter}
-\title{Extact parameter from curce XML file}
+\title{Extract parameter from source XML file}
 \usage{
-get_xmlfunction_parameter(data, rundata, parameter, default)
+get_xmlfunction_parameter(data, parameter, default)
 }
 \arguments{
-\item{data}{}
-
-\item{rundata}{}
+\item{data}{data.frame}
 
 \item{parameter}{}
 
 \item{default}{}
+
+\item{rundata}{}
 }
 \value{
 parameter value
@@ -22,6 +22,6 @@ parameter value
 Considers given default value in case the parameter is not defined in the XML file.
 }
 \author{
-Sascha Holzhauer
+Sascha Holzhauer Links.csv
 }
 

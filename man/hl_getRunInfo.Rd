@@ -2,7 +2,8 @@
 % Please edit documentation in R/hl_various.R
 \name{hl_getRunInfo}
 \alias{hl_getRunInfo}
-\title{Return data in RunInfo table for runid defined in simp.}
+\title{Return data in RunInfo table for runid defined in simp.
+Considers \code{}}
 \usage{
 hl_getRunInfo(simp, filename = simp$dirs$output$runinfo)
 }
@@ -16,6 +17,7 @@ data.frame
 }
 \description{
 Return data in RunInfo table for runid defined in simp.
+Considers \code{}
 }
 \author{
 Sascha Holzhauer

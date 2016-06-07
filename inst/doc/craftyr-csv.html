@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2016-05-19" />
+<meta name="date" content="2016-06-06" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2016-05-19</em></h4>
+<h4 class="date"><em>2016-06-06</em></h4>
 
 
 <div id="TOC">
@@ -103,6 +103,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 </ul></li>
 <li><a href="#output-write-csv-data">Output (write) CSV Data</a><ul>
+<li><a href="#land-use-index-per-tick">Land Use Index (per tick)</a></li>
 <li><a href="#generate-landuseindex-key">Generate LandUseIndex key</a></li>
 <li><a href="#aggregate-demand-and-supply">Aggregate demand and supply</a></li>
 <li><a href="#supplydemand-gap-regarding-agent-parameters-gu-probability">Supply/Demand gap regarding agent parameters (GU probability)</a></li>
@@ -146,7 +147,7 @@ csv_LandUseIndex_split &lt;-<span class="st"> </span>cdata
 cdata$Region &lt;-<span class="st"> </span><span class="ot">NULL</span>
 cdata$Scenario &lt;-<span class="st"> </span><span class="ot">NULL</span>
 
-cdata &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
+data &lt;-<span class="st"> </span><span class="kw">split</span>(cdata, <span class="kw">list</span>(cdata$Tick,cdata$Runid))
 
 cdata &lt;-<span class="st"> </span><span class="kw">lapply</span>(cdata, function(x) {x$Runid &lt;-<span class="st"> </span><span class="ot">NULL</span>; x})
 cdata &lt;-<span class="st"> </span><span class="kw">lapply</span>(cdata, function(x) {x$Tick &lt;-<span class="st"> </span><span class="ot">NULL</span>; x})
@@ -393,7 +394,7 @@ dataComp &lt;-<span class="st"> </span>dataComp[<span class="kw">complete.cases<
 data &lt;-reshape2::<span class="kw">melt</span>(dataAggregateAFTComposition, <span class="dt">variable.name=</span><span class="st">&quot;Agent&quot;</span>, <span class="dt">id.vars=</span> <span class="kw">c</span>(<span class="st">&quot;Region&quot;</span>, <span class="st">&quot;Tick&quot;</span>, <span class="st">&quot;Runid&quot;</span>, <span class="st">&quot;Scenario&quot;</span>), <span class="dt">direction=</span><span class="st">&quot;long&quot;</span>)
 d &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(data, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;value&quot;</span>)), <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">Agent =</span> data$Agent, <span class="dt">Tick=</span> data$Tick, <span class="dt">Runid=</span>data$Runid, <span class="dt">Scenario=</span>data$Scenario), <span class="st">&quot;mean&quot;</span>, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
 
-############### substitute AFT names by AFT ID
+ ## substitute AFT names by AFT ID
 aftNumbers &lt;-<span class="st"> </span><span class="kw">names</span>(simp$mdata$aftNames)
 <span class="kw">names</span>(aftNumbers) &lt;-<span class="st"> </span>simp$mdata$aftNames
 d$AFT &lt;-<span class="st"> </span>aftNumbers[<span class="kw">as.character</span>(d$AFT)]
@@ -413,7 +414,7 @@ simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>
 
 data &lt;-<span class="st"> </span><span class="kw">convert_aggregate_meltsupplydemand</span>(simp, csv_aggregateServiceDemand)
 
-############## Aggregate regions:
+ <span class="co"># Aggregate regions:</span>
 data &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">subset</span>(data, <span class="dt">select=</span><span class="kw">c</span>(<span class="st">&quot;Value&quot;</span>)),
         <span class="dt">by =</span> <span class="kw">list</span>(<span class="dt">ID =</span> data[,<span class="st">&quot;Runid&quot;</span>],
                 <span class="dt">Tick=</span>data[, <span class="st">&quot;Tick&quot;</span>],  <span class="dt">Scenario =</span> data[,<span class="st">&quot;Scenario&quot;</span>],
@@ -433,7 +434,7 @@ data &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class
 <div id="take-overs-giving-in" class="section level4">
 <h4>Take Overs (Giving in)</h4>
 <p>Visualize take overs due to giving in as arrows between columns of AFTs. Use <a href="https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-TakeoverCellOutputter">CRAFTY outputter TakeoverCellOutputter</a> to output the data from CRAFTY. To visualise all take overs (giving in and giving up), see below (using cell data).</p>
-<pre class="sourceCode r"><code class="sourceCode r">#################### TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
+<pre class="sourceCode r"><code class="sourceCode r"> <span class="co"># TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)</span>
 
 <span class="kw">library</span>(craftyr)
 simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
@@ -581,7 +582,8 @@ melteddat &lt;-<span class="st"> </span>reshape2::<span class="kw">melt</span>(d
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">convert_aggregate_demand</span>(simp)
 <span class="kw">convert_aggregate_supply</span>(simp, <span class="dt">celldataname =</span> <span class="st">&quot;dataAgg&quot;</span>)
 
-################ store percental supply (regarding demand)
+ <span class="co"># store percental supply (regarding demand)</span>
+
 <span class="kw">input_tools_load</span>(simp, <span class="dt">objectName=</span><span class="st">&quot;csv_aggregated_demand&quot;</span>)
 <span class="kw">input_tools_load</span>(simp, <span class="dt">objectName=</span><span class="st">&quot;csv_aggregated_supply&quot;</span>)
 <span class="kw">colnames</span>(csv_aggregated_demand)[<span class="kw">colnames</span>(csv_aggregated_demand) ==<span class="st"> &quot;variable&quot;</span>] &lt;-<span class="st"> &quot;Service&quot;</span>
@@ -638,6 +640,16 @@ simps &lt;-<span class="st"> </span><span class="kw">list</span>(simp1, simp2, s
 </div>
 <div id="output-write-csv-data" class="section level1">
 <h1>Output (write) CSV Data</h1>
+<div id="land-use-index-per-tick" class="section level2">
+<h2>Land Use Index (per tick)</h2>
+<pre class="sourceCode r"><code class="sourceCode r">simp &lt;-<span class="st"> </span><span class="kw">param_getExamplesSimp</span>()
+simp$sim$runids         &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">3</span>)
+simp$sim$scenario       &lt;-<span class="st">  &quot;A1&quot;</span>
+craftyr::<span class="kw">hl_write_csv_landuseindex</span>(simp, <span class="dt">dataname =</span> <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>, <span class="dt">pertick =</span> <span class="ot">TRUE</span>,
+        <span class="dt">identifier =</span> <span class="kw">paste</span>(simp$sim$scenario, <span class="dt">sep=</span><span class="st">&quot;_&quot;</span>),
+        <span class="dt">useIndices =</span> <span class="ot">TRUE</span>, <span class="dt">writeLegend =</span> <span class="ot">TRUE</span>, <span class="dt">zip =</span> <span class="ot">TRUE</span>, <span class="dt">removeCSV =</span> <span class="ot">TRUE</span>,
+        <span class="dt">outdir =</span> <span class="st">&quot;M:/web/public_html/CRAFTY/Europe&quot;</span>, <span class="dt">tempdir =</span> <span class="st">&quot;C:/Users/sholzhau/Desktop/Temp&quot;</span>)</code></pre>
+</div>
 <div id="generate-landuseindex-key" class="section level2">
 <h2>Generate LandUseIndex key</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hl_landindiceskey_csv</span>(simp)</code></pre>

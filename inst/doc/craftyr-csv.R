@@ -23,7 +23,7 @@ input_tools_save(simp, "csv_LandUseIndex_split")
 #  cdata$Region <- NULL
 #  cdata$Scenario <- NULL
 #  
-#  cdata <- split(cdata, list(cdata$Tick,cdata$Runid))
+#  data <- split(cdata, list(cdata$Tick,cdata$Runid))
 #  
 #  cdata <- lapply(cdata, function(x) {x$Runid <- NULL; x})
 #  cdata <- lapply(cdata, function(x) {x$Tick <- NULL; x})
@@ -224,7 +224,7 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 #  data <-reshape2::melt(dataAggregateAFTComposition, variable.name="Agent", id.vars= c("Region", "Tick", "Runid", "Scenario"), direction="long")
 #  d <- aggregate(subset(data, select=c("value")), by = list(Agent = data$Agent, Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), "mean", na.rm = TRUE)
 #  
-#  ############### substitute AFT names by AFT ID
+#   ## substitute AFT names by AFT ID
 #  aftNumbers <- names(simp$mdata$aftNames)
 #  names(aftNumbers) <- simp$mdata$aftNames
 #  d$AFT <- aftNumbers[as.character(d$AFT)]
@@ -244,7 +244,7 @@ input_tools_load(simp, "csv_aggregateServiceDemand")
 
 data <- convert_aggregate_meltsupplydemand(simp, csv_aggregateServiceDemand)
 
-############## Aggregate regions:
+ # Aggregate regions:
 data <- aggregate(subset(data, select=c("Value")),
 		by = list(ID = data[,"Runid"],
 				Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
@@ -262,7 +262,7 @@ visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand
 #  hl_aggregate_demandsupply(simp)
 
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
-#  #################### TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
+#   # TODO correct output_visualise_takeovers to work with gradient2sided (bezierArrowGradient2sided.R:304)
 #  
 #  library(craftyr)
 #  simp <- param_getExamplesSimp()
@@ -400,7 +400,8 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 #  convert_aggregate_demand(simp)
 #  convert_aggregate_supply(simp, celldataname = "dataAgg")
 #  
-#  ################ store percental supply (regarding demand)
+#   # store percental supply (regarding demand)
+#  
 #  input_tools_load(simp, objectName="csv_aggregated_demand")
 #  input_tools_load(simp, objectName="csv_aggregated_supply")
 #  colnames(csv_aggregated_demand)[colnames(csv_aggregated_demand) == "variable"] <- "Service"
@@ -446,6 +447,15 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_comp_demandsupply(simp, simps, dataname="dataAggregateSupplyDemand")
+
+## ---- eval=FALSE, results="hide"-----------------------------------------
+#  simp <- param_getExamplesSimp()
+#  simp$sim$runids			<- c(3)
+#  simp$sim$scenario		<-  "A1"
+#  craftyr::hl_write_csv_landuseindex(simp, dataname = "csv_LandUseIndex_rbinded", pertick = TRUE,
+#  		identifier = paste(simp$sim$scenario, sep="_"),
+#  		useIndices = TRUE, writeLegend = TRUE, zip = TRUE, removeCSV = TRUE,
+#  		outdir = "M:/web/public_html/CRAFTY/Europe", tempdir = "C:/Users/sholzhau/Desktop/Temp")
 
 ## ---- eval=FALSE, results="hide"-----------------------------------------
 #  hl_landindiceskey_csv(simp)

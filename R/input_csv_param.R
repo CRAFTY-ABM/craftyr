@@ -150,7 +150,13 @@ input_csv_param_productivities <- function(simp, aft, filenameprefix = "AftProdu
 	aftParamIds <- hl_getAgentParamId(simp)
 	aftparamdata <- input_csv_param_agents(simp, aft)
 	filename <- aftparamdata[match(aftParamIds,aftparamdata$aftParamId), "productionCsvFile"]
-	filename <- paste(simp$dirs$param$getparamdir(simp), as.character(filename), sep="/")
+	
+	filename <- paste(simp$dirs$param$getparamdir(simp), hl_getBaseDirAdaptation(simp), 
+			as.character(filename), sep="/")
+	
+	futile.logger::flog.debug("Agent productivities > Filename retrieved from AFT param CSV: %s",
+				filename,
+				name = "craftyr.input_csv_param.R")
 	if (!file.exists(filename)) {
 		filename <- paste(simp$dirs$param$getparamdir(simp, datatype="productivities"), "/", aft, 
 				"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
@@ -184,11 +190,16 @@ input_csv_param_agents <- function(simp, aft, filenameprefix = "AftParams_",
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_csv_param_runs <- function(simp) {
+input_csv_param_runs <- function(simp, paramid = FALSE) {
 	filename <- paste(simp$dirs$param$getparamdir(simp, datatype="runs"), 
 			"/Runs.csv", sep="")
 	
 	shbasic::sh.checkFilename(filename)
 	paramData <- utils::read.csv(filename)
+	if (paramid) {
+		runid = as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
+							simp$sim$runids[1]})
+		paramData <- paramData[paramData$run == runid,]
+	}
 	paramData
 }

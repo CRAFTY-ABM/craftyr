@@ -6,16 +6,14 @@
 \usage{
 visualise_actions(simp, dataname = "dataActions",
   monitordataname = "dataAggregateConnectivity",
-  monitorvars = simp$mdata$aftNames[-1],
-  monitorColours = setNames(simp$colours$AFT[names(simp$colours$AFT) \%in\%
-  names(simp$mdata$aftNames)], simp$mdata$aftNames[match(names(monitorColours),
-  as.numeric(names(monitorColours)))]), title = "Institutional Action",
-  filename = NULL, x_column = "Tick", y_column = "Score",
-  colour_column = "FR", shape_column = "Agent", fill_column = "Action",
-  facet_column = "Region", facet_column_levels = NULL, facet_ncol = 1,
-  alpha_column = "Selected", alpha = 0.5,
-  size_column = "RestrictionsNumber", measure_name = "Connectedness",
-  actionColours = NULL, returnplot = FALSE)
+  monitorvars = simp$mdata$aftNames[-1], monitorColours = NULL,
+  title = "Institutional Action", filename = NULL, x_column = "Tick",
+  y_column = "Score", colour_column = "FR", shape_column = "Agent",
+  fill_column = "Action", facet_column = "Region",
+  facet_column_levels = NULL, facet_ncol = 1, alpha_column = "Selected",
+  alpha = 0.5, size_column = "RestrictionsNumber",
+  measure_name = "Connectedness", actionColours = NULL,
+  returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}

@@ -11,7 +11,8 @@ hl_store_csvcelldata(simp, dataname = "csv_LandUseIndex", tickinterval = 10)
 
 \item{dataname}{}
 
-\item{tickinterval}{}
+\item{tickinterval}{the interval of ticks that are stored 
+(if tickinterval = 10, e.g. data of 2010,2020,2030 will be stored)}
 }
 \description{
 Store CSV cell data (also in splitted form)
