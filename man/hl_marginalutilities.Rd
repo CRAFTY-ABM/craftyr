@@ -5,21 +5,21 @@
 \title{Reads marginal utilties and prepares the data for plotting}
 \usage{
 hl_marginalutilities(simp, filename = paste(simp$dirs$output$rdata,
-  "MarginalUtilities.csv", sep = "/"), storerdata = TRUE,
+  simp$sim$id, "Marginal_Utilities.csv", sep = "/"), storerdata = TRUE,
   returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}
 
-\item{filename}{}
+\item{filename}{the file that contain marginal utility data. Default is \code{MarginalUtilities.csv} in RData folder.}
 
 \item{returnplot}{if true the ggplot object is returned}
 }
 \value{
-data.frame
+plot
 }
 \description{
-Stores data and returns.
+Reads marginal utilties and prepares the data for plotting
 }
 \author{
 Sascha Holzhauer

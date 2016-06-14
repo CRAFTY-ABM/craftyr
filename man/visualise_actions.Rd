@@ -4,7 +4,7 @@
 \alias{visualise_actions}
 \title{Visualise the performance and effect of Actions}
 \usage{
-visualise_actions(simp, dataname = "dataActions",
+visualise_actions(simp, dataname = "dataActions", onlySelected = FALSE,
   monitordataname = "dataAggregateConnectivity",
   monitorvars = simp$mdata$aftNames[-1], monitorColours = NULL,
   title = "Institutional Action", filename = NULL, x_column = "Tick",
@@ -12,6 +12,7 @@ visualise_actions(simp, dataname = "dataActions",
   fill_column = "Action", facet_column = "Region",
   facet_column_levels = NULL, facet_ncol = 1, alpha_column = "Selected",
   alpha = 0.5, size_column = "RestrictionsNumber",
+  linetype_column_actions = NULL, linetype_column_measures = NULL,
   measure_name = "Connectedness", actionColours = NULL,
   returnplot = FALSE)
 }
@@ -32,7 +33,7 @@ visualise_actions(simp, dataname = "dataActions",
 
 \item{shape_column}{}
 
-\item{fill_column}{}
+\item{fill_column}{default}
 
 \item{facet_column}{}
 
