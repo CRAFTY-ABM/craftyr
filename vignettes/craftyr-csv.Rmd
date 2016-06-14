@@ -157,7 +157,7 @@ input_tools_save(simp, "csv_aggregateGiStatistics")
 ## Source: Marginal Utilities
 
 Note: currently, there is no outputter, but marginal utilities can be extracted from log data using a
-python script (see Py4ABM, https://bitbucket.org/S-Holzhauer/py4abm). The resulting CSV file should be places in the projects RData folder.
+python script (see Py4ABM, https://bitbucket.org/S-Holzhauer/py4abm). The resulting CSV file should be placed in the project's RData folder.
 
 TODO
 ```{r, eval=FALSE, results="hide"}

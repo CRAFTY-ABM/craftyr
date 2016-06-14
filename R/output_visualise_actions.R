@@ -8,7 +8,7 @@
 #' @param y_column 
 #' @param colour_column 
 #' @param shape_column 
-#' @param fill_column 
+#' @param fill_column default
 #' @param facet_column 
 #' @param facet_ncol 
 #' @param alpha_column 
@@ -19,7 +19,8 @@
 #' @author Sascha Holzhauer
 #' @export
 visualise_actions <- function(simp, 
-		dataname = "dataActions", 
+		dataname = "dataActions",
+		onlySelected = FALSE,
 		monitordataname = "dataAggregateConnectivity",
 		monitorvars = simp$mdata$aftNames[-1],
 		monitorColours = NULL,
@@ -36,9 +37,13 @@ visualise_actions <- function(simp,
 		alpha_column = "Selected",
 		alpha = 0.5,
 		size_column = "RestrictionsNumber",
+		linetype_column_actions = NULL,
+		linetype_column_measures = NULL,
+		actionLineColour = "darkgrey",
 		measure_name = "Connectedness",
 		actionColours = NULL,
-		returnplot = FALSE) {
+		returnplot = FALSE,
+		ggplotaddons = NULL) {
 	
 #	dataname = "dataActions" 
 #	monitordataname = "csv_aggregated_supply"
@@ -56,6 +61,32 @@ visualise_actions <- function(simp,
 #	alpha_column = "Selected"
 #	size_column = NULL
 #	measure_name = "TotalProduction"
+	
+	
+#	# comapre settings:
+#	dataname = "dataActions"
+#	onlySelected = TRUE
+#	monitordataname = "csv_aggregated_supply"
+#	monitorvars = simp$mdata$services
+#	monitorColours = simp$colours$Service
+#	title = "Institutional Action"
+#	filename = NULL
+#	x_column = "Tick"
+#	y_column = "Score"
+#	colour_column = "Service"
+#	shape_column = "Agent"
+#	fill_column = "Action"
+#	facet_column = "Region" 
+#	facet_ncol = 1
+#	facet_column_levels = NULL
+#	alpha_column = "Selected"
+#	alpha = 0.7
+#	size_column = NULL
+#	linetype_column = "ID"
+#	linetype_column_actions = "Runid"
+#	measure_name = "TotalProduction"
+#	actionColours = NULL
+#	returnplot = FALSE
 	
 	if (is.null(monitorColours)) {
 		monitorColours <- simp$colours$AFT[names(simp$colours$AFT) %in% names(simp$mdata$aftNames)]
@@ -83,7 +114,10 @@ visualise_actions <- function(simp,
 	titlepart <- if(!is.null(title)) title else "InstitutionalAction"
 	if(is.null(filename)) filename = paste(gsub(" ", "-", titlepart), shbasic::shbasic_condenseRunids(actionData[,"Runid"]), sep="_")
 	
-	actionData <- actionData[, c(x_column, shape_column, fill_column, y_column, alpha_column, facet_column, size_column)]
+	actionData <- actionData[, c(x_column, shape_column, fill_column, y_column, alpha_column, facet_column, size_column, linetype_column_actions)]
+	if (onlySelected) {
+		actionData <- actionData[actionData$Selected == 1,]
+	}
 	actionData$Selected[actionData$Selected == 0] <- 0.7
 	actionData$Selected <- as.factor(actionData$Selected)
 	
@@ -141,22 +175,44 @@ visualise_actions <- function(simp,
 		data[is.na(data[,size_column]),size_column]	<- mean(data[,size_column], na.rm = TRUE) 
 	}
 	
+	scaleAlphaElem <- if (!onlySelected) {
+		ggplot2::scale_alpha_discrete(range=c(alpha, 1), labels=c("Not performed", "Performed"))
+	} else {
+		ggplot2::scale_alpha_discrete(range=c(1, 1), guide=FALSE)
+	}
+	
+	if (!is.null(linetype_column_actions)) {
+		lineElemActions <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column, 
+						 linetype = linetype_column_actions, 
+						 group = paste("interaction(Agent, ", linetype_column_actions, ")", sep="")), color = actionLineColour)
+	} else {
+		lineElemActions <- NULL
+	}
+	
+	if (!is.null(linetype_column_measures)) {
+		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = measure_name,
+						linetype = linetype_column_measures, colour = colour_column))
+	} else {
+		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = measure_name, 
+						colour = colour_column))
+	}
+	
 	p1 <- ggplot2::ggplot() +
+			lineElemActions +			
 			ggplot2::geom_point(data = data, mapping=ggplot2::aes_string(alpha=alpha_column, x = x_column, y = y_column,
 							fill = fill_column, shape = shape_column, size=size_column)) +
-			facetElem  +
+			lineElemMeasures +
 			
+			facetElem  +
 			ggplot2::scale_shape_manual(values=c(21:25)) +
 			scaleFillElem +
 			guides(fill=ggplot2::guide_legend(override.aes=list(colour=actionColours))) +
-			ggplot2::scale_alpha_discrete(range=c(alpha, 1), labels=c("Not performed", "Performed")) +
-			
-			ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = measure_name, 
-							colour = colour_column)) +
+			scaleAlphaElem +
 			scaleColourElem +
 			
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
-			(if (!is.null(title) && title != "") ggplot2::labs(title = title) else NULL) 
+			(if (!is.null(title) && title != "") ggplot2::labs(title = title) else NULL) +
+			ggplotaddons
 	print(p1)
 	simp$fig$close()
 	if (returnplot) return(p1)

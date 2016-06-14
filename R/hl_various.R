@@ -1,14 +1,13 @@
 #' Reads marginal utilties and prepares the data for plotting
 #' 
-#' Stores data and returns.
 #' @param simp 
-#' @param filename 
+#' @param filename the file that contain marginal utility data. Default is \code{MarginalUtilities.csv} in RData folder.
 #' @param returnplot if true the ggplot object is returned
-#' @return data.frame
+#' @return plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, "MarginalUtilities.csv", sep="/"),
+hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, simp$sim$id, "Marginal_Utilities.csv", sep="/"),
 		storerdata = TRUE, returnplot = FALSE) {
 	utilities = read.csv(filename, colClasses = "numeric")
 	csv_MarginalUtilitites_melt = reshape2::melt(utilities, variable.name="Service", 
@@ -236,4 +235,47 @@ hl_printCapitalChangesTable <- function(simp) {
 			sanitize.rownames.function = identity,
 			include.rownames = FALSE,
 			table.placement = "H")
+}
+#' Retrieve information about the number of cells.
+#' 
+#' @param simp 
+#' @param dataname  
+#' @return list of data
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getCellNumbers <- function(simp, dataname = "csv_LandUseIndex_rbinded") {
+	input_tools_load(simp, objectName="csv_LandUseIndex_rbinded")
+	output <- list()
+	output$x_min <- min(get(dataname)$X)
+	output$x_max <- max(get(dataname)$X)
+	output$y_min <- min(get(dataname)$Y)
+	output$y_max <- max(get(dataname)$Y)
+	output$squareNumberCells <- output$x_max * output$y_max
+	output$ratioDefinedCells <- length(get(dataname)[get(dataname)$Tick==get(dataname)$Tick[1], "Y"])*
+			100/output$squareNumberCells
+	return(output)
+}
+#' Fill given data with \code{doNothingAction} for missing entries of the combinations
+#' Tick/Runid/Region/Agent
+#' 
+#' @param simp 
+#' @param data 
+#' @param doNothingAction 
+#' @return manipulated data.frame
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_actions_fillDoNothing <- function(simp, data, doNothingAction =  "DoNothing") {
+	ticks <- data.frame(Tick=seq(min(data$Tick), max(data$Tick)))
+	data <- dplyr::full_join(expand.grid(
+					Tick=seq(min(data$Tick), max(data$Tick)), 
+					Runid = unique(data$Runid), 
+					Region = unique(data$Region),
+					Agent = unique(data$Agent)),
+			data)
+	data$Action[is.na(data$Action)] <- doNothingAction
+	data$Score[is.na(data$Score)] <- 0
+	data$Selected[is.na(data$Selected)] <- 1
+	return(data)
 }

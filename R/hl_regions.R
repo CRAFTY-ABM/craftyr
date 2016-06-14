@@ -58,6 +58,10 @@ hl_regions_demandandsupply <- function(simp, runid = simp$sim$runids[1], datanam
 			Type="Demand", Value=csv_aggregated_demand$Demand, Region = csv_aggregated_demand$Region)
 
 	datSupply <- csv_aggregated_supply[csv_aggregated_supply$ID == runid,]
+	
+	if (length(datSupply) == 0) {
+		R.oo::throw.default("No data in csv_aggregated_supply for ID ", runid, "!")
+	}
 	datSupply <- data.frame(Tick=datSupply$Tick, Variable=datSupply$Service, Type="Supply", 
 			Value=datSupply$TotalProduction, Region = datSupply$Region)
 	
