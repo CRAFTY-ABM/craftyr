@@ -11,7 +11,16 @@ input_tools_getAvailableTicks(simp, dir, pattern = NULL, datatype = NULL,
   simp$tech$maxtick, tickinterval = 1)
 }
 \arguments{
-\item{simp}{SIMulation Properties}
+\item{simp}{SIMulation Properties
+\itemise{
+    \item{simp$dirs$output$simulation}
+    \item{simp$sim$world}
+    \item{simp$sim$regionalisation -can be \code{NULL}}
+    \item{simp$sim$scenario}
+    \item{simp$sim$runids}
+    \item{simp$sim$regions}
+    \item{simp$sim$hasregiondir}
+    \item{simp$sim$regions}}}
 
 \item{dir}{directory to search in}
 

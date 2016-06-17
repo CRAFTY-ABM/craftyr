@@ -1,7 +1,7 @@
 #' AFT map for 2010 and 2040 with differences from stored CSV data
 #' 
 #' @param simp 
-#' @param dataname name of stored CSV LandUseIndex data
+#' @param dataname name of stored CSV LandUseIndex data (data.frame)
 #' @param returnplot if true the ggplot object is returned
 #' @return map plot
 #' 
@@ -17,13 +17,13 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	
 	runid <- unique(cdata$Runid)
 
-	if (!firsttick %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
+	if (!firsttick %in% cdata$Tick) {
 		futile.logger::flog.error("Data does not contain first tick (%d)!",
 				secondtick,
 				name = "craftyr.hl_maps.R")
 	}
 	
-	if (!secondtick %in% unlist(strsplit(names(cdata), ".", fixed=T))) {
+	if (!secondtick %in% cdata$Tick) {
 		futile.logger::flog.error("Data does not contain second tick (%d)!",
 				firsttick,
 				name = "craftyr.hl_maps.R")

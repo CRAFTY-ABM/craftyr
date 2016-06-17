@@ -7,7 +7,16 @@
 input_tools_getModelOutputDir(simp)
 }
 \arguments{
-\item{simp}{SIMulation Properties}
+\item{simp}{SIMulation Properties
+\itemise{
+    \item{simp$dirs$output$simulation}
+    \item{simp$sim$world}
+    \item{simp$sim$regionalisation -can be \code{NULL}}
+    \item{simp$sim$scenario}
+    \item{simp$sim$runids}
+    \item{simp$sim$regions}
+    \item{simp$sim$hasregiondir}
+    \item{simp$sim$regions}}}
 }
 \value{
 String or vector of output folder(s)
