@@ -35,6 +35,15 @@ input_tools_getModelInputDir <- function(simp, datatype = NULL) {
 #' \eqn{simp$sim$regionalisation}, \eqn{simp$sim$scenario}, \eqn{simp$sim$runids},
 #' or \eqn{simp$sim$regions} is a vector, a vector of directories is returned.
 #' @param simp SIMulation Properties
+#' 			\itemise{
+#' 				\item{simp$dirs$output$simulation}
+#' 				\item{simp$sim$world}
+#' 				\item{simp$sim$regionalisation -can be \code{NULL}}
+#' 				\item{simp$sim$scenario}
+#' 				\item{simp$sim$runids}
+#' 				\item{simp$sim$regions}
+#' 				\item{simp$sim$hasregiondir}
+#' 				\item{simp$sim$regions}}
 #' @return String or vector of output folder(s)
 #' 
 #' @author Sascha Holzhauer
@@ -158,6 +167,9 @@ input_tools_getAvailableTicks <- function(simp, dir, pattern = NULL,
 #' @param tickinterval only required when \code{pertick == TRUE}
 #' 
 #' @return list of vector of filenames (list elements rerpesent files of one folder)
+#' 
+#' @see input_tools_getModelOutputDir
+#' @see input_tools_getAvailableTicks
 #' 
 #' @author Sascha Holzhauer
 #' @export

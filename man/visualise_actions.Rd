@@ -4,46 +4,55 @@
 \alias{visualise_actions}
 \title{Visualise the performance and effect of Actions}
 \usage{
-visualise_actions(simp, dataname = "dataActions", onlySelected = FALSE,
-  monitordataname = "dataAggregateConnectivity",
-  monitorvars = simp$mdata$aftNames[-1], monitorColours = NULL,
-  title = "Institutional Action", filename = NULL, x_column = "Tick",
-  y_column = "Score", colour_column = "FR", shape_column = "Agent",
-  fill_column = "Action", facet_column = "Region",
-  facet_column_levels = NULL, facet_ncol = 1, alpha_column = "Selected",
-  alpha = 0.5, size_column = "RestrictionsNumber",
-  linetype_column_actions = NULL, linetype_column_measures = NULL,
-  measure_name = "Connectedness", actionColours = NULL,
-  returnplot = FALSE)
+visualise_actions(simp, actiondata = "dataActions", onlyselected = FALSE,
+  monitordata = NULL, title = NULL, filename = NULL, x_column = "Tick",
+  y_column_action = "Score", y_column_measure = "Value",
+  colour_column = "Service", shape_column = "Agent",
+  fill_column = "Action", alpha_column = "Selected",
+  size_column = "RestrictionsNumber", lineseparator_column_actions = NULL,
+  linetype_column_measures = NULL, facet_column = "Region",
+  actionfillcolours = NULL, monitorcolours = NULL,
+  actionlinecolour = "darkgrey", actionshapenumbers = c(21:25),
+  alpha = 0.5, facet_column_levels = NULL, facet_ncol = 1,
+  returnplot = FALSE, ggplotaddons = NULL)
 }
 \arguments{
 \item{simp}{}
 
-\item{dataname}{}
+\item{actiondata}{data.frame with columns \code{Action}, \code{Score}, \code{Selected}, \code{facet_column} and \code{x_column}.
+If a character string, the data will be loaded.}
 
-\item{monitordataname}{}
+\item{onlyselected}{If \code{TRUE} only selected actions will be shown.}
+
+\item{monitordata}{(melted) data.frame with columns \code{facet_column} and \code{x_column}.
+If a character string, the data will be loaded. NOTE: the value for \code{facet_column} should be distinct from
+the one in \code{actiondata} to show monitored data in a separate facet.}
 
 \item{title}{}
 
 \item{filename}{}
 
-\item{y_column}{}
+\item{y_column_action}{}
 
 \item{colour_column}{}
 
 \item{shape_column}{}
 
-\item{fill_column}{default}
-
-\item{facet_column}{}
-
-\item{facet_ncol}{}
+\item{fill_column}{d}
 
 \item{alpha_column}{}
 
 \item{size_column}{}
 
+\item{facet_column}{}
+
+\item{monitorcolours}{named vector with keys for actiondata values in column \code{colour_column}}
+
+\item{facet_ncol}{}
+
 \item{returnplot}{if true the ggplot object is returned}
+
+\item{agentfillcolour}{named vector with keys for actiondata values in column \code{fill_column}}
 }
 \value{
 figure
