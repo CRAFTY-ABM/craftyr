@@ -26,7 +26,8 @@
 visualise_lines <- function(simp, data, y_column, title = NULL,
 		colour_column = NULL, colour_legendtitle = colour_column, colour_legenditemnames = NULL,
 		linetype_column = NULL, linetype_legendtitle = linetype_column, linetype_legenditemnames = NULL,
-		facet_column = NULL, facet_ncol = 2, filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
+		facet_column = NULL, facet_ncol = 2, filename = paste(gsub(" ", "_", title), 
+				shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
 		alpha = simp$fig$alpha, ggplotaddons = NULL, returnplot = FALSE) {
 
 	if (!is.data.frame(data)) {
@@ -75,6 +76,7 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
 		 	scaleColourElem +
 			scaleLinetypeElem + 
+			ggplot2::scale_x_continuous(breaks= scales::pretty_breaks()) +
 			(if (!is.null(title) && title != "") ggplot2::labs(title = title) else NULL) +
 			ggplotaddons
 	print(p1)

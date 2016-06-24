@@ -19,6 +19,7 @@ Imports:
     knitr,
     kfigr,
     maptools,
+    optparse,
     plyr,
     R.oo,
     raster,
