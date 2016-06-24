@@ -38,12 +38,20 @@ hl_raster_changes <- function(simp, dataname = "raster_landUseIndex") {
 				datatype = "Agent", 
 				dataname = "SerialID",
 				starttick = 2010)
-		if (!is.null(simp$sim$rundesc)) names(raster_landUseIndex) <- simp$sim$rundesc
+
+		runids <- as.character(sapply(raster_landUseIndex, function(x) unique(x$Runid)))
+		runids <- sapply(strsplit(runids, "-"), function(x) x[[1]])
+		if (!is.null(simp$sim$rundesc) && all(runids %in% names(simp$sim$rundesc))) 
+			names(raster_landUseIndex) <- simp$sim$rundesc[runids]
 		input_tools_save(simp, "raster_landUseIndex")
 	} else {
 		input_tools_load(simp, dataname)
 	}
 	raster_aft <- get(dataname)[[1]]
+	
+	# TODO
+	str(raster_aft)
+	
 	last = raster_aft$Raster[[1]]
 	changenums = c()
 	for (raster in raster_aft$Raster[2:length(raster_aft$Raster)]) {
