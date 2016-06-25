@@ -49,9 +49,6 @@ hl_raster_changes <- function(simp, dataname = "raster_landUseIndex") {
 	}
 	raster_aft <- get(dataname)[[1]]
 	
-	# TODO
-	str(raster_aft)
-	
 	last = raster_aft$Raster[[1]]
 	changenums = c()
 	for (raster in raster_aft$Raster[2:length(raster_aft$Raster)]) {
