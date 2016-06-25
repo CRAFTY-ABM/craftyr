@@ -157,14 +157,15 @@ visualise_actions <- function(simp,
 		actionfillcolours <- settings_colours_getColors(number = max(3,length(unique(actiondata$Action))))
 	} else {
 		actionfillcolours <- actionfillcolours[order(names(actionfillcolours))]
+		if(any(!levels(data$Action[!is.na(data$Action)]) %in% names(actionfillcolours))) {
+			R.oo::throw.default(sprintf("actionfillcolours (%s) does not contain all actions in data (%s)!",
+							names(actionfillcolours),
+							paste(levels(data$Action[!is.na(data$Action)]), collapse="/")))
+		}
+		actionfillcolours <- actionfillcolours[names(actionfillcolours) %in% levels(data$Action[!is.na(data$Action)])]
 	}
 	data$Action <- factor(data$Action)
-	if(length(actionfillcolours) != length(levels(data$Action[!is.na(data$Action)]))) {
-		R.oo::throw.default(sprintf("Number of colours in actionfillcolours (%d) does not match required number (%d)! Actions in data: %s",
-						length(actionfillcolours),
-						length(levels(data$Action[!is.na(data$Action)])),
-						paste(levels(data$Action[!is.na(data$Action)]), collapse="/")))
-	}
+	
 	actionfillcolours <- setNames(actionfillcolours, levels(data$Action[!is.na(data$Action)]))
 	actionfillcolours <- actionfillcolours[1:length(levels(data$Action[!is.na(data$Action)]))]
 	scaleFillElem <- ggplot2::scale_fill_manual(name= fill_column, 
