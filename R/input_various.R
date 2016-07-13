@@ -25,7 +25,7 @@ input_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdat
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_processAftComposition <- function(simp, dataname = "csv_aggregateAFTComposition") {
+input_processAftComposition <- function(simp, dataname = "csv_aggregateAFTComposition", aggregateRegions=TRUE) {
 	
 	input_tools_load(simp, dataname)
 	dataComp <- get(dataname)
@@ -41,9 +41,12 @@ input_processAftComposition <- function(simp, dataname = "csv_aggregateAFTCompos
 			direction="long")
 	
 	operator = if (any(data$value > 1.0)) "sum" else "mean"
-	
-	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, 
-					Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), 
+	bylist <- list(AFT = data$Agent, 
+			Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario)
+	if (!aggregateRegions) {
+		bylist <- append(bylist, list(Region=data$Region))
+	}
+	d <- aggregate(subset(data, select=c("value")), by = bylist, 
 			operator, na.rm = TRUE)
 	return(d)
 }

@@ -5,7 +5,8 @@
 \title{Proceses/Aggregates stored, aggregated AFT composistion data. Checks wether data contains absolute numbers or
 proportions.}
 \usage{
-input_processAftComposition(simp, dataname = "csv_aggregateAFTComposition")
+input_processAftComposition(simp, dataname = "csv_aggregateAFTComposition",
+  aggregateRegions = TRUE)
 }
 \arguments{
 \item{simp}{}

@@ -124,6 +124,43 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 		input_tools_save(simp, supplydataname)
 	}
 }
+#' Calculates the percental demand supply gap for all ticks
+#' 
+#' @param simp 
+#' @param dataname 
+#' @param includesum if \code{TRUE} computes the sum across all services
+#' @return named (ticks) vector of percental demand supply gap
+#' 
+#' @author Sascha Holzhauer
+#' @export
+convert_supplydemand_percentage <- function(simp, datanamedemand = "csv_aggregated_demand",
+		datanamesupply = "csv_aggregated_supply", includesum = TRUE) {	
+	input_tools_load(simp, objectName=datanamedemand)
+	input_tools_load(simp, objectName=datanamesupply)
+	
+	colnames(csv_aggregated_demand)[colnames(csv_aggregated_demand) == "variable"] <- "Service"
+	data <- merge(csv_aggregated_supply, csv_aggregated_demand)
+	
+	if (length(unique(data$Scenario)) > 1) {
+		R.oo::throw.default("Data contains more than one scenario (", unique(data$Scenario), ")")
+	}
+	if (length(unique(data$Runid)) > 1) {
+		R.oo::throw.default("Data contains more than one run ID (", unique(data$Runid), ")")
+	}
+	
+	if(includesum) {
+		sum <- aggregate(data[, c("Demand", "TotalProduction")], list(
+						Tick	= data$Tick,
+						Region	= data$Region,
+						ID		= data$ID
+				),
+				FUN=sum)
+		sum$Service <- "Total"
+		data <- rbind(data, sum)
+	}
+	
+	return(setNames(100 * data$TotalProduction / data$Demand, data$Tick))
+}
 #' Extracts numbers of take overs for every pair of AFT for every tick from stored cell csv data
 #' Requires land use indices stored in an object whose name is given by \code{landusedataname}.
 #' 

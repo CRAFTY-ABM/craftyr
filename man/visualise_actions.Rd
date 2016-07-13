@@ -8,13 +8,12 @@ visualise_actions(simp, actiondata = "dataActions", onlyselected = FALSE,
   monitordata = NULL, title = NULL, filename = NULL, x_column = "Tick",
   y_column_action = "Score", y_column_measure = "Value",
   colour_column = "Service", shape_column = "Agent",
-  fill_column = "Action", alpha_column = "Selected",
-  size_column = "RestrictionsNumber", lineseparator_column_actions = NULL,
+  fill_column = "Action", alpha_column = "Selected", alpha = 0.5,
+  size_column = NULL, lineseparator_column_actions = NULL,
   linetype_column_measures = NULL, facet_column = "Region",
-  actionfillcolours = NULL, monitorcolours = NULL,
-  actionlinecolour = "darkgrey", actionshapenumbers = c(21:25),
-  alpha = 0.5, facet_column_levels = NULL, facet_ncol = 1,
-  returnplot = FALSE, ggplotaddons = NULL)
+  facet_ncol = 1, facet_column_levels = NULL, actionfillcolours = NULL,
+  monitorcolours = NULL, actionlinecolour = "darkgrey",
+  actionshapenumbers = c(21:25), returnplot = FALSE, ggplotaddons = NULL)
 }
 \arguments{
 \item{simp}{}
@@ -28,29 +27,49 @@ If a character string, the data will be loaded.}
 If a character string, the data will be loaded. NOTE: the value for \code{facet_column} should be distinct from
 the one in \code{actiondata} to show monitored data in a separate facet.}
 
-\item{title}{}
+\item{title}{figure title}
 
-\item{filename}{}
+\item{filename}{filename for figure file}
 
-\item{y_column_action}{}
+\item{x_column}{X variable}
 
-\item{colour_column}{}
+\item{y_column_action}{Y variable for action facets}
 
-\item{shape_column}{}
+\item{y_column_measure}{Y variable for measure facets}
 
-\item{fill_column}{d}
+\item{colour_column}{Colour variable}
 
-\item{alpha_column}{}
+\item{shape_column}{Shape variable}
 
-\item{size_column}{}
+\item{fill_column}{d Fill variable for action facets}
 
-\item{facet_column}{}
+\item{alpha_column}{Alpha variable}
+
+\item{alpha}{lower alpha value (upper is 1)}
+
+\item{size_column}{Size variable}
+
+\item{lineseparator_column_actions}{used to draw separate line besides 'Agent'. A character string of comma-separated variables
+is possible (feeds into \code{interaction)}.}
+
+\item{facet_column}{Facet Variable}
+
+\item{facet_ncol}{number of facet columns}
+
+\item{facet_column_levels}{enables the user to specify the order of facets - vector of character strings.}
 
 \item{monitorcolours}{named vector with keys for actiondata values in column \code{colour_column}}
 
-\item{facet_ncol}{}
+\item{actionlinecolour}{Colour for lines connecting action symbols (character)}
+
+\item{actionshapenumbers}{numbers of shapes for agents (action symbols)}
 
 \item{returnplot}{if true the ggplot object is returned}
+
+\item{ggplotaddons}{pass additional ggplot elements, e.g. \code{ggplot2::facet_grid(as.formula("Region ~ Runid"), scales="free_y")}.
+Can be a single element or a list of elements.}
+
+\item{linetype_column_measure}{Variable for linetype of measure facets}
 
 \item{agentfillcolour}{named vector with keys for actiondata values in column \code{fill_column}}
 }

@@ -10,9 +10,9 @@ visualise_lines(simp, data, y_column, title = NULL, colour_column = NULL,
   colour_legendtitle = colour_column, colour_legenditemnames = NULL,
   linetype_column = NULL, linetype_legendtitle = linetype_column,
   linetype_legenditemnames = NULL, facet_column = NULL, facet_ncol = 2,
-  filename = paste(title, shbasic::shbasic_condenseRunids(data[, "Runid"]),
-  sep = "_"), alpha = simp$fig$alpha, ggplotaddons = NULL,
-  returnplot = FALSE)
+  filename = paste(gsub(" ", "_", title),
+  shbasic::shbasic_condenseRunids(data[, "Runid"]), sep = "_"),
+  alpha = simp$fig$alpha, ggplotaddons = NULL, returnplot = FALSE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

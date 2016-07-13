@@ -1,6 +1,6 @@
 library(roxygen2)
 library("devtools")
-full <- FALSE
+full <- TRUE
 
 # has_devel() 	# does not work because of 'C:\Program' is not recognized as an internal or 
 # external command, operable program or batch file.

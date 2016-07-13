@@ -268,7 +268,7 @@ hl_aftmap_changes_runs <- function(simp, dataname = "csv_LandUseIndex_rbinded", 
 #' Plot changes between ticks for a specific (combination of) land use(s)
 #' 
 #' @param simp 
-#' @param cdata list of celldata to compare
+#' @param cdata list of celldata (\code{data.frame)} to compare
 #' @param ncol 
 #' @param ggplotaddon
 #' @param returnplot if true the ggplot object is returned
