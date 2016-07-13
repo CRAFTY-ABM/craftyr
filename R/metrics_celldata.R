@@ -1,3 +1,32 @@
+#' Determine number changes between ticks for a specific (combination of) land use(s)
+#' 
+#' @param simp 
+#' @param cdata list of celldata (\code{data.frame)} to compare
+#' @param ncol 
+#' @param ggplotaddon
+#' @param returnplot if true the ggplot object is returned
+#' @return vector of number of changes
+#' 
+#' @author Sascha Holzhauer
+#' @export
+metric_celldata_changes <- function(simp, cdata, ncol = 1, title = "AFT-Changes", ggplotaddon = NULL, 
+		regions = simp$sim$regions,
+		addcountryshapes = FALSE, plotunchanged = TRUE, returnplot = FALSE) {
+	
+	results <- c()
+	for (i in 2:length(cdata)) {
+		diffcells <- cdata[[1]]
+		diffcells$LandUseIndex <- NA
+		
+		# excluding cells which are or were zero not necessary?
+		#indices <- cdata[[i]]$LandUseIndex != 0 | cdata[[i-1]]$LandUseIndex != 0
+		#diffcells$LandUseIndex[indices] <- (cdata[[i]]$LandUseIndex - cdata[[i - 1]]$LandUseIndex)[indices]
+		
+		diffcells$LandUseIndex <- (cdata[[i]]$LandUseIndex - cdata[[i - 1]]$LandUseIndex)
+		results <- c(results, sum(diffcells$LandUseIndex==0))
+	}
+}
+
 #' TODO to complete
 #' TODO think about un-regular regions (real-world) (use shapefiles?)
 #' 
@@ -54,6 +83,7 @@ metric_regional_diversity <- function(simp, data, regionwidth = 50, regionheight
 }
 
 # Functions
+# TODO
 metric_global_connectivity <- function(sip, data, type) {
 	
 	

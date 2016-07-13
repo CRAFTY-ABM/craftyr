@@ -4,7 +4,8 @@
 \alias{hl_aftcomposition}
 \title{Load, aggregate and visualise AFT composition data}
 \usage{
-hl_aftcomposition(simp, dataname = "csv_cell_aggregated")
+hl_aftcomposition(simp, dataname = "csv_cell_aggregated",
+  returnplot = FALSE)
 }
 \arguments{
 \item{simp}{}

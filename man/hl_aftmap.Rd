@@ -10,7 +10,7 @@ hl_aftmap(simp, dataname = "csv_LandUseIndex_rbinded", firsttick = 2010,
 \arguments{
 \item{simp}{}
 
-\item{dataname}{name of stored CSV LandUseIndex data}
+\item{dataname}{name of stored CSV LandUseIndex data (data.frame)}
 
 \item{returnplot}{if true the ggplot object is returned}
 }

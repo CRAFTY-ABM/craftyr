@@ -245,3 +245,35 @@ readingRasterData_collateRunsAndMeasures <- function(scenario = lix$scenario, wo
 	}
 	r
 }
+
+#' Loads stored object for given id or read raster objects accordingly if not stored.
+#' 
+#' @param simp 
+#' @param dataname
+#' @param storerdata if \code{TRUE} If true, read raster data is stored in rData files. Note, this is not a good
+#' 					idea when path changes, as the raster objects usually only store filenames instead of data values.
+#' @return list of raster objects
+#' 
+#' @author Sascha Holzhauer
+#' @export
+input_raster_get <- function(simp, dataname="raster_landUseIndex", storerdata = FALSE) {
+	if (!input_tools_checkexists(simp, dataname)) {
+		raster_landUseIndex <- input_raster_output(simp,
+				datatype = "Agent", 
+				dataname = "SerialID",
+				starttick = simp$sim$starttick)
+		
+		runids <- as.character(sapply(raster_landUseIndex, function(x) unique(x$Runid)))
+		runids <- sapply(strsplit(runids, "-"), function(x) x[[1]])
+		if (!is.null(simp$sim$rundesc) && all(runids %in% names(simp$sim$rundesc))) 
+			names(raster_landUseIndex) <- simp$sim$rundesc[runids]
+		if (storerdata) {
+			assign(dataname, raster_landUseIndex)
+			input_tools_save(simp, dataname)
+		}
+	} else {
+		# TODO does not work when with else clause (when data stored)
+		input_tools_load(simp, dataname)
+	}
+	return(get(dataname))
+}

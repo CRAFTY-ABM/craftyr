@@ -18,7 +18,7 @@ input_csv_param_capitals_cellnumbers(simp, regionpartfromend = 2,
 data.frame with columns Region and Cells
 }
 \description{
-Determines number of cells from CSV data for potentially multiple regions
+TODO apply simp$sim$filepartordercapitals to extract region instead of regionpartfromend and regionpartdevider
 }
 \author{
 Sascha Holzhauer

@@ -8,8 +8,8 @@
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated") {
-	input_tools_load(simp, dataname, returnplot = FALSE)
+hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated", returnplot = FALSE) {
+	input_tools_load(simp, dataname)
 	data <- get(dataname)
 	
 	aftData <- data[, colnames(data) %in% c("Tick", "LandUseIndex", "Runid", "Region", "AFT")]

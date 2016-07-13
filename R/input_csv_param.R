@@ -23,6 +23,8 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 }
 #' Determines number of cells from CSV data for potentially multiple regions
 #' 
+#' TODO apply simp$sim$filepartordercapitals to extract region instead of regionpartfromend and regionpartdevider
+#' 
 #' @param simp SIMulation Properties
 #' @param regionpartfromend index of region part counted from end of filename (used to extract region from filename)
 #' @param regionpartdevider character that separated the region filename parts (used to extract region from filename)
@@ -37,10 +39,12 @@ input_csv_param_capitals_cellnumbers <- function(simp,
 			OBJECTNAME = paste("cellNum", simp$sim$world, simp$sim$regionalisation, sep="-"),
 			PRODUCTIONFUN = function(simp, regionpartfromend, regionpartdevider) {
 	
-		#simp$sim$filepartorder	<- c("regionalisation", "U", "regions", "U", "datatype")
+		filepartorderstored <- simp$sim$filepartorder
+		simp$sim$filepartorder	<- simp$sim$filepartordercapitals
 		filenames <- input_tools_getModelInputFilenames(simp, datatype="Capitals", 
 				folders = simp$dirs$param$getparamdir(simp, datatype="capitals"),
 				pertick = FALSE, extension = "csv", returnfileinfo = FALSE)
+		simp$sim$filepartorder <- filepartorderstored
 		
 		lapply(filenames, shbasic::sh.checkFilename)
 		cellnums <- lapply(filenames, function(file) {

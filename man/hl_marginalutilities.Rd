@@ -17,6 +17,7 @@ hl_marginalutilities(simp, filename = paste(simp$dirs$output$rdata,
 }
 \value{
 plot
+change
 }
 \description{
 Reads marginal utilties and prepares the data for plotting
