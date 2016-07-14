@@ -44,7 +44,7 @@ metric_rasters_global_patches <- function(simp, dataname = "raster_landUseIndex"
 					relevantindices = relevantindices, relevantafts = relevantafts)
 	
 	return(if(asvector) setNames(metric, simp$sim$starttick:simp$sim$endtick) else data.frame(
-			Metric = paste("ConsPatches", paste(relevantindices, relevantafts, collapse="-"), sep="_"), 
+			Metric = paste("ConsPatches", paste(relevantindices, relevantafts, collapse="-", sep=""), sep="_"), 
 			Tick =  simp$sim$starttick:simp$sim$endtick, Value = metric))	
 }
 #' Calculates the changes in land uses in a row of raster data.

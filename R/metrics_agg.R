@@ -60,36 +60,45 @@ metric_aggaft_proportions <- function(simp, afts, aftsname = NULL,
 	
 	return(if(asvector) setNames(metric$V1, metric$Tick) else data.frame(
 								Metric = paste("ConsProp", if(!is.null(aftsname)) aftsname else 
-													paste(afts, collapse="-")),
+													paste(afts, collapse="-"), sep="_"),
 								Tick =  metric$Tick, Value = metric$V1))
 }
 #' Calculates the percental demand supply gap for all ticks
 #' 
 #' @param simp 
-#' @param service character, the service the gap is returned for. "Sum" for sum.
+#' @param service character, the service the gap is returned for. "Total" for sum.
 #' @param datanamedemand
 #' @param datanamesupply
-#' @param includesum if \code{TRUE} computes the sum across all services
 #' @param asvector if \code{TRUE} metric is returned as named vector
 #' @return data.frame with cols Metric, Ticks and Value or named vector (ticks) of metric (percental demand supply gap) when \code{asvector == TRUE}
 #' 
 #' @author Sascha Holzhauer
 #' @export
-metric_agg_supplydemand_percentage <- function(simp, service = "Sum", datanamedemand = "csv_aggregated_demand",
-		datanamesupply = "csv_aggregated_supply", includesum = TRUE, asvector = FALSE) {	
+metric_agg_supplydemand_percentage <- function(simp, service = "Total", regions= NULL, datanamedemand = "csv_aggregated_demand",
+		datanamesupply = "csv_aggregated_supply",  asvector = FALSE) {	
 	data <- convert_supplydemand_percentage(simp = simp, datanamedemand = datanamedemand,
-			datanamesupply = datanamesupply, includesum = includesum)
+			datanamesupply = datanamesupply, includesum = TRUE)
 	data <- data[data$Service == service,]
-	metric <- 100 * data$TotalProduction / data$Demand
 	
-	return(if(asvector) setNames(metric$V1, metric$Tick) else data.frame(
-								Metric = paste("SupplyPercent", service, sep="_"),
-								Tick =  metric$Tick, Value = metric$V1))
+	if (!is.null(regions)) {
+		data <- data[data$Region %in% regions,]
+	}
+	
+	data <- aggregate(data[, c("TotalProduction", "Demand")], list(
+					Tick	= data$Tick),
+			FUN=sum)
+	data$Percentage <- 100 * data$TotalProduction/data$Demand
+	
+	return(if(asvector) setNames(data$Percentage, data$Tick) else data.frame(
+								Metric = paste("SupplyPercent", if (!is.null(service)) "_", service, 
+										if (!is.null(regions)) "_", paste(regions, collapse="-"), sep=""),
+								Tick =  data$Tick, Value = data$Percentage))
 }
 #' Calculates the maximum percental demand supply gap for across services for all ticks
 #' 
 #' @param simp 
 #' @param services vector of character. Limits set of considered services if not \code{NULL}.
+#' @param regions vector of character. Limits set of considered regions if not \code{NULL}.
 #' @param dataname 
 #' @param includesum if \code{TRUE} computes the sum across all services
 #' @param asvector if \code{TRUE} metric is returned as named vector
@@ -97,8 +106,8 @@ metric_agg_supplydemand_percentage <- function(simp, service = "Sum", datanamede
 #' 
 #' @author Sascha Holzhauer
 #' @export
-metric_agg_supplydemand_maximum <- function(simp, services = NULL, datanamedemand = "csv_aggregated_demand",
-		datanamesupply = "csv_aggregated_supply", includesum = TRUE, asvector = FALSE) {
+metric_agg_supplydemand_maximum <- function(simp, services = NULL, regions= NULL, datanamedemand = "csv_aggregated_demand",
+		datanamesupply = "csv_aggregated_supply", consideroversupply = FALSE, includesum = FALSE, asvector = FALSE) {
 
 	data <- convert_supplydemand_percentage(simp = simp, datanamedemand = datanamedemand,
 			datanamesupply = datanamesupply, includesum = includesum)
@@ -106,16 +115,30 @@ metric_agg_supplydemand_maximum <- function(simp, services = NULL, datanamedeman
 	if (!is.null(services)) {
 		data <- data[data$Service %in% services,]
 	}
-	metric <- aggregate(data[, c("Demand", "TotalProduction")], list(
+	
+	if (!is.null(regions)) {
+		data <- data[data$Region %in% regions,]
+	}
+
+	data <- aggregate(data[, c("TotalProduction", "Demand")], list(
 					Tick	= data$Tick,
-					Region	= data$Region,
-					ID		= data$ID
-			),
-			FUN=max)
+					Service = data$Service),
+			FUN=sum)
+	
+	data$Percentage <- 100 * (data$TotalProduction-data$Demand)/data$Demand
+	
+	metric <- plyr::ddply(data, "Tick", function(df) {
+					# df <- data[data$Tick == 2010,]
+					if (consideroversupply)
+						df[abs(df$Percentage) ==  max(abs(df$Percentage)), ]
+					else
+						df[df$Percentage == min(df$Percentage), ]
+			})
 	
 	return(if(asvector) setNames(metric$V1, metric$Tick) else data.frame(
-								Metric = paste("SupplyMaxGap", if (!is.null(services)) "_", services, sep=""),
-								Tick =  metric$Tick, Value = metric$V1))
+								Metric = paste("SupplyMaxGap", if (!is.null(services)) "_", paste(services, collapse="-"), 
+										if (!is.null(regions)) "_", paste(regions, collapse="-"), sep=""),
+								Tick =  metric$Tick, Value = metric$Percentage))
 }
 #' TODO
 #' 
