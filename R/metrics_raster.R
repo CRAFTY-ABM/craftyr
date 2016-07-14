@@ -25,7 +25,7 @@ metric_raster_global_patches <- function(simp, raster, directions = 8, relevanti
 	}
 	raster[!(raster::match(raster, relevantindices))] <- NA
 	rasterLayer <- raster::clump(raster, directions=directions, gaps=TRUE)
-	return(length(freq(rasterLayer)))
+	return(length(raster::freq(rasterLayer)))
 }
 #' Determine the number of patches of a list of rasters
 #' 
