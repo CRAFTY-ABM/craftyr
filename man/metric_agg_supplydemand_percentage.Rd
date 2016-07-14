@@ -6,15 +6,12 @@
 \usage{
 metric_agg_supplydemand_percentage(simp, service = "Sum",
   datanamedemand = "csv_aggregated_demand",
-  datanamesupply = "csv_aggregated_supply", includesum = TRUE,
-  asvector = FALSE)
+  datanamesupply = "csv_aggregated_supply", asvector = FALSE)
 }
 \arguments{
 \item{simp}{}
 
 \item{service}{character, the service the gap is returned for. "Sum" for sum.}
-
-\item{includesum}{if \code{TRUE} computes the sum across all services}
 
 \item{asvector}{if \code{TRUE} metric is returned as named vector}
 }

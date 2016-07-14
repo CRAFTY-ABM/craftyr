@@ -6,7 +6,7 @@
 \usage{
 metric_agg_supplydemand_maximum(simp, services = NULL,
   datanamedemand = "csv_aggregated_demand",
-  datanamesupply = "csv_aggregated_supply", includesum = TRUE,
+  datanamesupply = "csv_aggregated_supply", includesum = FALSE,
   asvector = FALSE)
 }
 \arguments{

@@ -134,7 +134,7 @@ convert_aggregate_supply <- function(simp, celldataname = "csv_cell_aggregated",
 #' @author Sascha Holzhauer
 #' @export
 convert_supplydemand_percentage <- function(simp, datanamedemand = "csv_aggregated_demand",
-		datanamesupply = "csv_aggregated_supply", includesum = TRUE) {	
+		datanamesupply = "csv_aggregated_supply", includesum = TRUE, asvector = FALSE) {	
 	input_tools_load(simp, objectName=datanamedemand)
 	input_tools_load(simp, objectName=datanamesupply)
 	
@@ -159,7 +159,9 @@ convert_supplydemand_percentage <- function(simp, datanamedemand = "csv_aggregat
 		data <- rbind(data, sum)
 	}
 	
-	return(setNames(100 * data$TotalProduction / data$Demand, data$Tick))
+	data$Percentage <-  100 * data$TotalProduction / data$Demand
+	return(if(asvector) setNames(data$Percentage, data$Tick) else data)
+	
 }
 #' Extracts numbers of take overs for every pair of AFT for every tick from stored cell csv data
 #' Requires land use indices stored in an object whose name is given by \code{landusedataname}.
