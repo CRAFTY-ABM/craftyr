@@ -283,7 +283,7 @@ metric_agg_regionalsupply_efficiency <- function(simp, service = NULL,
 			sum(df[df$AFT %in% producingAFTs[[service]], "x"]))
 	})
 	
-	servicecells <- melt(servicecells, id.vars="Tick", variable.name ="Service",
+	servicecells <- reshape2::melt(servicecells, id.vars="Tick", variable.name ="Service",
 		measure.vars = simp$mdata$services, value.name = "Servicecells")
 
 	data <- merge(supply, servicecells)
