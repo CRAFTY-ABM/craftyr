@@ -4,14 +4,18 @@
 \alias{hl_table_demand}
 \title{Output aggregated demand as table with services as columns}
 \usage{
-hl_table_demand(simp, dataname = "csv_aggregateServiceDemand", latex = TRUE)
+hl_table_demand(simp, dataname = "dataAggregateSupplyDemand",
+  demanddataname = "csv_aggregateServiceDemand", latex = TRUE,
+  forceparam = FALSE, regionset = NULL)
 }
 \arguments{
 \item{simp}{}
 
-\item{dataname}{}
+\item{dataname}{passed to \link{convert_aggregate_demand} as \code{sourcedataname}}
 
-\item{latex}{}
+\item{demanddataname}{passed to \link{convert_aggregate_demand}}
+
+\item{latex}{if \code{FALSE} return the data.frame of demands instead of LaTeX table.}
 }
 \value{
 data.frame or printed LaTeX table

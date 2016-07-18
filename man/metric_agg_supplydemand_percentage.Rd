@@ -4,14 +4,14 @@
 \alias{metric_agg_supplydemand_percentage}
 \title{Calculates the percental demand supply gap for all ticks}
 \usage{
-metric_agg_supplydemand_percentage(simp, service = "Sum",
+metric_agg_supplydemand_percentage(simp, service = "Total", regions = NULL,
   datanamedemand = "csv_aggregated_demand",
   datanamesupply = "csv_aggregated_supply", asvector = FALSE)
 }
 \arguments{
 \item{simp}{}
 
-\item{service}{character, the service the gap is returned for. "Sum" for sum.}
+\item{service}{character, the service the gap is returned for. "Total" for sum.}
 
 \item{asvector}{if \code{TRUE} metric is returned as named vector}
 }

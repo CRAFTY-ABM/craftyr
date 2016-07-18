@@ -5,7 +5,8 @@
 \title{Print agent parameters}
 \usage{
 hl_printAgentParameters(simp, filenameprefix = "AftParams_",
-  filenamepostfix = "", aftParamId = NULL, columnindices = c(2:7, 9))
+  filenamepostfix = "", aftParamId = NULL, columnindices = c(2:7, 9),
+  returnDataFrame = FALSE)
 }
 \arguments{
 \item{simp}{}
@@ -13,6 +14,8 @@ hl_printAgentParameters(simp, filenameprefix = "AftParams_",
 \item{filenameprefix}{}
 
 \item{filenamepostfix}{}
+
+\item{if}{\code{TRUE} no LaTeX table is printed but the data.frame returned.}
 }
 \value{
 print xtable

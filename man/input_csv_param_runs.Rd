@@ -8,6 +8,8 @@ input_csv_param_runs(simp, paramid = FALSE)
 }
 \arguments{
 \item{simp}{}
+
+\item{paramid}{if \code{TRUE} return row for run ID in \code{simp$sim$runids[1]} only}
 }
 \value{
 run data

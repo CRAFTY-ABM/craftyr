@@ -139,9 +139,6 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$fills$binarycolours 	<- c("skyblue1", "black")
 	defsimp$fills$defaultset		<- "Dark2"
 	
-	### Parameter Creation ###########################################################
-	defsimp$paramcreation$startrun	<- -1
-	
 	### Batch Run Creation Settings #################################################
 	defsimp$batchcreation$scenarios				<- c("A1", "B1")
 	defsimp$batchcreation$startrun 				<- 0

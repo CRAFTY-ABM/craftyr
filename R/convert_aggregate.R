@@ -26,17 +26,18 @@ convert_aggregate_meltsupplydemand <- function(simp, data) {
 #' 			\item{\code{simp$mdata$conversion$services}}
 #' 			\item{\code{\link{input_tools_load}}}
 #' 			\item{\code{\link{input_csv_param_demand}}}}
-#' @param checkexists 
+#' @param checkexists
+#' @param forceparam don't attempt to use stored rData.
 #' @param demanddataname 
 #' @return -
 #' 
 #' @author Sascha Holzhauer
 #' @export
-convert_aggregate_demand <- function(simp, checkexists = TRUE,
-		demanddataname = "csv_aggregated_demand", sourcedataname = "dataAggregateSupplyDemand") {
+convert_aggregate_demand <- function(simp, checkexists = TRUE, forceparam = FALSE,
+		demanddataname = "csv_aggregateServiceDemand", sourcedataname = "dataAggregateSupplyDemand") {
 	if (!checkexists | !input_tools_checkexists(simp, demanddataname)) {
 		# check for supply data as rData
-		if (input_tools_checkexists(simp, sourcedataname)) {
+		if (!forceparam & input_tools_checkexists(simp, sourcedataname)) {
 			futile.logger::flog.info("Using rData (%s)",
 					sourcedataname,
 					name = "craftyr.convert.aggregate.demand")
@@ -63,9 +64,9 @@ convert_aggregate_demand <- function(simp, checkexists = TRUE,
 			colnames(demand)[which(colnames(demand)=="Year")] <- "Tick"
 		}
 		
-		demand <- reshape2::melt(demand, id.vars=c("Region", "Tick"))
-		colnames(demand)[which(colnames(demand)=="value")] <- "Demand"
-		demand$variable <- as.factor(simp$mdata$conversion$services[as.character(demand$variable)])
+		demand <- reshape2::melt(demand, id.vars=c("Region", "Tick"), variable.name = "Service",
+				value.name = "Demand")
+		demand$Service <- as.factor(simp$mdata$conversion$services[as.character(demand$Service)])
 		assign(demanddataname,demand)
 		input_tools_save(simp, demanddataname)
 	}

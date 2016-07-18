@@ -5,7 +5,7 @@
 \title{Reads competition functions for each service.}
 \usage{
 input_xml_param_competition(simp, srcfilepath = NULL,
-  srcfilename = "Competition_linear")
+  srcfilename = "Competition_linear", returntext = FALSE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

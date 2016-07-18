@@ -66,12 +66,13 @@ hl_plotAgentProductionParameters <- function(simp, filenameprefix = "AftProducti
 #' @param filenameprefix 
 #' @param filenamepostfix 
 #' @param aftParamId
+#' @param if \code{TRUE} no LaTeX table is printed but the data.frame returned.
 #' @return print xtable
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
-		filenamepostfix = "", aftParamId = NULL, columnindices = c(2:7, 9)) {
+		filenamepostfix = "", aftParamId = NULL, columnindices = c(2:7, 9), returnDataFrame = FALSE) {
 	
 	if (is.null(aftParamId)) {
 		aftParamId = hl_getAgentParamId(simp)
@@ -94,25 +95,27 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 	colnames(agentparams) <- gsub("givingUp", "GU", colnames(agentparams), fixed = TRUE)
 	colnames(agentparams) <- gsub("givingIn", "GI", colnames(agentparams), fixed = TRUE)
 	
-	table <- xtable::xtable(agentparams,
-			label= "param.agents",
-			caption= "Agent Parameters"
-	)
-	
-	print(table, sanitize.colnames.function = identity,
-			include.rownames = FALSE,
-			table.placement = "H")
+	if (returnDataFrame) {
+		return(agentparams)
+	} else {
+		table <- xtable::xtable(agentparams,
+				label= "param.agents",
+				caption= "Agent Parameters"
+		)
+		
+		print(table, sanitize.colnames.function = identity,
+				include.rownames = FALSE,
+				table.placement = "H")
+	}
 }
 #' Read and plot competition functions
 #' @param simp 
-#' @param srcfilename competition XML file. Will be generated from \code{simp} if missing.
-#' @param srcfilepath obtained from Links.csv by default. Assign \code{NULL} to apply
-#' \code{simp$dirs$param$getparamdir}.
+
 #' @param filename filename for figure
 #' @param returnplot if true the ggplot object is returned
 #' @return plot
 #' 
-#' @inheritParams visualise_competition_funcs
+#' @inheritParams hl_getCompetitionFunctions visualise_competition_funcs
 #' 
 #' @author Sascha Holzhauer
 #' @export
@@ -123,6 +126,30 @@ hl_printCompetitionFunctions <- function(simp, srcfilename = NULL,
 				sep="/")),
 		xrange = c(-3,3), yrange = c(-1,1),
 		 filename = "competitionFunctions", runidcolumnname="run", returnplot = FALSE) {
+	
+	functions <- hl_getCompetitionFunctions(simp, srcfilename = srcfilename, srcfilepath = srcfilepath,
+			runidcolumnname = runidcolumnname)
+	p1 <- visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename, returnplot = returnplot)
+	if (returnplot) return(p1)
+}
+#' Read competition functions
+#' 
+#' @param simp 
+#' @param srcfilename competition XML file. Will be generated from \code{simp} if missing.
+#' @param srcfilepath obtained from Links.csv by default. Assign \code{NULL} to apply
+#' \code{simp$dirs$param$getparamdir}.
+#' @param runidcolumnname 
+#' @return functions
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getCompetitionFunctions <- function(simp, srcfilename = NULL, 
+		srcfilepath = dirname(paste(simp$dirs$output$data, simp$sim$folder,
+						hl_getBaseDirAdaptation(simp),
+						hl_getRunParameter(simp, "Competition_xml"), 
+						sep="/")),
+		runidcolumnname="run", returntext = FALSE) {
+	
 	if(is.null(srcfilename)) {
 		paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 							simp$sim$runids[1]})
@@ -130,10 +157,8 @@ hl_printCompetitionFunctions <- function(simp, srcfilename = NULL,
 		srcfilename <- tools::file_path_sans_ext(basename(as.character(runData[runData[runidcolumnname] == paramid, 
 										"Competition_xml"])))
 	}
-	
-	functions <- input_xml_param_competition(simp, srcfilename = srcfilename, srcfilepath = srcfilepath)
-	p1 <- visualise_competition_funcs(simp, functions, xrange, yrange, filename = filename, returnplot = returnplot)
-	if (returnplot) return(p1)
+	return(input_xml_param_competition(simp, srcfilename = srcfilename, 
+					srcfilepath = srcfilepath, returntext = returntext))
 }
 #' Print LaTeX table including run information
 #' 
