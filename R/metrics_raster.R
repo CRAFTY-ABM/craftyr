@@ -20,9 +20,6 @@ metric_raster_global_patches <- function(simp, raster, directions = 8, relevanti
 		relevantindices <- as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames %in% relevantafts])
 	}
 	
-	countnonna <- function(x) {
-		sum(is.na(x))
-	}
 	raster[!(raster::match(raster, relevantindices))] <- NA
 	rasterLayer <- raster::clump(raster, directions=directions, gaps=TRUE)
 	return(length(raster::freq(rasterLayer)))
@@ -111,4 +108,42 @@ metric_rasters_changedcells <- function(simp, aft = NULL, dataname = "raster_lan
 	return(if(asvector) setNames(metric, (simp$sim$starttick + 1):simp$sim$endtick) else data.frame(
 								Metric = paste("VarChangesCells", if (!is.null(aft)) "_", aft, sep=""),
 								Tick =  (simp$sim$starttick + 1):simp$sim$endtick, Value = metric))
+}
+#' Calculates the connectivity (average of proportion of similar neighbours) in a series of raster data.
+#' TODO test
+#' 
+#' @param simp
+#' @param aft if \code{NULL}, all AFTs are considered
+#' @param dataname
+#' @param asvector if \code{TRUE} metric is returned as named vector
+#' @return data.frame with cols Metric, Ticks and Value or named vector (ticks) of metric (number of changed cells (integer)) when \code{asvector == TRUE}
+#' 
+#' @author Sascha Holzhauer
+#' @export
+metrics_rasters_connectivity <- function(simp, afts = NULL, dataname = "raster_landUseIndex",
+		asvector = FALSE) {
+	# afts = c("NC_Cereal", "NC_Livestock")
+	relevantindices <- as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames %in% afts])
+	
+	raster_aft <- input_raster_get(simp = simp, dataname= dataname)[[1]]
+	metric <- c()
+	for (raster in raster_aft$Raster[2:length(raster_aft$Raster)]) {
+		# raster <- raster_aft$Raster[[1]
+		raster <- raster[[1]]
+		sum = 0
+		for (cell in 1:raster::ncell(raster)) {
+			# cell = 44569
+			if (raster[cell] %in% relevantindices) {
+				a <- raster::adjacent(raster, cell, 8, pairs=FALSE)
+				if (length(a[!is.na(a)])==8) {
+					sum = sum + sum(raster[a] %in% relevantindices) / 8
+					counter = coutner + 1
+				}
+			}
+		}
+		metric <-  c(metric, sum / counter)
+	}
+	return(if(asvector) setNames(metric, (simp$sim$starttick + 1):simp$sim$endtick) else data.frame(
+							Metric = paste("ConsConnectivity", if (!is.null(aft)) "_", aft, sep=""),
+							Tick =  (simp$sim$starttick + 1):simp$sim$endtick, Value = metric))
 }

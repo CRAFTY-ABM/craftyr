@@ -14,15 +14,6 @@ hl_printCompetitionFunctions(simp, srcfilename = NULL,
 \arguments{
 \item{simp}{}
 
-\item{srcfilename}{competition XML file. Will be generated from \code{simp} if missing.}
-
-\item{srcfilepath}{obtained from Links.csv by default. Assign \code{NULL} to apply
-\code{simp$dirs$param$getparamdir}.}
-
-\item{xrange}{Vector of two. The x range to plot}
-
-\item{yrange}{Vector of two. The y range to plot}
-
 \item{filename}{filename for figure}
 
 \item{returnplot}{if true the ggplot object is returned}

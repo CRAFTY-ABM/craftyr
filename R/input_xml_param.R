@@ -8,7 +8,8 @@
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_xml_param_competition <- function(simp, srcfilepath = NULL, srcfilename = "Competition_linear") {
+input_xml_param_competition <- function(simp, srcfilepath = NULL, srcfilename = "Competition_linear",
+		returntext = FALSE) {
 	
 	filepath <- paste(if(is.null(srcfilepath)) simp$dirs$param$getparamdir(simp, datatype="competition")
 					 else srcfilepath, 
@@ -20,7 +21,11 @@ input_xml_param_competition <- function(simp, srcfilepath = NULL, srcfilename = 
 	xml_data$.attrs <- NULL
 	xml_data <- sapply(xml_data, unlist,  recursive = F, simplify=F)
 	
-	functions <- sapply(xml_data, get_function)
+	if (returntext) {
+		functions <- sapply(xml_data, get_textfunction)
+	} else {
+		functions <- sapply(xml_data, get_function)
+	}
 	names(functions) <- do.call(rbind, xml_data)[,".attrs.service"]
 	return(functions)
 }
@@ -62,7 +67,22 @@ get_function <- function(data) {
 					name = "craftyr.input.xml.param.competition")
 	}
 }
-
+get_textfunction <- function(data) {
+	# read params from run.csv by runid
+	if (data["curve.class"] %in% "com.moseph.modelutils.curve.LinearFunction") {
+		return(paste(get_xmlfunction_parameter_numeric(data, parameter = "curve.b", default = 1.0),"x + ", 
+							get_xmlfunction_parameter_numeric(data, "curve.a", 0.0), sep=""))
+	} else if (data["curve.class"] %in% "com.moseph.modelutils.curve.ExponentialFunction") {
+		return(paste(
+					get_xmlfunction_parameter_numeric(data, "curve.A", 0.0)," + ",
+							get_xmlfunction_parameter_numeric(data, "curve.B", 1.0), 
+							" exp(",get_xmlfunction_parameter_numeric(data, "curve.C", 1.0), "x)", sep=""))
+	} else {
+		futile.logger::flog.warn("Curve in %s not supported!",
+				filename,
+				name = "craftyr.input.xml.param.competition")
+	}
+}
 #' Extract parameter from source XML file
 #' 
 #' Considers given default value in case the parameter is not defined in the XML file.

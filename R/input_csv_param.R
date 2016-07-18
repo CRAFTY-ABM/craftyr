@@ -19,6 +19,12 @@ input_csv_param_capitals <- function(simp, capitals = simp$mdata$capitals) {
 		
 	lapply(filenames, shbasic::sh.checkFilename)
 	capitalData <- lapply(filenames, utils::read.csv)
+	if (any(!c(simp$csv$cname_x, simp$csv$cname_y, capitals) %in% colnames(capitalData[[1]]))) {
+		requested <- c(simp$csv$cname_x, simp$csv$cname_y, capitals)
+		R.oo::throw.default("Requested columns (" , 
+				paste(requested[!requested %in% colnames(capitalData[[1]])], collapse=","), ") not in data (",
+				paste(colnames(capitalData[[1]]), collapse=","), ")!")
+	}
 	capitalData <- lapply(capitalData, function(x) x[, c(simp$csv$cname_x, simp$csv$cname_y, capitals)])
 }
 #' Determines number of cells from CSV data for potentially multiple regions
@@ -189,7 +195,9 @@ input_csv_param_agents <- function(simp, aft, filenameprefix = "AftParams_",
 	paramData
 }
 #' Read Runs data (Runs.csv)
+#' 
 #' @param simp 
+#' @param paramid if \code{TRUE} return row for run ID in \code{simp$sim$runids[1]} only
 #' @return run data
 #' 
 #' @author Sascha Holzhauer

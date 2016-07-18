@@ -4,15 +4,17 @@
 \alias{metric_agg_supplydemand_maximum}
 \title{Calculates the maximum percental demand supply gap for across services for all ticks}
 \usage{
-metric_agg_supplydemand_maximum(simp, services = NULL,
+metric_agg_supplydemand_maximum(simp, services = NULL, regions = NULL,
   datanamedemand = "csv_aggregated_demand",
-  datanamesupply = "csv_aggregated_supply", includesum = FALSE,
-  asvector = FALSE)
+  datanamesupply = "csv_aggregated_supply", consideroversupply = FALSE,
+  includesum = FALSE, asvector = FALSE)
 }
 \arguments{
 \item{simp}{}
 
 \item{services}{vector of character. Limits set of considered services if not \code{NULL}.}
+
+\item{regions}{vector of character. Limits set of considered regions if not \code{NULL}.}
 
 \item{includesum}{if \code{TRUE} computes the sum across all services}
 

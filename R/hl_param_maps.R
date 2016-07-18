@@ -9,7 +9,7 @@
 #' @export
 hl_param_capital_map <- function(simp, capitals = simp$mdata$capitals, 
 		filenameorder = c("regionalisation", "U", "regions", "U", "datatype"),
-		returnplot = FALSE) {
+		returnplot = FALSE, ggplotaddon = NULL) {
 	
 	simp$sim$filepartorder <- filenameorder
 	
@@ -18,6 +18,7 @@ hl_param_capital_map <- function(simp, capitals = simp$mdata$capitals,
 			variable.name = "Capital", value.name = "Value")
 	p1 <- visualise_cells_printPlots(simp, melted, idcolumn = "Capital", valuecolumn = "Value",
 			title = "Capitals", ncol = 2, 
-			coloursetname=simp$colours$Capital, returnplot = returnplot)
+			coloursetname=simp$colours$Capital, returnplot = returnplot,
+			ggplotaddon = ggplotaddon)
 	if (returnplot) return(p1)
 }

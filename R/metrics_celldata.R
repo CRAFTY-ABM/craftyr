@@ -43,7 +43,7 @@ metric_celldata_connectivity_global <- function(sip, data, type) {
 	
 	# Extract cells of correct type and remove cells at edge, to prevent subscripts going out of bounds
 	
-	# TODO How to do that for arbitrary areas?
+	# TODO How to do that for arbitrary areas? see metrics_rasters_connectivity
 	dtx<-matrixdata$x[matrixdata$homo==1 & matrixdata$x>1 & matrixdata$y>1 & matrixdata$x<200 & matrixdata$y<200]  
 	dty<-matrixdata$y[matrixdata$homo==1 & matrixdata$x>1 & matrixdata$y>1 & matrixdata$x<200 & matrixdata$y<200]  
 	

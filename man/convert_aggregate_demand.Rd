@@ -4,8 +4,8 @@
 \alias{convert_aggregate_demand}
 \title{Aggregate and store demand}
 \usage{
-convert_aggregate_demand(simp, checkexists = TRUE,
-  demanddataname = "csv_aggregated_demand",
+convert_aggregate_demand(simp, checkexists = TRUE, forceparam = FALSE,
+  demanddataname = "csv_aggregateServiceDemand",
   sourcedataname = "dataAggregateSupplyDemand")
 }
 \arguments{
@@ -14,7 +14,7 @@ convert_aggregate_demand(simp, checkexists = TRUE,
 \item{\code{\link{input_tools_load}}}
 \item{\code{\link{input_csv_param_demand}}}}}
 
-\item{checkexists}{}
+\item{forceparam}{don't attempt to use stored rData.}
 
 \item{demanddataname}{}
 }

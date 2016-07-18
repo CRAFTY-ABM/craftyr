@@ -6,7 +6,7 @@
 \usage{
 hl_param_capital_map(simp, capitals = simp$mdata$capitals,
   filenameorder = c("regionalisation", "U", "regions", "U", "datatype"),
-  returnplot = FALSE)
+  returnplot = FALSE, ggplotaddon = NULL)
 }
 \arguments{
 \item{simp}{}
