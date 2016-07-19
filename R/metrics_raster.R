@@ -127,23 +127,21 @@ metrics_rasters_connectivity <- function(simp, afts = NULL, dataname = "raster_l
 	
 	raster_aft <- input_raster_get(simp = simp, dataname= dataname)[[1]]
 	metric <- c()
-	for (raster in raster_aft$Raster[2:length(raster_aft$Raster)]) {
-		# raster <- raster_aft$Raster[[1]
-		raster <- raster[[1]]
+	for (raster in raster_aft$Raster) {
+		# raster <- raster_aft$Raster[[1]]
+		raster <- raster::brick(raster[[1]])
 		sum = 0
-		for (cell in 1:raster::ncell(raster)) {
-			# cell = 44569
-			if (raster[cell] %in% relevantindices) {
+		counter = 0
+		for (cell in raster::Which(raster::match(raster, relevantindices), cells = TRUE)) {
 				a <- raster::adjacent(raster, cell, 8, pairs=FALSE)
 				if (length(a[!is.na(a)])==8) {
 					sum = sum + sum(raster[a] %in% relevantindices) / 8
-					counter = coutner + 1
+					counter = counter + 1
 				}
-			}
 		}
 		metric <-  c(metric, sum / counter)
 	}
 	return(if(asvector) setNames(metric, (simp$sim$starttick + 1):simp$sim$endtick) else data.frame(
-							Metric = paste("ConsConnectivity", if (!is.null(aft)) "_", aft, sep=""),
+							Metric = paste("ConsConnectivity", if (!is.null(afts)) "_", paste(afts, collapse="-"), sep=""),
 							Tick =  (simp$sim$starttick + 1):simp$sim$endtick, Value = metric))
 }
