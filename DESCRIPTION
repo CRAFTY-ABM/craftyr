@@ -1,7 +1,7 @@
 Package: craftyr
 Type: Package
 Title: Processing CRAFTY model output
-Version: 0.3.11
+Version: 0.3.12
 Date: 2016-07-19
 Authors@R: c(person("Sascha", "Holzhauer", role = c("aut", "cre"), email =
     "Sascha.Holzhauer@ed.ac.uk"), person("Calum", "Brown", email =

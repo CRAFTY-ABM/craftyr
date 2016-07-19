@@ -141,7 +141,7 @@ metrics_rasters_connectivity <- function(simp, afts = NULL, dataname = "raster_l
 		}
 		metric <-  c(metric, sum / counter)
 	}
-	return(if(asvector) setNames(metric, (simp$sim$starttick + 1):simp$sim$endtick) else data.frame(
+	return(if(asvector) setNames(metric, (simp$sim$starttick):simp$sim$endtick) else data.frame(
 							Metric = paste("ConsConnectivity", if (!is.null(afts)) "_", paste(afts, collapse="-"), sep=""),
-							Tick =  (simp$sim$starttick + 1):simp$sim$endtick, Value = metric))
+							Tick =  (simp$sim$starttick):simp$sim$endtick, Value = metric))
 }
