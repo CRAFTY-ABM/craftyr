@@ -6,8 +6,8 @@
 \usage{
 metric_agg_supplydemand_maximum(simp, services = NULL, regions = NULL,
   datanamedemand = "csv_aggregated_demand",
-  datanamesupply = "csv_aggregated_supply", consideroversupply = FALSE,
-  includesum = FALSE, asvector = FALSE)
+  datanamesupply = "csv_aggregated_supply", considerundersupply = TRUE,
+  consideroversupply = FALSE, includesum = FALSE, asvector = FALSE)
 }
 \arguments{
 \item{simp}{}
@@ -16,14 +16,15 @@ metric_agg_supplydemand_maximum(simp, services = NULL, regions = NULL,
 
 \item{regions}{vector of character. Limits set of considered regions if not \code{NULL}.}
 
+\item{consideroversupply}{}
+
 \item{includesum}{if \code{TRUE} computes the sum across all services}
 
 \item{asvector}{if \code{TRUE} metric is returned as named vector}
-
-\item{dataname}{}
 }
 \value{
 data.frame with cols Metric, Ticks and Value or named vector (ticks) of metric (percental demand supply gap) when \code{asvector == TRUE}
+			Metric will be negative in case of undersupply and positive in case of oversupply.
 }
 \description{
 Calculates the maximum percental demand supply gap for across services for all ticks
