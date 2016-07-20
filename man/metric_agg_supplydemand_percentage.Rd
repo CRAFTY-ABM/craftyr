@@ -6,7 +6,8 @@
 \usage{
 metric_agg_supplydemand_percentage(simp, service = "Total", regions = NULL,
   datanamedemand = "csv_aggregated_demand",
-  datanamesupply = "csv_aggregated_supply", asvector = FALSE)
+  datanamesupply = "csv_aggregated_supply", considerundersupply = TRUE,
+  consideroversupply = FALSE, asvector = FALSE)
 }
 \arguments{
 \item{simp}{}

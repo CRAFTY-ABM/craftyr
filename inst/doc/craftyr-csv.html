@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sascha Holzhauer" />
 
-<meta name="date" content="2016-07-19" />
+<meta name="date" content="2016-07-20" />
 
 <title>Using CSV data with craftyr</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">Using CSV data with craftyr</h1>
 <h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2016-07-19</em></h4>
+<h4 class="date"><em>2016-07-20</em></h4>
 
 
 <div id="TOC">
@@ -181,8 +181,9 @@ csv_cell_aggregated &lt;-<span class="st"> </span><span class="kw">input_csv_dat
         <span class="dt">starttick =</span> <span class="dv">2000</span>, <span class="dt">endtick =</span> <span class="dv">2020</span>, <span class="dt">tickinterval =</span> <span class="dv">10</span>,
         <span class="dt">attachfileinfo =</span> <span class="ot">TRUE</span>, <span class="dt">bindrows =</span> <span class="ot">TRUE</span>,
         <span class="dt">aggregationFunction =</span> aggregationFunction,
-        <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)
-<span class="kw">rownames</span>(csv_cell_aggregated) &lt;-<span class="st"> </span><span class="ot">NULL</span>
+        <span class="dt">skipXY =</span> <span class="ot">TRUE</span>)</code></pre>
+<pre><code>## Warning: package 'plyr' was built under R version 3.2.5</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rownames</span>(csv_cell_aggregated) &lt;-<span class="st"> </span><span class="ot">NULL</span>
 <span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_cell_aggregated&quot;</span>)</code></pre>
 </div>
 <div id="source-cell-table-pre-allocation-competitiveness" class="section level2">

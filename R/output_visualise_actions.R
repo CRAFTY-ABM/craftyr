@@ -105,6 +105,7 @@ visualise_actions <- function(simp,
 #	actionfillcolours = NULL
 #	returnplot = FALSE
 	
+err
 	if (is.null(monitorcolours)) {
 		monitorcolours <- simp$colours$AFT[names(simp$colours$AFT) %in% names(simp$mdata$aftNames)]
 		monitorcolours <- setNames(monitorcolours,
@@ -134,7 +135,7 @@ visualise_actions <- function(simp,
 	titlepart <- if(!is.null(title)) title else "InstitutionalAction"
 	if(is.null(filename)) filename = paste(gsub(" ", "-", titlepart), 
 				shbasic::shbasic_condenseRunids(actiondata[,"Runid"]), sep="_")
-
+	
 	if (onlyselected) {
 		actiondata <- actiondata[actiondata$Selected == 1,]
 	}
@@ -151,7 +152,7 @@ visualise_actions <- function(simp,
 	# Actions:
 	# order actions and synchonise actionfillcolours with it as 'override.aes' in guide_fill does not care:
 	data[,fill_column] <- factor(data[,fill_column], levels(data[,fill_column])[order(levels(data[,fill_column]))])
-
+	data$Action <- factor(data$Action)
 	# handle colours:
 	if (is.null(actionfillcolours)) {
 		actionfillcolours <- settings_colours_getColors(number = max(3,length(unique(actiondata$Action))))
@@ -164,20 +165,18 @@ visualise_actions <- function(simp,
 		}
 		actionfillcolours <- actionfillcolours[names(actionfillcolours) %in% levels(data$Action[!is.na(data$Action)])]
 	}
-	data$Action <- factor(data$Action)
+	
 	
 	actionfillcolours <- setNames(actionfillcolours, levels(data$Action[!is.na(data$Action)]))
 	actionfillcolours <- actionfillcolours[1:length(levels(data$Action[!is.na(data$Action)]))]
 	scaleFillElem <- ggplot2::scale_fill_manual(name= fill_column, 
 				values = c(actionfillcolours))
-	
+		
 	# Monitored data:
 	scaleColourElem <- ggplot2::scale_colour_manual(name=colour_column, 
 			values = c(monitorcolours),
 			labels =  ggplot2::waiver())
 		
-	
-	
 	
 	# facets / order facets:
 	facetElem <- ggplot2::facet_wrap(as.formula(paste("~", facet_column)), ncol = facet_ncol, scales="free_y")
