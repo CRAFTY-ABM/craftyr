@@ -167,10 +167,10 @@ metric_agg_supplydemand_maximum <- function(simp, services = NULL, regions= NULL
 			})
 	
 	return(if(asvector) setNames(metric$V1, metric$Tick) else data.frame(
-								Metric = paste("Max", if (considerundersupply) "Under",
+								Metric = if(nrow(metric) > 0) paste("Max", if (considerundersupply) "Under",
 													  if(consideroversupply) "Over" , "Supply", 
 										if (!is.null(services)) "_", paste(services, collapse="-"), 
-										if (!is.null(regions)) "_", paste(regions, collapse="-"), sep=""),
+										if (!is.null(regions)) "_", paste(regions, collapse="-"), sep="") else metric$Tick,
 								Tick =  metric$Tick, Value = metric$Percentage))
 }
 #' TODO

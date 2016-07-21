@@ -105,7 +105,6 @@ visualise_actions <- function(simp,
 #	actionfillcolours = NULL
 #	returnplot = FALSE
 	
-err
 	if (is.null(monitorcolours)) {
 		monitorcolours <- simp$colours$AFT[names(simp$colours$AFT) %in% names(simp$mdata$aftNames)]
 		monitorcolours <- setNames(monitorcolours,
