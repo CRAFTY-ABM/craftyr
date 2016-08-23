@@ -10,10 +10,11 @@ visualise_actions(simp, actiondata = "dataActions", onlyselected = FALSE,
   colour_column = "Service", shape_column = "Agent",
   fill_column = "Action", alpha_column = "Selected", alpha = 0.5,
   size_column = NULL, lineseparator_column_actions = NULL,
-  linetype_column_measures = NULL, facet_column = "Region",
-  facet_ncol = 1, facet_column_levels = NULL, actionfillcolours = NULL,
-  monitorcolours = NULL, actionlinecolour = "darkgrey",
-  actionshapenumbers = c(21:25), returnplot = FALSE, ggplotaddons = NULL)
+  linetype_column_measures = NULL, linetype_column_actions = NULL,
+  facet_column = "Region", facet_ncol = 1, facet_column_levels = NULL,
+  actionfillcolours = NULL, monitorcolours = NULL,
+  actionlinecolour = "darkgrey", actionshapenumbers = c(21:25),
+  returnplot = FALSE, ggplotaddons = NULL)
 }
 \arguments{
 \item{simp}{}

@@ -52,6 +52,7 @@ visualise_actions <- function(simp,
 		size_column 		= NULL,
 		lineseparator_column_actions	= NULL,
 		linetype_column_measures 		= NULL,
+		linetype_column_actions = NULL,
 		facet_column 		= "Region", 
 		facet_ncol = 1,
 		facet_column_levels = NULL,
@@ -197,15 +198,18 @@ visualise_actions <- function(simp,
 		ggplot2::scale_alpha_discrete(range=c(1, 1), guide=FALSE)
 	}
 	
-	lineElemActions <- ggplot2::geom_line(data = data[!is.na(data$Selected) & data$Selected == 1,], mapping=ggplot2::aes_string(x = x_column, 
-						 y = y_column_action, 
+	lineElemActions <- ggplot2::geom_line(data = data[!is.na(data$Selected) & data$Selected == 1,], 
+									mapping=ggplot2::aes_string(x = x_column, y = y_column_action, 
 						 group = if (is.null(lineseparator_column_actions)) "Agent" else 
-									 paste("interaction(Agent, ", lineseparator_column_actions, ")", sep="")
+									 paste("interaction(Agent, ", lineseparator_column_actions, ")", sep=""),
+						 linetype = linetype_column_actions
 					), color = actionlinecolour)
 	
 	if (!is.null(linetype_column_measures)) {
 		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column_measure,
-						linetype = linetype_column_measures, colour = colour_column))
+						linetype = linetype_column_measures, 
+						colour = colour_column)
+					)
 	} else {
 		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column_measure, 
 						colour = colour_column))
@@ -214,12 +218,13 @@ visualise_actions <- function(simp,
 	p1 <- ggplot2::ggplot() +
 			lineElemActions +			
 			ggplot2::geom_point(data = data, mapping=ggplot2::aes_string(alpha=alpha_column, x = x_column, y = y_column_action,
-							fill = fill_column, shape = shape_column, size=size_column)) +
+				fill = fill_column, shape = shape_column, size=size_column)) +
 			lineElemMeasures +
 			
 			facetElem  +
 			ggplot2::scale_shape_manual(values=actionshapenumbers) +
 			scaleFillElem +
+			
 			ggplot2::guides(fill=ggplot2::guide_legend(override.aes=list(colour=actionfillcolours))) +
 			ggplot2::guides(linetype=ggplot2::guide_legend(title=linetype_column_measures)) +
 			scaleAlphaElem +

@@ -122,6 +122,7 @@ visualise_cells_printPlots <- function(simp, celldata, idcolumn = "Tick", valuec
 #' @param coloursetname id for colour set (if factorial) to pass to simp$colours$GenericFun (e.g. "AFT", "Capital", "Service")
 #' @param returnplot if true the ggplot object is returned
 #'
+#' @seealso input_shapes_countries
 #' @author Sascha Holzhauer
 #' @export
 visualise_cells_printRawPlots <- function(simp, celldata, idcolumn = "Tick", valuecolumn = "LandUseIndex",

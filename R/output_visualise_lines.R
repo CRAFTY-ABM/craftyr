@@ -18,17 +18,18 @@
 #' @param alpha
 #' @param ggplotaddons vector of ggplot objects to add
 #' @param returnplot if true the ggplot object is returned
+#' @param showsd if \code{TRUE} line shows mean and ribbons standard deviation (requires multiple data points per group)
 #' @return ggplot2 line visualisation
 #' @example demo/example_visualise_lines_csv_allocation.R
 #'
 #' @author Sascha Holzhauer
 #' @export
-visualise_lines <- function(simp, data, y_column, title = NULL,
+visualise_lines <- function(simp, data, x_column= NULL, y_column, title = NULL,
 		colour_column = NULL, colour_legendtitle = colour_column, colour_legenditemnames = NULL,
 		linetype_column = NULL, linetype_legendtitle = linetype_column, linetype_legenditemnames = NULL,
 		facet_column = NULL, facet_ncol = 2, filename = paste(gsub(" ", "_", title), 
 				shbasic::shbasic_condenseRunids(data[, "Runid"]), sep="_"),
-		alpha = simp$fig$alpha, ggplotaddons = NULL, returnplot = FALSE) {
+		alpha = simp$fig$alpha, showsd = FALSE, ggplotaddons = NULL, returnplot = FALSE) {
 
 	if (!is.data.frame(data)) {
 		data <- do.call(rbind, data)
@@ -63,15 +64,29 @@ visualise_lines <- function(simp, data, y_column, title = NULL,
 		facetElem <- ggplot2::facet_wrap(as.formula(paste("~", facet_column)), ncol = facet_ncol)
 	}
 	
-	if ("Tick" %in% names(data)) {
-		x_column = "Tick"
+	if (is.null(x_column)) {
+		if ("Tick" %in% names(data)) {
+			x_column = "Tick"
+		} else {
+			x_column = "Runid"
+		}	
+	}
+	
+	if (showsd) {
+		lineelem <- list(ggplot2::stat_summary(data = data, fun.data=ggplot2::mean_se, geom = "ribbon", 
+						alpha=simp$fig$ribbon$alpha,
+						ggplot2::aes_string(x=x_column, y=y_column, fill = colour_column)),
+				ggplot2::stat_summary(data = data, fun.y=mean, geom = "line", 
+						ggplot2::aes_string(x = x_column, y = y_column,color=colour_column), 
+							alpha=alpha, size = simp$fig$linewidth))
 	} else {
-		x_column = "Runid"
-	}	
-
+		lineelem <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column,
+						colour = colour_column, linetype = linetype_column), size = simp$fig$linewidth,
+							alpha=alpha)
+	}
+	
 	p1 <- ggplot2::ggplot() +
-			ggplot2::geom_line(data = data , alpha=alpha, mapping=ggplot2::aes_string(x = x_column, y = y_column,
-							colour = colour_column, linetype = linetype_column)) +
+			lineelem +
 			facetElem  +
 			ggplot2::theme(strip.text.x = ggplot2::element_text(size=8)) +
 		 	scaleColourElem +

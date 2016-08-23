@@ -5,7 +5,8 @@
 \title{Fill given data with \code{doNothingAction} for missing entries of the combinations
 Tick/Runid/Region/Agent}
 \usage{
-hl_actions_fillDoNothing(simp, data, doNothingAction = "DoNothing")
+hl_actions_fillDoNothing(simp, data, doNothingAction = "DoNothing",
+  score = 0)
 }
 \arguments{
 \item{simp}{}
@@ -13,6 +14,8 @@ hl_actions_fillDoNothing(simp, data, doNothingAction = "DoNothing")
 \item{data}{}
 
 \item{doNothingAction}{}
+
+\item{score}{the score value that is assigned to added DoNothing actions.}
 }
 \value{
 manipulated data.frame

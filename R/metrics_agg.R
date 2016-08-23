@@ -360,4 +360,21 @@ metric_agg_regionalsupply_efficiency <- function(simp, service = NULL,
 								Metric = paste("EffSupply", if (!is.null(service)) "_", service, sep=""),
 								Tick =  data$Tick, Value = data$Metric))
 }
-	
+#' Get number of actions per institution(s)
+#' 
+#' TODO test
+#' @param simp 
+#' @param institutions 
+#' @param pattern if given, the action name must match the pattern (using grepl) 
+#' @return number of actions
+#' 
+#' @author Sascha Holzhauer
+#' @export
+metric_agg_actions_number <- function(simp, institutions = NULL, pattern = NULL) {
+	input_tools_load(simp, "dataActions")
+	checkAction <- function(x) {
+		return(x != "DoNothing" && (is.null(pattern) || grepl(pattern, x)) &&
+				(is.null(institutions) || dataActions$Agent %in% institutions))
+	}
+	return(sum(dataActions[sapply(dataActions$Action, checkAction), "Selected"]))	
+}
