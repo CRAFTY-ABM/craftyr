@@ -15,9 +15,7 @@ input_shapes_countries <- function(simp,
 					"various/CountryCodeNumberMapping.csv", 
 					package = "craftyr"))
 	
-	if (is.null(countries2show)) {
-		countries2show <- countries$ISOcode
-	} else {
+	if (is.null(countries2show) && length(match(countries2show, countries$Code))>0){
 		countries2show <- countries$ISOcode[match(countries2show, countries$Code)]
 	}
 	
@@ -29,7 +27,9 @@ input_shapes_countries <- function(simp,
 	# rgdal does not install on the eddie...
 	#shapes <- rgdal::readOGR(dsn = filename_shapes, tools::file_path_sans_ext(basename(filename_shapes)))
 	shapes <- maptools::readShapePoly(filename_shapes)
-	shapes <- shapes[shapes@data[[countrycodedatacolumn]] %in% countries2show,]
+	if (!is.null(countries2show)) {
+		shapes <- shapes[shapes@data[[countrycodedatacolumn]] %in% countries2show,]
+	}
 	
 	## Eurostat (does not work without conversion)
 	#filename_shapes <- "C:/Data/LURG/Projects/Volante/InputData/shp/shapes/eurostat/CNTR_2014_03M_SH/Data/CNTR_RG_03M_2014.shp"
@@ -58,7 +58,7 @@ input_shapes_countries <- function(simp,
 	shapes.f$lat <- (shapes.f$lat + simp$mdata$conversion$latoffset) / simp$mdata$conversion$divisor
 	
 	g <- ggplot2::geom_path(data=shapes.f, ggplot2::aes(long, lat, group = group), 
-			colour="darkgrey", size = simp$fig$outlinesize, alpha = simp$fig$countryshapes$alpha)
+			colour=simp$fig$countryshapes$colour, size = simp$fig$outlinesize, alpha = simp$fig$countryshapes$alpha)
 	
 	return(g)
 }

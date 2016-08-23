@@ -262,11 +262,12 @@ hl_getCellNumbers <- function(simp, dataname = "csv_LandUseIndex_rbinded") {
 #' @param simp 
 #' @param data 
 #' @param doNothingAction 
+#' @param score the score value that is assigned to added DoNothing actions.
 #' @return manipulated data.frame
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_actions_fillDoNothing <- function(simp, data, doNothingAction =  "DoNothing") {
+hl_actions_fillDoNothing <- function(simp, data, doNothingAction =  "DoNothing", score = 0) {
 	ticks <- data.frame(Tick=seq(min(data$Tick), max(data$Tick)))
 	data <- dplyr::full_join(expand.grid(
 					Tick=seq(min(data$Tick), max(data$Tick)), 
@@ -275,7 +276,7 @@ hl_actions_fillDoNothing <- function(simp, data, doNothingAction =  "DoNothing")
 					Agent = unique(data$Agent)),
 			data)
 	data$Action[is.na(data$Action)] <- doNothingAction
-	data$Score[is.na(data$Score)] <- 0
+	data$Score[is.na(data$Score)] <- score
 	data$Selected[is.na(data$Selected)] <- 1
 	return(data)
 }
