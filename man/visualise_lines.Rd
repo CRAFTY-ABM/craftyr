@@ -6,13 +6,14 @@
 and potentially as facet plot.
 Uses ticks as X variable if present, runid otherwise.}
 \usage{
-visualise_lines(simp, data, y_column, title = NULL, colour_column = NULL,
-  colour_legendtitle = colour_column, colour_legenditemnames = NULL,
-  linetype_column = NULL, linetype_legendtitle = linetype_column,
-  linetype_legenditemnames = NULL, facet_column = NULL, facet_ncol = 2,
-  filename = paste(gsub(" ", "_", title),
-  shbasic::shbasic_condenseRunids(data[, "Runid"]), sep = "_"),
-  alpha = simp$fig$alpha, ggplotaddons = NULL, returnplot = FALSE)
+visualise_lines(simp = simp, data = data, x_column = NULL, y_column,
+  title = NULL, colour_column = NULL, colour_legendtitle = colour_column,
+  colour_legenditemnames = NULL, linetype_column = NULL,
+  linetype_legendtitle = linetype_column, linetype_legenditemnames = NULL,
+  facet_column = NULL, facet_ncol = 2, filename = paste(gsub(" ", "_",
+  title), shbasic::shbasic_condenseRunids(data[, "Runid"]), sep = "_"),
+  alpha = simp$fig$alpha, showsd = FALSE, ggplotaddons = NULL,
+  returnplot = FALSE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}
@@ -38,6 +39,8 @@ visualise_lines(simp, data, y_column, title = NULL, colour_column = NULL,
 \item{facet_ncol}{number of columns of facet wrap}
 
 \item{filename}{without extension}
+
+\item{showsd}{if \code{TRUE} line shows mean and ribbons standard deviation (requires multiple data points per group)}
 
 \item{ggplotaddons}{vector of ggplot objects to add}
 

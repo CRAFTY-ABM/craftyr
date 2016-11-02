@@ -16,7 +16,7 @@ output_tools_getDefaultFilename <- function(simp, postfix = "") {
 		  gsub(" ", "_", postfix), sep="")
 }
 #' Format vector of characters into latex list
-#'  
+#' 
 #' @param simp 
 #' @param x 
 #' @param out.format 

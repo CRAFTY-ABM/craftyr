@@ -7,14 +7,17 @@
 #' @author Sascha Holzhauer
 #' @export
 hl_printAgentProductionParameters <- function(simp, filenameprefix = "AftProduction_",
-		filenamepostfix = "_multi_medium", heading = "subsubsection") {
+		filenamepostfix = "_multi_medium", aftwisefolder = TRUE, heading = "subsubsection",
+		filenameprefix_aftparams = "AftParams_", filenamepostfix_aftparams = "") {
 	
 	# for each AFT
 	for (aft in simp$mdata$aftNames[-1]) {
 		# aft = simp$mdata$aftNames[2]
 		# get productivity table 
 		data <- input_csv_param_productivities(simp, aft, filenameprefix = filenameprefix,
-				filenamepostfix = filenamepostfix)
+				filenamepostfix = filenamepostfix, aftwisefolder = aftwisefolder,
+				filenameprefix_aftparams = filenameprefix_aftparams,
+				filenamepostfix_aftparams = filenamepostfix_aftparams, )
 		
 		# print table
 		table <- xtable::xtable(data,
@@ -94,6 +97,7 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 	# print table
 	colnames(agentparams) <- gsub("givingUp", "GU", colnames(agentparams), fixed = TRUE)
 	colnames(agentparams) <- gsub("givingIn", "GI", colnames(agentparams), fixed = TRUE)
+	colnames(agentparams) <- gsub("serviceLevelNoise", "prodNoise", colnames(agentparams), fixed = TRUE)
 	
 	if (returnDataFrame) {
 		return(agentparams)
@@ -111,6 +115,8 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 #' Read and plot competition functions
 #' @param simp 
 
+#' @param srcfilename XML filename without extension (must be .xml) 
+#' @param srcfilepath
 #' @param filename filename for figure
 #' @param returnplot if true the ggplot object is returned
 #' @return plot
@@ -154,6 +160,13 @@ hl_getCompetitionFunctions <- function(simp, srcfilename = NULL,
 		paramid <- as.numeric(if(grepl('-', simp$sim$runids[1])) strsplit(simp$sim$runids[1], '-')[[1]][1] else {
 							simp$sim$runids[1]})
 		runData <- input_csv_param_runs(simp)
+		
+		if (is.null(runData[runData[runidcolumnname] == paramid, 
+										"Competition_xml"])) {
+							R.oo::throw.default("The run CSV file does not contain the column >Competition_xml< for",
+									" paramid ", paramid, "!")
+						}
+		
 		srcfilename <- tools::file_path_sans_ext(basename(as.character(runData[runData[runidcolumnname] == paramid, 
 										"Competition_xml"])))
 	}
@@ -232,4 +245,16 @@ hl_compilerunparams <- function (simp, runidcolumnname = "run") {
 	
 	print(table, sanitize.colnames.function = identity,
 			table.placement = "H")
+}
+#' Returns matrix to define allocation restrictions.
+#' 
+#' Fills the matrix with "0", meaning no restriction
+#' @return matrix with agent types as rows and columns 
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_getAllocationRestrictionMatrix <- function() {
+	data <- matrix(data=c(0), nrow = length(simp$mdata$aftNames), ncol = length(simp$mdata$aftNames))
+	rownames(data) <- colnames(data) <-  simp$mdata$aftNames
+	return(data)	
 }

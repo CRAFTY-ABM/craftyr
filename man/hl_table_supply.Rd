@@ -4,12 +4,18 @@
 \alias{hl_table_supply}
 \title{Output aggregated supply as table with services as columns}
 \usage{
-hl_table_supply(simp, dataname = "csv_aggregateServiceDemand", latex = TRUE)
+hl_table_supply(simp, celldataname = "csv_cell_aggregated",
+  sourcedataname = "dataAggregateSupplyDemand",
+  dataname = "csv_aggregated_supply", latex = TRUE)
 }
 \arguments{
 \item{simp}{}
 
-\item{dataname}{}
+\item{celldataname}{name for retrieving supply data (celldata)}
+
+\item{sourcedataname}{name for storing supply data}
+
+\item{dataname}{name for retrieving supply data (RData)}
 
 \item{latex}{}
 }

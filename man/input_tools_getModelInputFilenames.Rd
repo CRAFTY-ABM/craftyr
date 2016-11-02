@@ -5,7 +5,7 @@
 \title{Determines the model input filenames for the given simp and datatype, dataname, ticks settings}
 \usage{
 input_tools_getModelInputFilenames(simp,
-  folders = input_tools_getModelInputDir(simp, datatype), datatype = NULL,
+  folders = simp$dirs$param$getparamdir(simp, datatype), datatype = NULL,
   dataname = NULL, extension = NULL, pertick = FALSE, starttick = NULL,
   endtick = NULL, tickinterval = NULL, returnfileinfo = TRUE)
 }

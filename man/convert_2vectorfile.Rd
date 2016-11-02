@@ -2,7 +2,7 @@
 % Please edit documentation in R/convert_2vectorfile.R
 \name{convert_2vectorfile}
 \alias{convert_2vectorfile}
-\title{Reads in CSV files with coordinates and creates polygone shapefiels via raster}
+\title{Reads in CSV files with coordinates and creates polygone shapefiles via raster}
 \usage{
 convert_2vectorfile(indir, outdir, filenamesub = NULL)
 }
@@ -15,7 +15,7 @@ convert_2vectorfile(indir, outdir, filenamesub = NULL)
 polygone shapefiles
 }
 \description{
-Considers only CSV fiels in the indir. They must have a "x" and "y" column, but not "z"!
+Considers only CSV files in the indir. They must have a "x" and "y" column, but not "z"!
 }
 \author{
 Sascha Holzhauer

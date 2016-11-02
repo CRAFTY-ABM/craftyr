@@ -122,23 +122,42 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	
 	### Colour Settings ###########################################################
 	defsimp$colours <- list()
-	defsimp$colours$AFT 			<- settings_colours_getAftColours()
+	defsimp$colours$AFT 			<- c(  "-1" = "black",
+											"0" = "orange1",
+											"1" = "lightgoldenrod",
+											"2" = "indianred4",
+											"3" = "indianred1",
+											"4" = "green4",
+											"5" = "royalblue2",
+											"6" = "darkviolet")
 	defsimp$colours$aftgroups		<- NULL
-	defsimp$colours$Service 		<- settings_colours_getServiceColours()
-	defsimp$colours$Capital 		<- settings_colours_getCapitalColours()
-	defsimp$colours$Region 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
-	defsimp$colours$Runid 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
-	defsimp$colours$GenericFun		<- settings_colours_getColorSet
+	defsimp$colours$Service 		<- c(	"-1" = "black",
+											"Meat" 			= "indianred1",
+											"Cereal" 	 	= "orange1",
+											"Conservation" 	= "royalblue2",
+											"Recreation" 	= "royalblue2",
+											"Timber" 		= "green4",
+											"Biofuel" 		= "darkviolet")
+	defsimp$colours$Capital 		<- c(	   "-1" = "white",
+											"Cprod" = "orange1",
+											"Fprod" = "darkgreen",
+											"Infra" = "violet",
+											"Grass" = "indianred1",
+											"Nat" 	= "green4",
+											"Econ" 	= "blue")
+	defsimp$colours$Region 			<- settings_colours_getColors(number = 12, set= "Set3")
+	defsimp$colours$Runid 			<- settings_colours_getColors(number = 12, set= "Set3")
+	defsimp$colours$GenericFun		<- settings_colours_getColors
 	defsimp$colours$binarycolours 	<- c("skyblue1", "black")
 	defsimp$colours$defaultset		<- "Dark2"
 	
 	defsimp$fills <- list()
-	defsimp$fills$AFT 				<- settings_colours_getAftColours()
-	defsimp$fills$Service 			<- settings_colours_getServiceColours()
-	defsimp$fills$Capital 			<- settings_colours_getCapitalColours()
-	defsimp$fills$Region 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
-	defsimp$fills$Runid 			<- settings_colours_getColorSet(NULL, number = 12, set= "Set3")
-	defsimp$fills$GenericFun		<- settings_colours_getColorSet
+	defsimp$fills$AFT 				<- defsimp$colours$AFT
+	defsimp$fills$Service 			<- defsimp$colours$Service
+	defsimp$fills$Capital 			<- defsimp$colours$Capital
+	defsimp$fills$Region 			<- defsimp$colours$Region
+	defsimp$fills$Runid 			<- defsimp$colours$Runid
+	defsimp$fills$GenericFun		<- defsimp$colours$GenericFun
 	defsimp$fills$binarycolours 	<- c("skyblue1", "black")
 	defsimp$fills$defaultset		<- "Dark2"
 	

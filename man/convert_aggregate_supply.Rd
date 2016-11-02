@@ -17,7 +17,9 @@ convert_aggregate_supply(simp, celldataname = "csv_cell_aggregated",
 
 \item{checkexists}{}
 
-\item{supplydataname}{}
+\item{supplydataname}{name for storing supply data}
+
+\item{sourcedataname}{name for retrieving data (rData)}
 }
 \value{
 -

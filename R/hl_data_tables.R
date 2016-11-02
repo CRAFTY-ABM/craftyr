@@ -1,18 +1,30 @@
 #' Output aggregated supply as table with services as columns
 #' 
 #' @param simp 
-#' @param dataname 
+#' @param dataname name for retrieving supply data (RData)
+#' @param celldataname name for retrieving supply data (celldata)
+#' @param sourcedataname name for storing supply data
 #' @param latex 
 #' @return data.frame or printed LaTeX table
 #' 
 #' @author Sascha Holzhauer
 #' @export
-hl_table_supply <- function(simp, dataname = "csv_aggregateServiceDemand", latex = TRUE) {
+hl_table_supply <- function(simp, 
+		celldataname = "csv_cell_aggregated",
+		sourcedataname = "dataAggregateSupplyDemand",
+		dataname = "csv_aggregated_supply",
+		latex = TRUE) {
 	# dataname = "dataAggregateSupplyDemand"
+	
+	convert_aggregate_supply(simp, celldataname = celldataname, checkexists = TRUE,
+			supplydataname = dataname, sourcedataname = sourcedataname)
+	
 	input_tools_load(simp, dataname)
 	data <- get(dataname)
 	d <- data[, grep("ServiceSupply",colnames(data), fixed=T)]
 	d <- aggregate(d, by = list(Tick = data$Tick), FUN= "sum")
+	
+	colnames(d) <- gsub("ServiceSupply.", "", colnames(d))
 	
 	if (latex) {
 		table <- xtable::xtable(d,
@@ -20,7 +32,7 @@ hl_table_supply <- function(simp, dataname = "csv_aggregateServiceDemand", latex
 				caption= "Service supply"
 		)
 		
-		print(table, sanitize.colnames.function = identity,
+		print(table, sanitize.colnames.function = NULL,
 				sanitize.rownames.function = identity,
 				include.rownames = FALSE,
 				table.placement = "H")
@@ -60,7 +72,7 @@ hl_table_demand <- function(simp, dataname = "dataAggregateSupplyDemand",
 				caption= "Service demand"
 		)
 		
-		print(table, sanitize.colnames.function = identity,
+		print(table, sanitize.colnames.function = NULL,
 				sanitize.rownames.function = identity,
 				include.rownames = FALSE,
 				table.placement = "H")

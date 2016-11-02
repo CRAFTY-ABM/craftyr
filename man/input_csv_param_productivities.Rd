@@ -4,8 +4,10 @@
 \alias{input_csv_param_productivities}
 \title{Reads productivities for each capital and each service for the given aft}
 \usage{
-input_csv_param_productivities(simp, aft, filenameprefix = "AftProduction_",
-  filenamepostfix = "_multi_medium")
+input_csv_param_productivities(simp, aft, filenameprefix = NULL,
+  filenamepostfix = NULL, filenameprefix_aftparams = "AftParams_",
+  filenamepostfix_aftparams = "", aftwisefolder = TRUE,
+  servicesasrownames = FALSE)
 }
 \arguments{
 \item{simp}{SIMulation Properties}

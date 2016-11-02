@@ -2,9 +2,9 @@
 % Please edit documentation in R/settings_colours.R
 \name{settings_colours_getColors}
 \alias{settings_colours_getColors}
-\title{Get colour palette of requested dimension}
+\title{Get colour palette of requested size.}
 \usage{
-settings_colours_getColors(number, dim = 1)
+settings_colours_getColors(number, dim = 1, set = "Set1")
 }
 \arguments{
 \item{number}{}
@@ -15,7 +15,7 @@ settings_colours_getColors(number, dim = 1)
 colour palette
 }
 \description{
-Get colour palette of requested dimension
+Applied if colours are not defined in \code{simp$fills} or \code{simp$colours}
 }
 \author{
 Sascha Holzhauer

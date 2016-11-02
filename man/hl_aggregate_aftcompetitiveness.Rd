@@ -2,7 +2,7 @@
 % Please edit documentation in R/hl_aggregate_visualise.R
 \name{hl_aggregate_aftcompetitiveness}
 \alias{hl_aggregate_aftcompetitiveness}
-\title{Yearly aggregated AFT competitiveness}
+\title{Yearly aggregated AFT competitiveness (from special competitiveness output)}
 \usage{
 hl_aggregate_aftcompetitiveness(simp,
   dataname = "csv_aggregateAFTCompetitiveness", includeunmanaged = FALSE,
@@ -20,7 +20,7 @@ total number of cells obtained}
 timeline plot
 }
 \description{
-Yearly aggregated AFT competitiveness
+Yearly aggregated AFT competitiveness (from special competitiveness output)
 }
 \author{
 Sascha Holzhauer

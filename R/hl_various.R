@@ -20,7 +20,8 @@ hl_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdata, 
 		input_tools_save(simp, "csv_MarginalUtilitites_melt")
 	}
 	
-	p1 <- visualise_lines(simp, csv_MarginalUtilitites_melt, "value", title = "Marginal Utilities",
+	p1 <- visualise_lines(simp = simp, data = csv_MarginalUtilitites_melt, y_column = "value",
+			title = "Marginal Utilities",
 			colour_column = "Service",
 			filename = paste("MarginalUtilities", sep=""),
 			alpha=0.7,
@@ -47,12 +48,17 @@ hl_getRunInfo <-  function(simp, filename = simp$dirs$output$runinfo) {
 		colnames(runinfo) <- runinfo[2,]
 		runinfo <- runinfo[-c(1,2),]
 		rinfo <- runinfo[runinfo["Version"] == simp$sim$version &
-						runinfo["1st Run ID"] == paramid & (if(!is.null(randomseed)) 
-								runinfo["Random Seed"]== randomseed else TRUE), ]
+						runinfo["First Run ID"] == paramid & (if(!is.null(randomseed))
+								(if ("Random Seed" %in% colnames(runinfo))
+									runinfo["Random Seed"] == randomseed  else
+									runinfo["First Random Seed"] <= randomseed & runinfo["Last Random Seed"] >= randomseed)
+										else TRUE), ]
 		
 		if (length(rinfo[,1]) == 0) {
-			rinfo <- runinfo[runinfo["Version"] == simp$sim$version & runinfo["1st Run ID"] <= paramid &
-							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) || runinfo[,"Random Seed"]== randomseed), ]
+			rinfo <- runinfo[runinfo["Version"] == simp$sim$version & runinfo["First Run ID"] <= paramid &
+							runinfo["Last Run ID"] >= paramid & (is.null(randomseed) || (if ("Random Seed" %in% colnames(runinfo))
+										runinfo["Random Seed"] == randomseed  else
+										runinfo["First Random Seed"] <= randomseed & runinfo["Last Random Seed"] >= randomseed)), ]
 		}
 	} else if(tools::file_ext(filename) == "csv") {
 		runinfo <- read.csv(filename, skip = 1)
@@ -63,7 +69,7 @@ hl_getRunInfo <-  function(simp, filename = simp$dirs$output$runinfo) {
 	
 	if (length(rinfo[,1]) == 0) {
 		R.oo::throw.default("Runinfo table ", filename," does not contain a row for version ", 
-				simp$sim$version, " and paramID ", paramid, "(random seed: ", randomseed, ")!", sep="")
+				simp$sim$version, " and paramID ", paramid, " (random seed: ", randomseed, ")!", sep="")
 	}
 	return(rinfo)
 }
@@ -156,11 +162,16 @@ hl_getCapitalDataFile <- function(simp, ID=NULL, cellInitialiserColName = "CellI
 	# get Region CSV
 	world_xml_data <- XML::xmlToList(XML::xmlParse(worldLoaderFile))
 	world_xml_data <- unlist(world_xml_data)
-	world_data <- read.csv(paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
-		get_xmlfunction_parameter(unlist(world_xml_data), "regionCSV", ""), sep="/"))
+	world_data_filename <- paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
+			get_xmlfunction_parameter(unlist(world_xml_data), "regionCSV", ""), sep="/")
+	world_data <- read.csv(world_data_filename)
 	
 	# get CellInitialisers XML
 	if (is.null(ID)) ID = world_data$ID[1]
+	
+	if (!cellInitialiserColName %in% colnames(world_data)) {
+		R.oo::throw.default("CSV file ", world_data_filename, " does not contain column >", cellInitialiserColName, "<!")
+	}
 	cellinit_xml <- paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
 			input_tools_getParamValue(simp, world_data[world_data$ID == ID, cellInitialiserColName]), sep="/")
 
@@ -222,9 +233,9 @@ hl_printCapitalChangesTable <- function(simp) {
 	# find relevant factors:
 	# Get (relevant) institutions
 	
-	# TODO parse institution XMLs
+	# TODO parse institution XMLs - tricky to identify the right institution(s)
 	
-	capchanges <- read.csv(paste(simp$dirs$param$getparamdir(simp), craftyr:::hl_getBaseDirAdaptation(simp),
+	capchanges <- read.csv(paste(simp$dirs$param$getparamdir(simp, datatype="capitaldyns"),
 					as.character(input_csv_param_runs(simp, paramid = TRUE)[1,"capitalFactorsCSV"]), sep="/"))
 		
 	table <- xtable::xtable(capchanges,
