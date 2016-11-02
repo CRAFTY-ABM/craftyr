@@ -22,7 +22,7 @@ hl_regions_aftcomposition <- function(simp, dataname = "csv_cell_aggregated", fa
 	aftData$Proportion <- ave(aftData$AftNumbers, aftData$ID, aftData$Region, aftData$Tick, 
 			FUN =  function(.x) .x/sum(.x))
 	
-	p1 <- visualise_lines(simp, aftData, "Proportion", title = "Regional AFT composition",
+	p1 <- visualise_lines(simp = simp, data = aftData, y_column = "Proportion", title = "Regional AFT composition",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -54,7 +54,7 @@ hl_regions_demandandsupply <- function(simp, runid = simp$sim$runids[1], datanam
 	input_tools_load(simp, "csv_aggregated_demand")
 	input_tools_load(simp, "csv_aggregated_supply")
 	
-	datDemand <- data.frame(Tick=csv_aggregated_demand$Tick, Variable=csv_aggregated_demand$variable, 
+	datDemand <- data.frame(Tick=csv_aggregated_demand$Tick, Variable=csv_aggregated_demand$Service, 
 			Type="Demand", Value=csv_aggregated_demand$Demand, Region = csv_aggregated_demand$Region)
 
 	datSupply <- csv_aggregated_supply[csv_aggregated_supply$ID == runid,]
@@ -70,7 +70,7 @@ hl_regions_demandandsupply <- function(simp, runid = simp$sim$runids[1], datanam
 	combined <- aggregate(subset(combined, select=c("Value")),
 			by =list(Tick=combined[, "Tick"], ID=combined[,"Type"], 
 					Region = combined[,"Region"], Service = combined[,"Variable"]), FUN=sum)
-	p1 <- visualise_lines(simp, combined, "Value", title = title,
+	p1 <- visualise_lines(simp = simp, data = combined, y_column = "Value", title = title,
 			colour_column = "Service",
 			facet_column = "Region",
 			facet_ncol = facet_ncol,

@@ -36,7 +36,7 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 	## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 	
-	p1 <- visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
+	p1 <- visualise_lines(simp = simp, data = aftData, y_column = "Proportion", title = "Total AFT composition",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -89,7 +89,7 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	p1 <- visualise_lines(simp, d, "value", title = title,
+	p1 <- visualise_lines(simp = simp, data = d, y_column = "value", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = filename,
@@ -167,7 +167,7 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated",
 	combined <- combined[combined$Tick < simp$sim$endtick,]
 	
 	if(visualise) {
-		visualise_lines(simp, combined, "Value", title = title,
+		visualise_lines(simp = simp, data = combined, y_column = "Value", title = title,
 				colour_column = "Service",
 				linetype_column = "ID",
 				filename = filename,
@@ -223,7 +223,7 @@ hl_comp_demandsupplygap_agentparams <- function(simp, simps = input_tools_builds
 	data$Tick <- agentparams[data$ID]
 	
 	# Draw figure
-	p1 <- visualise_lines(simp, data, "Value", title = title,
+	p1 <- visualise_lines(simp = simp, data = data, y_column = "Value", title = title,
 			colour_column = "Service",
 			filename = filename,
 			alpha=0.7,
@@ -273,7 +273,7 @@ hl_comp_percentalsupply_perService <- function(simp, simps = input_tools_buildsi
 	data$Value <- 100 *data$Supply/data$Demand
 	
 	# Draw figure
-	p1 <- visualise_lines(simp, data, "Value", title = title,
+	p1 <- visualise_lines(simp = simp, data = data, y_column = "Value", title = title,
 			colour_column = "Service",
 			linetype_column = "ID",
 			filename = filename,

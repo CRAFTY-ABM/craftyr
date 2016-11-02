@@ -37,4 +37,7 @@ There does not seem to be a straigh-forward way to convert a gTree object back t
 \author{
 Sascha Holzhauer
 }
+\seealso{
+input_shapes_countries
+}
 

@@ -154,11 +154,13 @@ input_csv_param_demand <- function(simp) {
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_csv_param_productivities <- function(simp, aft, filenameprefix = "AftProduction_",
-		filenamepostfix = "_multi_medium") {
+input_csv_param_productivities <- function(simp, aft, filenameprefix = NULL,
+		filenamepostfix = NULL, filenameprefix_aftparams = "AftParams_",
+		filenamepostfix_aftparams = "", aftwisefolder = TRUE, servicesasrownames = FALSE) {
 	# try to retrieve filename from AFT param CSV:
 	aftParamIds <- hl_getAgentParamId(simp)
-	aftparamdata <- input_csv_param_agents(simp, aft)
+	aftparamdata <- input_csv_param_agents(simp, aft, filenameprefix = filenameprefix_aftparams,
+			filenamepostfix = filenamepostfix_aftparams)
 	filename <- aftparamdata[match(aftParamIds,aftparamdata$aftParamId), "productionCsvFile"]
 	
 	filename <- paste(simp$dirs$param$getparamdir(simp), hl_getBaseDirAdaptation(simp), 
@@ -167,13 +169,17 @@ input_csv_param_productivities <- function(simp, aft, filenameprefix = "AftProdu
 	futile.logger::flog.debug("Agent productivities > Filename retrieved from AFT param CSV: %s",
 				filename,
 				name = "craftyr.input_csv_param.R")
-	if (!file.exists(filename)) {
-		filename <- paste(simp$dirs$param$getparamdir(simp, datatype="productivities"), "/", aft, 
-				"/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
+	if (!file.exists(filename) || !is.null(filenameprefix) || !is.null(filenamepostfix)) {
+		filename <- paste(simp$dirs$param$getparamdir(simp, datatype="productivities"), "/", 
+				if (aftwisefolder) aft, "/", filenameprefix, aft, filenamepostfix, ".csv", sep="")
 	}
 	
 	shbasic::sh.checkFilename(filename)
 	capitalData <- utils::read.csv(filename)
+	if (servicesasrownames) {
+		rownames(capitalData) <- capitalData[,1]
+		capitalData <- capitalData[, -c(1)]
+	}
 	capitalData
 }
 #' Read agent specifc parameters

@@ -310,7 +310,7 @@ input_tools_constructFilenameList <- function(simp, datatype = NULL, dataname = 
 #' 
 #' @author Sascha Holzhauer
 #' @export
-input_tools_getModelInputFilenames <- function(simp, folders = input_tools_getModelInputDir(simp, datatype),
+input_tools_getModelInputFilenames <- function(simp, folders = simp$dirs$param$getparamdir(simp, datatype),
 		datatype = NULL,
 		dataname = NULL,
 		extension = NULL,

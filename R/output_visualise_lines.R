@@ -4,6 +4,7 @@
 #' 
 #' @param simp SIMulation Properties
 #' @param data data.frame or list that is rbinded to a data.frame
+#' @param x_column
 #' @param y_column
 #' @param title figure title
 #' @param colour_column column used to define colours
@@ -24,7 +25,7 @@
 #'
 #' @author Sascha Holzhauer
 #' @export
-visualise_lines <- function(simp, data, x_column= NULL, y_column, title = NULL,
+visualise_lines <- function(simp = simp, data = data, x_column= NULL, y_column, title = NULL,
 		colour_column = NULL, colour_legendtitle = colour_column, colour_legenditemnames = NULL,
 		linetype_column = NULL, linetype_legendtitle = linetype_column, linetype_legenditemnames = NULL,
 		facet_column = NULL, facet_ncol = 2, filename = paste(gsub(" ", "_", title), 
@@ -45,10 +46,18 @@ visualise_lines <- function(simp, data, x_column= NULL, y_column, title = NULL,
 	
 	scaleColourElem <- NULL
 	if (!is.null(colour_column)) {
-		scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
-				values = if (!is.null(simp$colours[[colour_column]])) simp$colours[[colour_column]] else 
-							settings_colours_getColors(number = length(unique(data[, colour_column]))),
-				 labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
+		if (!is.null(simp$fills[[colour_column]]) && 
+				length(simp$fills[[colour_column]]) >=  length(unique(data[, colour_column]))) {
+			warning("Not enough colours in simp$fills[[", colour_column, "]] (", 
+					length(simp$fills[[colour_column]]), " - needed: " , length(unique(data[, colour_column])), ")")
+			scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
+					values = simp$fills[[colour_column]],
+					labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
+		} else {
+			scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
+					values =  settings_colours_getColors(number = length(unique(data[, colour_column]))),
+					labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
+		}
 	}
 	
 	scaleLinetypeElem <- NULL

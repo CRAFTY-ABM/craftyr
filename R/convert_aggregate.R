@@ -52,7 +52,6 @@ convert_aggregate_demand <- function(simp, checkexists = TRUE, forceparam = FALS
 			futile.logger::flog.info("Using param data",
 					name = "craftyr.convert.aggregate.demand")
 			
-			simp$sim$filepartorder_demands <- c("regionalisation", "U", "scenario", "U", "datatype", "U", "regions")
 			demand <- input_csv_param_demand(simp)
 			demand <- lapply(demand, function(x) {
 						x$Region <- substr(x$filename[1],
@@ -66,7 +65,12 @@ convert_aggregate_demand <- function(simp, checkexists = TRUE, forceparam = FALS
 		
 		demand <- reshape2::melt(demand, id.vars=c("Region", "Tick"), variable.name = "Service",
 				value.name = "Demand")
-		demand$Service <- as.factor(simp$mdata$conversion$services[as.character(demand$Service)])
+		
+		demand$Service <- as.character(demand$Service)
+		demand$Service[as.character(demand$Service) %in% names(simp$mdata$conversion$services)] <- 
+				simp$mdata$conversion$services[as.character(demand$Service[
+						as.character(demand$Service) %in% names(simp$mdata$conversion$services)])]
+		demand$Service <- as.factor(demand$Service)
 		assign(demanddataname,demand)
 		input_tools_save(simp, demanddataname)
 	}
@@ -81,7 +85,8 @@ convert_aggregate_demand <- function(simp, checkexists = TRUE, forceparam = FALS
 #' 			\item{\code{\link{input_tools_load}}}}
 #' @param celldataname aggregated cell CSV data
 #' @param checkexists 
-#' @param supplydataname 
+#' @param supplydataname name for storing supply data
+#' @param sourcedataname name for retrieving data (rData)
 #' @return -
 #' 
 #' @author Sascha Holzhauer

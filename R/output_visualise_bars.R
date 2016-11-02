@@ -37,10 +37,21 @@ visualise_bars <- function(simp, data, y_column, title = NULL,
 	
 	scaleFillElem <- NULL
 	if (!is.null(fill_column)) {
-		scaleFillElem <- ggplot2::scale_fill_manual(name=fill_legendtitle, 
-				values = if (!is.null(simp$fills[[fill_column]])) simp$fills[[fill_column]] else 
-							settings_colours_getColors(number = length(unique(data[, fill_column]))),
-				 labels = if(!is.null(fill_legenditemnames)) fill_legenditemnames else ggplot2::waiver())
+		
+		if (!is.null(simp$fills[[fill_column]]) && 
+								length(simp$fills[[fill_column]]) >=  length(unique(data[, fill_column]))) {
+				scaleFillElem <- ggplot2::scale_fill_manual(name=fill_legendtitle, 
+						values = simp$fills[[fill_column]],
+						labels = if(!is.null(fill_legenditemnames)) fill_legenditemnames else ggplot2::waiver())
+		} else {
+			if (!is.null(simp$fills[[fill_column]])) {
+				warning("Not enough colours in simp$fills[[", fill_column, "]] (", 
+					length(simp$fills[[fill_column]]), " - needed: " , length(unique(data[, fill_column])), ")")
+			}
+			scaleFillElem <- ggplot2::scale_fill_manual(name=fill_legendtitle, 
+				values =  settings_colours_getColors(number = length(unique(data[, fill_column]))),
+				labels = if(!is.null(fill_legenditemnames)) fill_legenditemnames else ggplot2::waiver())
+	 	}
 	}
 	
 	facetElem = NULL

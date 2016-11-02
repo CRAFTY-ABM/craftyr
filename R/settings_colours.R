@@ -1,67 +1,23 @@
-#' Return AFT colours
-#' @return coolour pallete
+
+#' Get colour palette of requested size.
 #' 
-#' @author Sascha Holzhauer
-#' @export
-settings_colours_getAftColours <- function() {
-	aftColours <- c("-1" = "black",
-					"0" = "orange1",
-					"1" = "lightgoldenrod",
-					"2" = "indianred4",
-					"3" = "indianred1",
-					"4" = "green4",
-					"5" = "royalblue2",
-					"6" = "darkviolet")
-}
-#' Return AFT colours
-#' @return coolour pallete
-#' 
-#' @author Sascha Holzhauer
-#' @export
-settings_colours_getServiceColours <- function() {
-	serviceColours <- c("-1" = "black",
-			"Meat" 			= "indianred1",
-			"Cereal" 	 	= "orange1",
-			"Conservation" 	= "royalblue2",
-			"Recreation" 	= "royalblue2",
-			"Timber" 		= "green4",
-			"Biofuel" 		= "darkviolet")
-}
-#' Return AFT colours
-#' @return coolour pallete
-#' 
-#' @author Sascha Holzhauer
-#' @export
-settings_colours_getCapitalColours <- function() {
-	aftColours <- c("-1" = "white",
-			"Cprod" = "orange1",
-			"Fprod" = "darkgreen",
-			"Infra" = "violet",
-			"Grass" = "indianred1",
-			"Nat" 	= "green4",
-			"Econ" 	= "blue")
-}
-#' Get colour palette of requested dimension
+#' Applied if colours are not defined in \code{simp$fills} or \code{simp$colours} 
 #' @param number 
 #' @param dim  
 #' @return colour palette
 #' 
 #' @author Sascha Holzhauer
 #' @export
-settings_colours_getColors <- function(number, dim=1) {
-	if (dim == 1) {
-		colors = rev(RColorBrewer::brewer.pal(number, "Set1"))
-	}
-	if (dim == 2) {
-		colors = rev(RColorBrewer::brewer.pal(number, "Accent"))
-	}
-	colors
+settings_colours_getColors <- function(number, dim=1, set="Set1") {
+	colors = rev(RColorBrewer::brewer.pal(number, set))
 }
 #' Return requested colour palette
 #' @param SIMP
 #' @param number number of required colours
 #' @param set one of c("Topo","RedGreen","GreenRed") or one for brewer.pal
 #' @return colour palette
+#' 
+#' @deprecated
 #' 
 #' @author Sascha Holzhauer
 #' @export
@@ -75,7 +31,7 @@ settings_colours_getColorSet <- function(simp, number=9, set="Set1") {
 	} else if (set=="Topo") {
 		colors = fBasics::topoPalette(number)
 	} else if (set=="RedGreen") {
-		colors = grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
+		colors = grDevices::rainbow8(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1)
 	} else if (set=="GreenRed") {
 		colors = rev(grDevices::rainbow(number, s = 1, v = 1, start = 1, end = 2/6, alpha = 1))
 	} else  {

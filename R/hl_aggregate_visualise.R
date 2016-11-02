@@ -27,7 +27,8 @@ hl_aftcomposition <- function(simp, dataname = "csv_cell_aggregated", returnplot
 		## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 	
-	p1 <- visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
+	p1 <- visualise_lines(simp = simp, data = aftData, y_colum = "Proportion", 
+			title = "Total AFT composition",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -79,7 +80,7 @@ hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_n
 	prodData$Service <- simp$mdata$conversion$services[prodData$Service]
 	prodData$AFT <- simp$mdata$aftNames[match(prodData$AFT, names(simp$mdata$aftNames))]
 	
-	p1 <- visualise_lines(simp, prodData, "Production", title = "Service Production",
+	p1 <- visualise_lines(simp = simp, data = prodData, y_column = "Production", title = "Service Production",
 			colour_column = "Service",
 			#colour_legenditemnames = simp$mdata$services,
 			linetype_column = "ID",
@@ -93,8 +94,7 @@ hl_serviceproduction <- function(simp, dataname = "csv_cell_aggregated", facet_n
 			returnplot = returnplot)
 	if (returnplot) return(p1)
 }
-#' Load from csv data, aggregate, and plot AFT competitiveness
-#' 
+#' Load from csv data, aggregate, and plot AFT competitiveness over time (only for ticks cell data is available for) 
 #' @param simp 
 #' @param dataname
 #' @param returnplot if true the ggplot object is returned
@@ -119,7 +119,8 @@ hl_competitiveness <- function(simp, dataname = "csv_cell_aggregated", returnplo
 		## does not work
 	#reshape2::melt(reshape2::dcast(aftData, Tick~AFT, value.var="Proportion",fill=0), id.var="Date")
 		
-	p1 <- visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness (invalid mean!)",
+	p1 <- visualise_lines(simp = simp, data = aftData, y_column = "Competitiveness", 
+			title = "AFT Competitiveness (invalid mean!)",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "ID",
@@ -169,7 +170,8 @@ hl_competitivenessPerRegion <- function(simp, dataname = "csv_cell_aggregated", 
 		linetype_legenditemnames = NULL
 		facet_column = "Region"
 	}
-	p1 <- visualise_lines(simp, aftData, "Competitiveness", title = "AFT Competitiveness",
+	p1 <- visualise_lines(simp = simp, data = aftData, y_column = "Competitiveness", 
+			title = "AFT Competitiveness",
 			colour_column = "AFT",
 			colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = linetype_column,
@@ -216,7 +218,8 @@ hl_demandsupply <- function(simp, runid = simp$sim$runids, dataname = "csv_cell_
 	combined <- rbind(datDemand, datSupply)
 	combined <- aggregate(subset(combined, select=c("Value")),
 			by =list(Tick=combined[, "Tick"], ID=combined[,"Type"], Service = combined[,"Variable"]), FUN=sum)
-	p1 <- visualise_lines(simp, combined, "Value", title = paste("Demand & Supply", simp$sim$rundesc[runid]),
+	p1 <- visualise_lines(simp = simp, data = combined, y_column= "Value", 
+			title = paste("Demand & Supply", simp$sim$rundesc[runid]),
 			colour_column = "Service",
 			linetype_column = "ID",
 			filename = paste("TotalDemandAndSupply_",simp$sim$rundesc[runid], sep=""),
@@ -270,7 +273,7 @@ hl_lines_from_csv <- function(simp, dataname, datatype, datacolumns = NULL, line
 	}
 	
 	
-	p1 <- visualise_lines(simp, data, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
+	p1 <- visualise_lines(simp = simp, data = d, y_column = "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
 			colour_column = colourcol,
 			linetype_column = linetypecol,
 			facet_column = facetcol,
@@ -522,7 +525,7 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	p1 <- visualise_lines(simp, d, "value", title = paste("Aft Composition", if (operator == "mean") " (potentially invalid mean)", sep=""),
+	p1 <- visualise_lines(simp = simp, data = d, y_column = "value", title = paste("Aft Composition", if (operator == "mean") " (potentially invalid mean)", sep=""),
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = "AftComposition",
@@ -530,7 +533,7 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 			returnplot = returnplot)
 	if (returnplot) return(p1)
 }
-#' Yearly aggregated AFT competitiveness
+#' Yearly aggregated AFT competitiveness (from special competitiveness output)
 #' 
 #' @param simp 
 #' @param dataname
@@ -585,7 +588,8 @@ hl_aggregate_aftcompetitiveness <- function(simp, dataname = "csv_aggregateAFTCo
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	p1 <- visualise_lines(simp, d, "value", title = paste("Aft Competitiveness", if (operator == "mean") " (potentially invalid mean)", sep=""),
+	p1 <- visualise_lines(simp = simp, data = d, y_column = "value", 
+			title = paste("Aft Competitiveness", if (operator == "mean") " (potentially invalid mean)", sep=""),
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = "AftCompetitiveness",
@@ -613,7 +617,7 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 					Service=data[,"Service"], Type=data[,"Type"]),
 			FUN=sum)
 	
-	p1 <- visualise_lines(simp, data, "Value", title = title,
+	p1 <- visualise_lines(simp = simp, data = data, y_column = "Value", title = title,
 			colour_column = "Service",
 			# TODO use simp$mdata$services or document setting NULL
 			colour_legenditemnames = simp$mdata$conversion$services,
@@ -948,7 +952,8 @@ hl_aggregate_sa <- function(simp, celldataname = "csv_LandUseIndex_rbinded",
 						Region = region)}, tick = tick, data = data, type = type))
 			}, data = data, type = type, regions = regions))
 
-	p1 <- visualise_lines(simp, scoresdata, "Value", title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
+	p1 <- visualise_lines(simp = simp, data = scoresdata, y_column = "Value", 
+			title = paste(titleprefix, simp$sim$rundesc[simp$sim$runid]),
 			colour_column = colourcol,
 			linetype_column = linetypecol,
 			filename = paste(filenameprefix, "_", simp$sim$rundesc[simp$sim$runid], sep=""),
@@ -971,9 +976,9 @@ hl_connectedness <- function(simp, dataname = "csv_aggregated_connectivity",
 		percent = NULL, returnplot = FALSE) {
 
 	# dataname = "dataAggregateConnectivity"
-	p1 <- craftyr::hl_lines_from_csv(simp, dataname = dataname, 
+	p1 <- hl_lines_from_csv(simp, dataname = dataname, 
 			datatype = datatype, datacolumns = aftcolumns, linetypecol = "Region",
-			colourcol = "Type", titleprefix = "Connectedness", filenameprefix = "Connectedness288", 
+			colourcol = "Type", titleprefix = "Connectedness", filenameprefix = "Connectedness", 
 			percent = percent, returnplot = FALSE)
 	if (returnplot) return(p1)
 }
@@ -1019,7 +1024,8 @@ hl_normalisedutilities <- function(simp,
 	data$Value <- data$Value / sum(num$Cells)
 	
 	if (!is.null(filenamePlotPercellDemand)) {
-		p1 <- visualise_lines(simp, data, "Value", title = "Per-cell Demand & Supply",
+		p1 <- visualise_lines(simp = simp, data = data, y_column = "Value", 
+				title = "Per-cell Demand & Supply",
 				colour_column = "Service",
 				linetype_column = "Type",
 				filename = filenamePlotPercellDemand,
@@ -1031,7 +1037,7 @@ hl_normalisedutilities <- function(simp,
 	data <- data[data$Type == "Demand",]
 	normalised <- merge(marginalUtils, data)
 	normalised$Value <-  normalised$V / normalised$Value
-	p1 <- visualise_lines(simp, normalised, "Value", title = "Demand-normalised per-cell Utilities",
+	p1 <- visualise_lines(simp = simp, data = normalised, y_column = "Value", title = "Demand-normalised per-cell Utilities",
 			colour_column = "Service",
 			linetype_column = "Type",
 			filename = filenameNormalisedResiduals,
@@ -1067,7 +1073,7 @@ hl_aftcomposisition_file <- function(simp, csvfilename, title = "AftComposition"
 	names(aftNumbers) <- simp$mdata$aftNames
 	d$AFT <- aftNumbers[as.character(d$AFT)]
 	
-	p1 <- visualise_lines(simp, d, "value", title = title,
+	p1 <- visualise_lines(simp = simp, data = d, y_column = "value", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			filename = figurefilename,
 			alpha=0.7,

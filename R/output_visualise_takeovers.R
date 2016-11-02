@@ -266,7 +266,7 @@ output_visualise_aftFluctuations <- function(simp,
 	names(aftNumbers) <- simp$mdata$aftNames
 	fluctuations$AFT <- aftNumbers[levels(fluctuations$AFT)[fluctuations$AFT]]
 
-	p1 <- visualise_lines(simp, fluctuations, "sum", title = title,
+	p1 <- visualise_lines(simp = simp, data = fluctuations, y_column = "sum", title = title,
 			colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 			linetype_column = "Runid",
 			filename = filename,

@@ -25,7 +25,7 @@ hl_aftmap <- function(simp, dataname = "csv_LandUseIndex_rbinded",
 	
 	if (!secondtick %in% cdata$Tick) {
 		futile.logger::flog.error("Data does not contain second tick (%d)!",
-				firsttick,
+				secondtick,
 				name = "craftyr.hl_maps.R")
 	}
 	

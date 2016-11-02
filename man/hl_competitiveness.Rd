@@ -2,7 +2,7 @@
 % Please edit documentation in R/hl_aggregate_visualise.R
 \name{hl_competitiveness}
 \alias{hl_competitiveness}
-\title{Load from csv data, aggregate, and plot AFT competitiveness}
+\title{Load from csv data, aggregate, and plot AFT competitiveness over time (only for ticks cell data is available for)}
 \usage{
 hl_competitiveness(simp, dataname = "csv_cell_aggregated",
   returnplot = FALSE)
@@ -16,7 +16,7 @@ hl_competitiveness(simp, dataname = "csv_cell_aggregated",
 plot
 }
 \description{
-Load from csv data, aggregate, and plot AFT competitiveness
+Load from csv data, aggregate, and plot AFT competitiveness over time (only for ticks cell data is available for)
 }
 \author{
 Sascha Holzhauer

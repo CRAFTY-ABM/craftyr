@@ -47,6 +47,10 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 							# df <- fileinfos[[1]][1,]
 							return <- tryCatch({
 								futile.logger::flog.debug("Read file %s...", df[,"Filename"], name="craftyr.input.csv")
+								
+								if (!file.exists(df[,"Filename"])) {
+									R.oo::throw.default("The required filename ", df[,"Filename"], " does not exist!")
+								}
 								data <- utils::read.csv(df[,"Filename"], na.strings = simp$csv$nastrings)
 								if (length(data[,1]) == 0) {
 									warnings("CSV file ", df[,"Filename"] , " does not contain any rows!")

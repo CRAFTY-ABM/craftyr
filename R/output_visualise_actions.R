@@ -160,7 +160,7 @@ visualise_actions <- function(simp,
 		actionfillcolours <- actionfillcolours[order(names(actionfillcolours))]
 		if(any(!levels(data$Action[!is.na(data$Action)]) %in% names(actionfillcolours))) {
 			R.oo::throw.default(sprintf("actionfillcolours (%s) does not contain all actions in data (%s)!",
-							names(actionfillcolours),
+							paste(names(actionfillcolours), collapse="/"),
 							paste(levels(data$Action[!is.na(data$Action)]), collapse="/")))
 		}
 		actionfillcolours <- actionfillcolours[names(actionfillcolours) %in% levels(data$Action[!is.na(data$Action)])]

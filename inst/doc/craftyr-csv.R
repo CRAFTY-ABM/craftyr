@@ -147,7 +147,7 @@ aftData$AFT <- as.factor(aftData$AFT)
 aftData$Proportion <- ave(aftData$AftNumbers, aftData$ID, aftData$Tick, FUN =  function(.x) .x/sum(.x))
 aftData$Number <- NULL
 
-visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
+visualise_lines(simp = simp, data = aftData, y_column="Proportion", title = "Total AFT composition",
 		colour_column = "AFT",
 		colour_legenditemnames = simp$mdata$aftNames,
 		linetype_column = "ID",
@@ -184,7 +184,7 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 #  					Region = region)}, tick = tick, data = data, type = type))
 #  		}, data = data, type = "Moran", regions = simp$sim$regions))
 #  
-#  visualise_lines(simp, scoresdata, "Value", title = paste("Spatial Autocorrelation (Moran)", simp$sim$rundesc[simp$sim$runid]),
+#  visualise_lines(simp = simp, data = scoresdata, y_column = "Value", title = paste("Spatial Autocorrelation (Moran)", simp$sim$rundesc[simp$sim$runid]),
 #  		linetype_column = "Region",
 #  		filename = paste("Spatial Autocorrelation (Moran)", "_", simp$sim$rundesc[simp$sim$runid], sep=""))
 
@@ -229,7 +229,7 @@ visualise_lines(simp, aftData, "Proportion", title = "Total AFT composition",
 #  names(aftNumbers) <- simp$mdata$aftNames
 #  d$AFT <- aftNumbers[as.character(d$AFT)]
 #  
-#  visualise_lines(simp, d, "value", title = "AftCompositionInvalid",
+#  visualise_lines(simp = simp, data = d, y_column = "value", title = "AftCompositionInvalid",
 #  		colour_column = "AFT", colour_legenditemnames = simp$mdata$aftNames,
 #  		filename = "AftCompositionInvalid",
 #  		alpha=0.7)
@@ -251,7 +251,7 @@ data <- aggregate(subset(data, select=c("Value")),
 				Service=data[,"Service"], Type=data[,"Type"]),
 		FUN=sum)
 
-visualise_lines(simp, data, "Value", title = "Aggregated Service Supply & Demand",
+visualise_lines(simp = simp, data = data, y_column = "Value", title = "Aggregated Service Supply & Demand",
 		colour_column = "Service",
 		linetype_column = "Type",
 		filename = paste("AggregateServiceDemand", 
@@ -381,7 +381,7 @@ visualise_bars(simp, data = melteddat, y_column = "Number", title = "Giving In S
 
 ## ---- eval=FALSE, dev="png", fig.width=7, fig.show='hold', results="hide"----
 #  input_tools_load(simp, "csv_MarginalUtilitites_melt")
-#  visualise_lines(simp, data, "value", title = "Marginal Utilities",
+#  visualise_lines(simp = simp, data = data, y_column = "value", title = "Marginal Utilities",
 #  		colour_column = "Service",
 #  		filename = paste("MarginalUtilities", sep=""),
 #  		alpha=0.7)
