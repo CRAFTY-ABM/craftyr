@@ -14,6 +14,8 @@ hl_printCompetitionFunctions(simp, srcfilename = NULL,
 \arguments{
 \item{simp}{}
 
+\item{srcfilename}{XML filename without extension (must be .xml)}
+
 \item{filename}{filename for figure}
 
 \item{returnplot}{if true the ggplot object is returned}

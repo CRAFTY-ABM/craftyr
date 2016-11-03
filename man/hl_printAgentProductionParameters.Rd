@@ -5,7 +5,9 @@
 \title{Print AFT productivities}
 \usage{
 hl_printAgentProductionParameters(simp, filenameprefix = "AftProduction_",
-  filenamepostfix = "_multi_medium", heading = "subsubsection")
+  filenamepostfix = "_multi_medium", aftwisefolder = TRUE,
+  heading = "subsubsection", filenameprefix_aftparams = "AftParams_",
+  filenamepostfix_aftparams = "")
 }
 \arguments{
 \item{simp}{}

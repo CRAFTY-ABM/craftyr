@@ -8,8 +8,12 @@
 #' 
 #' @author Sascha Holzhauer
 #' @export
-settings_colours_getColors <- function(number, dim=1, set="Set1") {
-	colors = rev(RColorBrewer::brewer.pal(number, set))
+settings_colours_getColors <- function(simp, number, dim=1, set="Set1") {
+	if (set %in% names(simp$colours)) {
+		return(simp$colours[[set]])
+	} else {
+		return(rev(RColorBrewer::brewer.pal(number, set)))
+	}
 }
 #' Return requested colour palette
 #' @param SIMP

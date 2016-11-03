@@ -145,8 +145,8 @@ param_mergeDefaultSimp <- function(simp = list()) {
 											"Grass" = "indianred1",
 											"Nat" 	= "green4",
 											"Econ" 	= "blue")
-	defsimp$colours$Region 			<- settings_colours_getColors(number = 12, set= "Set3")
-	defsimp$colours$Runid 			<- settings_colours_getColors(number = 12, set= "Set3")
+	defsimp$colours$Region 			<- settings_colours_getColors(defsimp, number = 12, set= "Set3")
+	defsimp$colours$Runid 			<- settings_colours_getColors(defsimp, number = 12, set= "Set3")
 	defsimp$colours$GenericFun		<- settings_colours_getColors
 	defsimp$colours$binarycolours 	<- c("skyblue1", "black")
 	defsimp$colours$defaultset		<- "Dark2"
