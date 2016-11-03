@@ -55,7 +55,7 @@ visualise_lines <- function(simp = simp, data = data, x_column= NULL, y_column, 
 					labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
 		} else {
 			scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
-					values =  settings_colours_getColors(number = length(unique(data[, colour_column]))),
+					values =  settings_colours_getColors(simp, number = length(unique(data[, colour_column]))),
 					labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
 		}
 	}

@@ -155,7 +155,7 @@ visualise_actions <- function(simp,
 	data$Action <- factor(data$Action)
 	# handle colours:
 	if (is.null(actionfillcolours)) {
-		actionfillcolours <- settings_colours_getColors(number = max(3,length(unique(actiondata$Action))))
+		actionfillcolours <- settings_colours_getColors(simp, number = max(3,length(unique(actiondata$Action))))
 	} else {
 		actionfillcolours <- actionfillcolours[order(names(actionfillcolours))]
 		if(any(!levels(data$Action[!is.na(data$Action)]) %in% names(actionfillcolours))) {

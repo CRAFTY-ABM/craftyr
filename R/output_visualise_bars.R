@@ -49,7 +49,7 @@ visualise_bars <- function(simp, data, y_column, title = NULL,
 					length(simp$fills[[fill_column]]), " - needed: " , length(unique(data[, fill_column])), ")")
 			}
 			scaleFillElem <- ggplot2::scale_fill_manual(name=fill_legendtitle, 
-				values =  settings_colours_getColors(number = length(unique(data[, fill_column]))),
+				values =  settings_colours_getColors(simp, number = length(unique(data[, fill_column]))),
 				labels = if(!is.null(fill_legenditemnames)) fill_legenditemnames else ggplot2::waiver())
 	 	}
 	}
