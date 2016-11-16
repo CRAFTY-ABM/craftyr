@@ -5,12 +5,15 @@
 \title{Yearly aggregated demand and supply}
 \usage{
 hl_aggregate_demandsupply(simp, dataname = "csv_aggregateServiceDemand",
-  title = "Aggregated Service Supply & Demand", returnplot = FALSE)
+  title = "Aggregated Service Supply & Demand", returnplot = FALSE,
+  services = NULL)
 }
 \arguments{
 \item{simp}{}
 
 \item{returnplot}{if true the ggplot object is returned}
+
+\item{services}{vector of services labels to visualise. If NULL, all services are displayed}
 }
 \value{
 timeline plot

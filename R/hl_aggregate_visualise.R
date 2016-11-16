@@ -499,7 +499,7 @@ hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 #' @author Sascha Holzhauer
 #' @export
 hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTComposition", 
-		includeunmanaged = FALSE, aggcelldataname = "dataAgg", returnplot = FALSE) {
+		includeunmanaged = FALSE, aggcelldataname = "dataAgg", returnplot = FALSE, afts = NULL) {
 	
 	d <- input_processAftComposition(simp, dataname = dataname)
 	operator = if (any(d$value > 1.0)) "sum" else "mean"
@@ -520,6 +520,11 @@ hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTCompo
 				}, cellnum = cellnum)
 		
 	}
+	# afts <- c("COF_Cereal", "NCOF_Livestock")
+	if (!is.null(afts)) {
+		d <- d[d$AFT %in% afts,]
+	}
+	
 	# substitute AFT names by AFT ID
 	aftNumbers <- names(simp$mdata$aftNames)
 	names(aftNumbers) <- simp$mdata$aftNames
@@ -601,12 +606,13 @@ hl_aggregate_aftcompetitiveness <- function(simp, dataname = "csv_aggregateAFTCo
 #' @param simp 
 #' @param dataname
 #' @param returnplot if true the ggplot object is returned
+#' @param services vector of services labels to visualise. If NULL, all services are displayed
 #' @return timeline plot
 #' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDemand",
-		title = "Aggregated Service Supply & Demand", returnplot = FALSE) {
+		title = "Aggregated Service Supply & Demand", returnplot = FALSE, services = NULL) {
 	input_tools_load(simp, dataname)
 	data <- convert_aggregate_meltsupplydemand(simp, get(dataname))
 	
@@ -616,6 +622,10 @@ hl_aggregate_demandsupply <- function(simp, dataname = "csv_aggregateServiceDema
 					Tick=data[, "Tick"],  Scenario = data[,"Scenario"],
 					Service=data[,"Service"], Type=data[,"Type"]),
 			FUN=sum)
+	
+	if (!is.null(services)) {
+		data <- data[data$Service %in% services, ]
+	}
 	
 	p1 <- visualise_lines(simp = simp, data = data, y_column = "Value", title = title,
 			colour_column = "Service",

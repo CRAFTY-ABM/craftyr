@@ -48,12 +48,15 @@ visualise_lines <- function(simp = simp, data = data, x_column= NULL, y_column, 
 	if (!is.null(colour_column)) {
 		if (!is.null(simp$fills[[colour_column]]) && 
 				length(simp$fills[[colour_column]]) >=  length(unique(data[, colour_column]))) {
-			warning("Not enough colours in simp$fills[[", colour_column, "]] (", 
-					length(simp$fills[[colour_column]]), " - needed: " , length(unique(data[, colour_column])), ")")
 			scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
 					values = simp$fills[[colour_column]],
 					labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
 		} else {
+			if (!is.null(simp$fills[[colour_column]]) && 
+					length(simp$fills[[colour_column]]) <  length(unique(data[, colour_column]))) {
+				warning("Not enough colours in simp$fills[[", colour_column, "]] (", 
+						length(simp$fills[[colour_column]]), " - needed: " , length(unique(data[, colour_column])), ")")
+			}
 			scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
 					values =  settings_colours_getColors(simp, number = length(unique(data[, colour_column]))),
 					labels = if(!is.null(colour_legenditemnames)) colour_legenditemnames else ggplot2::waiver())
