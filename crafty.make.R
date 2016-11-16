@@ -1,6 +1,6 @@
 library(roxygen2)
 library("devtools")
-full <- TRUE
+full <- FALSE
 
 # has_devel() 	# does not work because of 'C:\Program' is not recognized as an internal or 
 # external command, operable program or batch file.
@@ -29,7 +29,7 @@ if (full) {
 
 install(pkgsName)
 # devtools::install_bitbucket("geoslurg/craftyr@default")
-# for eddie (use qlogin session!):
+# for eddie (use qlogin session: qlogin -l h_vmem=2G):
 # module load R/3.2.2
 # R
 # .libPaths(.libPaths()[2])

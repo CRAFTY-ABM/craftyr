@@ -328,6 +328,7 @@ input_tools_getModelInputFilenames <- function(simp, folders = simp$dirs$param$g
 #' @param simp 
 #' @param object object name as character
 #' 
+#' @family storing data
 #' @author Sascha Holzhauer
 #' @export
 input_tools_save <- function(simp, object) {
@@ -364,6 +365,7 @@ input_tools_checkexists <- function(simp, objectName) {
 #' }
 #' @param objectName 
 #' 
+#' @family storing data
 #' @author Sascha Holzhauer
 #' @export
 input_tools_load <- function(simp, objectName, ...) {
