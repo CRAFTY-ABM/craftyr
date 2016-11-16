@@ -141,7 +141,11 @@ visualise_actions <- function(simp,
 	}
 	
 	
-	data <- merge(actiondata, monitordata, all = TRUE)
+	if (!is.null(monitordata)) {
+		data <- merge(actiondata, monitordata, all = TRUE)	
+	} else {
+		data <- actiondata
+	}
 	
 	if (!is.null(alpha_column)) {
 		data[,alpha_column] <- factor(data[,alpha_column])
@@ -173,10 +177,13 @@ visualise_actions <- function(simp,
 				values = c(actionfillcolours))
 		
 	# Monitored data:
-	scaleColourElem <- ggplot2::scale_colour_manual(name=colour_column, 
-			values = c(monitorcolours),
-			labels =  ggplot2::waiver())
-		
+	if (!is.null(monitordata)) {
+		scaleColourElem <- ggplot2::scale_colour_manual(name=colour_column, 
+				values = c(monitorcolours),
+				labels =  ggplot2::waiver())
+	} else {
+		scaleColourElem <- NULL
+	}
 	
 	# facets / order facets:
 	facetElem <- ggplot2::facet_wrap(as.formula(paste("~", facet_column)), ncol = facet_ncol, scales="free_y")
@@ -188,7 +195,9 @@ visualise_actions <- function(simp,
 	
 	# handle action symbol size:
 	if (!is.null(size_column)) {
-		data[,size_column]	<- as.numeric(levels(data[,size_column])[data[,size_column]])
+		if (is.factor(data[,size_column])) {
+			data[,size_column]	<- as.numeric(levels(data[,size_column])[data[,size_column]])
+		}
 		data[is.na(data[,size_column]),size_column]	<- mean(data[,size_column], na.rm = TRUE) 
 	}
 	
@@ -210,9 +219,11 @@ visualise_actions <- function(simp,
 						linetype = linetype_column_measures, 
 						colour = colour_column)
 					)
-	} else {
+	} else if (!is.null(monitordata)){
 		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column_measure, 
 						colour = colour_column))
+	} else {
+		lineElemMeasures <- NULL
 	}
 	
 	p1 <- ggplot2::ggplot() +
