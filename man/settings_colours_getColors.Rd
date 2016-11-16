@@ -4,7 +4,7 @@
 \alias{settings_colours_getColors}
 \title{Get colour palette of requested size.}
 \usage{
-settings_colours_getColors(number, dim = 1, set = "Set1")
+settings_colours_getColors(simp, number, dim = 1, set = "Set1")
 }
 \arguments{
 \item{number}{}

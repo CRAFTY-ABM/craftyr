@@ -6,9 +6,14 @@
 \usage{
 metric_agg_regionalsupply_efficiency(simp, service = NULL,
   datanamesupply = "csv_aggregated_supply",
-  datanameaft = "csv_aggregateAFTComposition", asvector = FALSE)
+  datanameaft = "csv_aggregateAFTComposition",
+  filenameprefix = "AftProduction_", filenamepostfix = "_multi_medium",
+  filenameprefix_aftparams = "AftParams_", filenamepostfix_aftparams = "",
+  aftwisefolder = TRUE, asvector = FALSE)
 }
 \arguments{
+\item{simp}{SIMulation Properties}
+
 \item{service}{the service to calculate the metric for. If \code{NULL} the mean across services is returned.}
 
 \item{datanamesupply}{}

@@ -357,12 +357,16 @@ metric_aggaft_diversity_simpson <- function(simp, region = NULL, dataname = "csv
 #' @param datanameaft
 #' @param asvector if \code{TRUE} metric is returned as named vector
 #' @return data.frame with cols Metric, Ticks and Value or named vector (ticks) of metric when \code{asvector == TRUE}
+#' @inheritParams input_csv_param_productivities
 #' 
 #' @author Sascha Holzhauer
 #' @export
 metric_agg_regionalsupply_efficiency <- function(simp, service = NULL, 
 		datanamesupply = "csv_aggregated_supply",
 		datanameaft = "csv_aggregateAFTComposition",
+		filenameprefix = "AftProduction_",
+		filenamepostfix = "_multi_medium",  filenameprefix_aftparams = "AftParams_",
+		filenamepostfix_aftparams = "", aftwisefolder = TRUE,		
 		asvector = FALSE) {
 	
 	# get regional service supply
@@ -379,8 +383,10 @@ metric_agg_regionalsupply_efficiency <- function(simp, service = NULL,
 	for (aft in simp$mdata$aftNames[-1]) {
 		# aft = afts[3]
 		productivities <- input_csv_param_productivities(simp, aft = aft, 
-				filenameprefix = "AftProduction_",
-				filenamepostfix = "_multi_medium")
+				filenameprefix = filenameprefix,
+				filenamepostfix = filenamepostfix,
+				filenameprefix_aftparams = filenameprefix_aftparams,
+				filenamepostfix_aftparams =  filenamepostfix_aftparams, aftwisefolder = TRUE)
 		for (service_ in productivities[productivities$Production > 0, "X"]) {
 			producingAFTs[[service_]][length(producingAFTs[[service_]]) + 1] <- aft
 		}
