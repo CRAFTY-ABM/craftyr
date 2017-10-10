@@ -89,7 +89,7 @@ input_raster_output <- function(simp,
 			tickinterval = tickinterval)
 
 	listnames <- names(files)
-	mapply(function(fileinfovector, name) {
+	data <- mapply(function(fileinfovector, name) {
 				futile.logger::flog.debug("Handle directory %s...\n",
 						name,
 						name="crafy.input.raster")

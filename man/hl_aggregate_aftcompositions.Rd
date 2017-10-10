@@ -6,7 +6,7 @@
 \usage{
 hl_aggregate_aftcompositions(simp, dataname = "csv_aggregateAFTComposition",
   includeunmanaged = FALSE, aggcelldataname = "dataAgg",
-  returnplot = FALSE)
+  returnplot = FALSE, afts = NULL)
 }
 \arguments{
 \item{simp}{}
@@ -24,5 +24,8 @@ Yearly aggregated AFT composition
 }
 \author{
 Sascha Holzhauer
+}
+\seealso{
+hl_comp_cell_aftcomposition
 }
 

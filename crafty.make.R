@@ -6,7 +6,7 @@ full <- FALSE
 # external command, operable program or batch file.
 
 pkgsName <- "craftyr"
-setwd("C:/Data/LURG/workspace/")
+setwd("/daten/LURG/workspace/")
 
 #create(pkgsName)
 

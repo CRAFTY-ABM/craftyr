@@ -97,6 +97,7 @@ hl_printAgentParameters <- function(simp, filenameprefix  = "AftParams_",
 	# print table
 	colnames(agentparams) <- gsub("givingUp", "GU", colnames(agentparams), fixed = TRUE)
 	colnames(agentparams) <- gsub("givingIn", "GI", colnames(agentparams), fixed = TRUE)
+	colnames(agentparams) <- gsub("Dist", "D-", colnames(agentparams), fixed = TRUE)
 	colnames(agentparams) <- gsub("serviceLevelNoise", "prodNoise", colnames(agentparams), fixed = TRUE)
 	
 	if (returnDataFrame) {

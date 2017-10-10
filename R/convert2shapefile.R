@@ -4,17 +4,23 @@
 #' @param sip 
 #' @param indir 
 #' @param outdir 
+#' @param regexcountry regular expression to extract country number from CSV filename.
+#' 			Alternative to extract country code: "(?<=_)(.*)(?=\\.)",
 #' @param countryCodesFile 
 #' @return shapefile
 #' 
 #' @author Sascha Holzhauer
 #' @export
 convert_csv2shapefile <- function(sip, indir, outdir, 
-		countryCodesFile = system.file("extdata", "various/CountryCodeNumberMapping.csv", package="crafty")) {
+		regexcountry = "\\d+",
+		countryCodesFile = system.file("extdata", "various/CountryCodeNumberMapping.csv", package="craftyr")) {
 	
-	countryCodes <- read.csv(countryCodesFile)
+	countryCodes <- NULL
+	if (!is.null(countryCodesFile)) 
+		countryCodes <- read.csv(countryCodesFile)
 
 	for (file in list.files(indir, pattern="*.csv")) {
+		# file = list.files(indir, pattern="*.csv")[1]
 		futile.logger::flog.info("Processing %s...",
 					file,
 					name = "craftyr_convert2shapefile")
@@ -23,11 +29,12 @@ convert_csv2shapefile <- function(sip, indir, outdir,
 		data <- data[,c(simp$csv$cname_x, simp$csv$cname_y)]
 		data$z = 1
 		r <- raster::rasterFromXYZ(data)
-		p <- raster::asterToPolygons(r, dissolve=TRUE)
+		p <- raster::rasterToPolygons(r)
+		#p <- raster::rasterToPolygons(r, dissolve=TRUE)
 		
-		filenumber <- regmatches(file, regexpr("\\d+", file))
-		outfile <- paste(outdir,countryCodes[countryCodes$Number == filenumber & 
-								!is.na(countryCodes$Number), "Code"], sep="/")
+		filenumber <- regmatches(file, regexpr(regexcountry, file, perl = TRUE))
+		outfile <- paste(outdir, if (!is.null(countryCodes)) countryCodes[countryCodes$Number == filenumber & 
+								!is.na(countryCodes$Number), "Code"] else filenumber, sep="/")
 		
 		futile.logger::flog.info("Writing to %s...",
 				outfile,

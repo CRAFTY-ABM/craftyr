@@ -34,6 +34,7 @@ param_mergeDefaultSimp <- function(simp = list()) {
 	defsimp$sim$filepartorder			<- c("scenario", "D", "runid", "D", "regions", "D", 
 											"datatype", "D", "dataname", "D", "tick")
 	defsimp$sim$filepartordercapitals	<- c("regions", "U", "datatype")
+	defsimp$sim$filepartorder_demands	<- c("scenario", "U", "datatype", "U", "regions")
 	
 	### Directories ################################################################
 	defsimp$dirs <- list()

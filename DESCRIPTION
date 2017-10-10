@@ -1,8 +1,8 @@
 Package: craftyr
 Type: Package
 Title: Processing CRAFTY model output
-Version: 0.3.19
-Date: 2016-11-16
+Version: 0.3.20
+Date: 2017-10-10
 Authors@R: c(person("Sascha", "Holzhauer", role = c("aut", "cre"), email =
     "Sascha.Holzhauer@ed.ac.uk"), person("Calum", "Brown", email =
     "Calum.Brown@ed.ac.uk", role = "aut"))
@@ -14,8 +14,10 @@ Depends:
 Imports:
     futile.logger,
     ggplot2,
+    gplots,
     graphics,
     grid,
+    igraph,
     knitr,
     kfigr,
     maptools,
@@ -32,7 +34,8 @@ Imports:
     sp,
     stringr,
     tools,
-    XML
+    XML,
+    xtable
 License: GPL-3
 VignetteBuilder: knitr
 Suggests:

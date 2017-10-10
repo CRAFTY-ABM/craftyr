@@ -16,7 +16,7 @@ input_marginalutilities <- function(simp, filename = paste(simp$dirs$output$rdat
 	csv_MarginalUtilitites_melt
 }
 
-#' Proceses/Aggregates stored, aggregated AFT composistion data. Checks wether data contains absolute numbers or
+#' Proceses/Aggregates stored, aggregated AFT composistion data. Checks whether data contains absolute numbers or
 #' proportions.
 #' 
 #' @param simp 
@@ -34,6 +34,10 @@ input_processAftComposition <- function(simp, dataname = "csv_aggregateAFTCompos
 	dataComp[,grep("AFT.", colnames(dataComp))] <- as.numeric(do.call(cbind, lapply(dataComp[,grep("AFT.", 
 											colnames(dataComp))], as.character)))
 	dataComp <- dataComp[complete.cases(dataComp),]
+	
+	if (nrow(dataComp) == 0) {
+		R.oo::throw.default("No row left in %s after removing incomplete rows!", dataname, "input.aft.composition")
+	}
 	
 	colnames(dataComp) <- gsub("AFT.", "", colnames(dataComp))
 	

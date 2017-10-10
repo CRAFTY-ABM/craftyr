@@ -21,4 +21,7 @@ Wrapper for load
 \author{
 Sascha Holzhauer
 }
+\seealso{
+Other storing data: \code{\link{input_tools_save}}
+}
 
