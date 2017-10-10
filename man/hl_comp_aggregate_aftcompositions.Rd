@@ -8,7 +8,7 @@ hl_comp_aggregate_aftcompositions(simp, simps,
   dataname = "csv_aggregateAFTComposition",
   filename = paste("AftComposition_", if (!is.null(simp$sim$rundesc))
   paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep = ""),
-  title = "Aft Composition", returnplot = FALSE)
+  title = "Aft Composition", returnplot = FALSE, afts = NULL)
 }
 \arguments{
 \item{simp}{}

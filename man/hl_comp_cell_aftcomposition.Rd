@@ -26,4 +26,7 @@ Load, aggregate and visualise AFT composition data of several runs to compare
 \author{
 Sascha Holzhauer
 }
+\seealso{
+hl_aggregate_aftcompositions
+}
 

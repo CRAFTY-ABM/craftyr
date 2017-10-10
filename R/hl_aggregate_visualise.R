@@ -496,6 +496,8 @@ hl_afttakeoverfluctuations <- function(simp, dataname = "csv_cell_aggregated",
 #' @param returnplot if true the ggplot object is returned
 #' @return timelien plot
 #' 
+#' @seealso hl_comp_cell_aftcomposition
+#' 
 #' @author Sascha Holzhauer
 #' @export
 hl_aggregate_aftcompositions <- function(simp, dataname = "csv_aggregateAFTComposition", 

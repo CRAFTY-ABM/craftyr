@@ -55,7 +55,8 @@ visualise_lines <- function(simp = simp, data = data, x_column= NULL, y_column, 
 			if (!is.null(simp$fills[[colour_column]]) && 
 					length(simp$fills[[colour_column]]) <  length(unique(data[, colour_column]))) {
 				warning("Not enough colours in simp$fills[[", colour_column, "]] (", 
-						length(simp$fills[[colour_column]]), " - needed: " , length(unique(data[, colour_column])), ")")
+						length(simp$fills[[colour_column]]), " - needed: " , length(unique(data[, colour_column])), "[", 
+						paste(unique(data[, colour_column]), collapse = "/"), "])")
 			}
 			scaleColourElem <- ggplot2::scale_colour_manual(name=colour_legendtitle, 
 					values =  settings_colours_getColors(simp, number = length(unique(data[, colour_column]))),

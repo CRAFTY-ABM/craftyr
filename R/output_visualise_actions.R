@@ -167,20 +167,20 @@ visualise_actions <- function(simp,
 							paste(names(actionfillcolours), collapse="/"),
 							paste(levels(data$Action[!is.na(data$Action)]), collapse="/")))
 		}
-		actionfillcolours <- actionfillcolours[names(actionfillcolours) %in% levels(data$Action[!is.na(data$Action)])]
+		actionfillcolours <- actionfillcolours[names(actionfillcolours) %in% unique(data$Action[!is.na(data$Action)])]
 	}
 	
 	
 	actionfillcolours <- setNames(actionfillcolours, levels(data$Action[!is.na(data$Action)]))
 	actionfillcolours <- actionfillcolours[1:length(levels(data$Action[!is.na(data$Action)]))]
 	scaleFillElem <- ggplot2::scale_fill_manual(name= fill_column, 
-				values = c(actionfillcolours))
-		
+			values = c(actionfillcolours), na.translate = FALSE)
+	
 	# Monitored data:
 	if (!is.null(monitordata)) {
 		scaleColourElem <- ggplot2::scale_colour_manual(name=colour_column, 
 				values = c(monitorcolours),
-				labels =  ggplot2::waiver())
+				labels =  ggplot2::waiver(), na.translate = FALSE)
 	} else {
 		scaleColourElem <- NULL
 	}
@@ -202,26 +202,27 @@ visualise_actions <- function(simp,
 	}
 	
 	scaleAlphaElem <- if (!onlyselected) {
-		ggplot2::scale_alpha_discrete(range=c(alpha, 1), labels=c("Not performed", "Performed"))
-	} else {
-		ggplot2::scale_alpha_discrete(range=c(1, 1), guide=FALSE)
-	}
+				ggplot2::scale_alpha_discrete(range=c(alpha, 1), labels=c("Not performed", "Performed"),
+						na.translate = FALSE)
+			} else {
+				ggplot2::scale_alpha_discrete(range=c(1, 1), guide=FALSE, na.translate = FALSE)
+			}
 	
 	lineElemActions <- ggplot2::geom_line(data = data[!is.na(data$Selected) & data$Selected == 1,], 
-									mapping=ggplot2::aes_string(x = x_column, y = y_column_action, 
-						 group = if (is.null(lineseparator_column_actions)) "Agent" else 
-									 paste("interaction(Agent, ", lineseparator_column_actions, ")", sep=""),
-						 linetype = linetype_column_actions
-					), color = actionlinecolour)
+			mapping=ggplot2::aes_string(x = x_column, y = y_column_action, 
+					group = if (is.null(lineseparator_column_actions)) "Agent" else 
+								paste("interaction(Agent, ", lineseparator_column_actions, ")", sep=""),
+					linetype = linetype_column_actions
+			), color = actionlinecolour, na.rm = TRUE)
 	
 	if (!is.null(linetype_column_measures)) {
 		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column_measure,
 						linetype = linetype_column_measures, 
-						colour = colour_column)
-					)
+						colour = colour_column), na.rm = TRUE
+		)
 	} else if (!is.null(monitordata)){
 		lineElemMeasures <- ggplot2::geom_line(data = data, mapping=ggplot2::aes_string(x = x_column, y = y_column_measure, 
-						colour = colour_column))
+						colour = colour_column), na.rm = TRUE)
 	} else {
 		lineElemMeasures <- NULL
 	}
@@ -229,11 +230,11 @@ visualise_actions <- function(simp,
 	p1 <- ggplot2::ggplot() +
 			lineElemActions +			
 			ggplot2::geom_point(data = data, mapping=ggplot2::aes_string(alpha=alpha_column, x = x_column, y = y_column_action,
-				fill = fill_column, shape = shape_column, size=size_column)) +
+							fill = fill_column, shape = shape_column, size=size_column), na.rm = TRUE) +
 			lineElemMeasures +
 			
 			facetElem  +
-			ggplot2::scale_shape_manual(values=actionshapenumbers) +
+			ggplot2::scale_shape_manual(values=actionshapenumbers,  na.translate = FALSE) +
 			scaleFillElem +
 			
 			ggplot2::guides(fill=ggplot2::guide_legend(override.aes=list(colour=actionfillcolours))) +

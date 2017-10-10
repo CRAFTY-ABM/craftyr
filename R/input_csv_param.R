@@ -129,11 +129,14 @@ input_csv_param_initialAllocation <- function(simp, aftColumn = "LandUseIndex",
 #' 				\item{\code{simp$dirs$param$getparamdir}}
 #' 				\item{\code{simp$sim$filepartorder_demands}}}
 #' @return list of data.frames containing demand values, and the filename of their origin  
-#' 
+#'
 #' @author Sascha Holzhauer
 #' @export
 input_csv_param_demand <- function(simp) {
-	filenames = do.call(paste, c(simp$dirs$param$getparamdir(simp, datatype="demand"), '/', 
+	if(is.null(simp$sim$filepartorder_demands)) {
+		R.oo::throw.default("simp$sim$filepartorder_demands is NULL!")
+	}
+	filenames = do.call(paste, c(simp$dirs$param$getparamdir(simp, datatype="demands"), '/', 
 					expand.grid(input_tools_constructFilenameList(simp, datatype = "demands",,
 									order = simp$sim$filepartorder_demands), stringsAsFactors = FALSE), ".csv", sep=""))
 	futile.logger::flog.debug("Filenames for collecting demand: %s",

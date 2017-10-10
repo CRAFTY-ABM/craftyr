@@ -4,9 +4,9 @@
 \alias{convert_csv2shapefile}
 \title{Convert X and Y coordinates from a CSV file into a shapefile}
 \usage{
-convert_csv2shapefile(sip, indir, outdir,
+convert_csv2shapefile(sip, indir, outdir, regexcountry = "\\\\d+",
   countryCodesFile = system.file("extdata",
-  "various/CountryCodeNumberMapping.csv", package = "crafty"))
+  "various/CountryCodeNumberMapping.csv", package = "craftyr"))
 }
 \arguments{
 \item{sip}{}
@@ -14,6 +14,9 @@ convert_csv2shapefile(sip, indir, outdir,
 \item{indir}{}
 
 \item{outdir}{}
+
+\item{regexcountry}{regular expression to extract country number from CSV filename.
+Alternative to extract country code: "(?<=_)(.*)(?=\\.)",}
 
 \item{countryCodesFile}{}
 }

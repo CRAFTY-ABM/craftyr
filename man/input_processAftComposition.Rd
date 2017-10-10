@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_various.R
 \name{input_processAftComposition}
 \alias{input_processAftComposition}
-\title{Proceses/Aggregates stored, aggregated AFT composistion data. Checks wether data contains absolute numbers or
+\title{Proceses/Aggregates stored, aggregated AFT composistion data. Checks whether data contains absolute numbers or
 proportions.}
 \usage{
 input_processAftComposition(simp, dataname = "csv_aggregateAFTComposition",
@@ -17,7 +17,7 @@ input_processAftComposition(simp, dataname = "csv_aggregateAFTComposition",
 data.frame
 }
 \description{
-Proceses/Aggregates stored, aggregated AFT composistion data. Checks wether data contains absolute numbers or
+Proceses/Aggregates stored, aggregated AFT composistion data. Checks whether data contains absolute numbers or
 proportions.
 }
 \author{

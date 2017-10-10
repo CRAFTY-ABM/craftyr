@@ -8,6 +8,8 @@
 #' @param returnplot if true the ggplot object is returned
 #' @return timeline plot
 #' 
+#' @seealso hl_aggregate_aftcompositions
+#' 
 #' @author Sascha Holzhauer
 #' @export
 hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggregated",
@@ -60,17 +62,17 @@ hl_comp_cell_aftcomposition <- function(simp, simps, dataname = "csv_cell_aggreg
 hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggregateAFTComposition", 
 		filename = paste("AftComposition_", 
 			if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
-			title = "Aft Composition", returnplot = FALSE)	 {
+			title = "Aft Composition", returnplot = FALSE, afts = NULL)	 {
 	
 	dataComp <- data.frame()
 	for (p in simps) {
 		input_tools_load(p, dataname)
 		d <- get(dataname)
 		d$Runid <- paste(p$sim$shortid, d$Runid, sep="-")
-		if (ncol(d) != nocl(dataComp)) {
-			R.oo::throw.default("Number of columns does not match between runs. Most likely the set of AFTs (%s vs. %s) is not the same!",
-					colnames(d)[! colnames(d) %in% c("Region", "Tick", "Scenario", "Runid")],
-					colnames(dataComp)[! colnames(dataComp) %in% c("Region", "Tick", "Scenario", "Runid")])
+		if (nrow(dataComp) > 0 && ncol(d) != ncol(dataComp)) {
+			R.oo::throw.default(sprintf("Number of columns does not match between runs. Most likely the set of AFTs (%s vs. %s) is not the same!",
+					paste(colnames(d)[! colnames(d) %in% c("Region", "Tick", "Scenario", "Runid")], collapse = "/"),
+					paste(colnames(dataComp)[! colnames(dataComp) %in% c("Region", "Tick", "Scenario", "Runid")], collapse = "?")))
 		}
 		dataComp <- rbind(dataComp, d)		
 	}
@@ -83,6 +85,10 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 	d <- aggregate(subset(data, select=c("value")), by = list(AFT = data$Agent, 
 					Tick= data$Tick, Runid=data$Runid, Scenario=data$Scenario), 
 			"sum", na.rm = TRUE)
+	
+	if (!is.null(afts)) {
+		d <- d[d$AFT %in% afts,]
+	}
 	
 	# substitute AFT names by AFT ID
 	aftNumbers <- names(simp$mdata$aftNames)
@@ -125,6 +131,7 @@ hl_comp_aggregate_aftcompositions <- function(simp, simps, dataname = "csv_aggre
 hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated", 
 		filename = paste("TotalDemandAndSupply_", 
 			if(!is.null(simp$sim$rundesc))paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep=""),
+		services = NULL,
 		title = paste("Demand & Supply (", paste(simp$sim$rundesc, collapse = "/"),")", sep=""),
 		visualise = TRUE) {
 	aggregated_demand <- data.frame()
@@ -146,7 +153,7 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated",
 	}
 	
 	### Demand & Supply
-	datDemand <- data.frame(Tick=aggregated_demand$Tick, Variable=aggregated_demand$variable, 
+	datDemand <- data.frame(Tick=aggregated_demand$Tick, Variable=aggregated_demand$Service, 
 			Type=aggregated_demand$Type, Value=aggregated_demand$Demand)
 
 	datSupply <- data.frame(Tick=aggregated_supply$Tick, Variable=aggregated_supply$Service, Type=aggregated_supply$Type, 
@@ -165,6 +172,10 @@ hl_comp_demandsupply <- function(simp, simps, dataname = "csv_cell_aggregated",
 	combined <- aggregate(subset(combined, select=c("Value")),
 			by =list(Tick=combined[, "Tick"], ID=combined[,"Type"], Service = combined[,"Variable"]), FUN=sum)
 	combined <- combined[combined$Tick < simp$sim$endtick,]
+	
+	if (!is.null(services)) {
+		combined <- combined[combined$Service %in% services, ]
+	}
 	
 	if(visualise) {
 		visualise_lines(simp = simp, data = combined, y_column = "Value", title = title,
