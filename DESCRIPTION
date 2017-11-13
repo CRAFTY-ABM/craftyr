@@ -1,8 +1,8 @@
 Package: craftyr
 Type: Package
 Title: Processing CRAFTY model output
-Version: 0.3.20
-Date: 2017-10-10
+Version: 0.3.21
+Date: 2017-11-13
 Authors@R: c(person("Sascha", "Holzhauer", role = c("aut", "cre"), email =
     "Sascha.Holzhauer@ed.ac.uk"), person("Calum", "Brown", email =
     "Calum.Brown@ed.ac.uk", role = "aut"))
@@ -45,4 +45,4 @@ Suggests:
     readODS,
     sqldf
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
