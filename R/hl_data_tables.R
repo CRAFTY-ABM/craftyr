@@ -80,3 +80,69 @@ hl_table_demand <- function(simp, dataname = "dataAggregateSupplyDemand",
 		return(d)
 	}
 }
+#' Output aggregated number of AFTs as table with AFTs as columns
+#' 
+#' @param simp 
+#' @param dataname name for retrieving aggregated AFT data (RData)
+#' @param aggcelldataname name for retrieving aggregated cell data (celldata) to calculate unmanagend
+#' @param includeunmanaged included numbers for unmanaged cells if TRUE
+#' @param#' aftasnumber If TRUE show AFT as numbers instead of names
+#' @param afts list of AFTs to limit set of shown AFTs
+#' @param latex output as latex table string
+#' @return data.frame or printed LaTeX table
+#' 
+#' @author Sascha Holzhauer
+#' @export
+hl_table_afts <- function(simp, dataname = "csv_aggregateAFTComposition", aftasnumber = TRUE,
+		includeunmanaged = FALSE, aggcelldataname = "dataAgg", afts = NULL, latex = TRUE) {
+	
+	d <- input_processAftComposition(simp, dataname = dataname)
+	operator = if (any(d$value > 1.0)) "sum" else "mean"
+	
+	if (includeunmanaged) {
+		
+		input_tools_load(simp, aggcelldataname)
+		aggcelldata <- get(aggcelldataname)
+		
+		cellnum <- sum(aggcelldata[aggcelldata$Tick == aggcelldata$Tick[1], "AFT"])
+		
+		d <-  plyr::ddply(d, "Tick", function(df, cellnum) {
+					rbind(df, data.frame(AFT = "Unmanaged",
+									Tick = unique(df$Tick),
+									Runid = unique(df$Runid),
+									Scenario = unique(df$Scenario),
+									value = cellnum - sum(df$value)))
+				}, cellnum = cellnum)
+		
+	}
+	# afts <- c("COF_Cereal", "NCOF_Livestock")
+	if (!is.null(afts)) {
+		d <- d[d$AFT %in% afts,]
+	}
+	
+	# substitute AFT names by AFT ID
+	aftNumbers <- names(simp$mdata$aftNames)
+	names(aftNumbers) <- simp$mdata$aftNames
+	
+	if (aftasnumber) {
+		d$AFT <- aftNumbers[as.character(d$AFT)]
+	}
+	
+	d <- reshape2::dcast(d, Tick~AFT, mean,
+			value.var = "value")
+	
+	
+	if (latex) {
+		table <- xtable::xtable(d,
+				label= "data.afts", 
+				caption= "Numbers of allocated AFTs"
+		)
+		
+		print(table, sanitize.colnames.function = NULL,
+				sanitize.rownames.function = identity,
+				include.rownames = FALSE,
+				table.placement = "H")
+	} else {
+		return(d)
+	}
+}
