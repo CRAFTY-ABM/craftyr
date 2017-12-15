@@ -26,4 +26,3 @@ Copy first line of CSV file and assign endtick.
 \author{
 Sascha Holzhauer
 }
-

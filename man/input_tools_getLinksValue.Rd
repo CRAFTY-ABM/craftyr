@@ -20,4 +20,3 @@ Read a value from Links.cav according to simp and the given ID.
 \author{
 Sascha Holzhauer
 }
-

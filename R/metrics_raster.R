@@ -20,9 +20,9 @@ metric_raster_global_patches <- function(simp, raster, directions = 8, relevanti
 		relevantindices <- as.numeric(names(simp$mdata$aftNames)[simp$mdata$aftNames %in% relevantafts])
 	}
 	
-	raster[!(raster::match(raster, relevantindices))] <- NA
+	raster <- raster::match(raster, relevantindices)
 	rasterLayer <- raster::clump(raster, directions=directions, gaps=TRUE)
-	return(length(raster::freq(rasterLayer)))
+	return(length(raster::freq(rasterLayer)[,"value"]))
 }
 #' Determine the number of patches of a list of rasters
 #' 

@@ -23,4 +23,3 @@ TODO apply simp$sim$filepartordercapitals to extract region instead of regionpar
 \author{
 Sascha Holzhauer
 }
-

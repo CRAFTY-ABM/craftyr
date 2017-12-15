@@ -21,4 +21,3 @@ Only facet elements
 \author{
 Sascha Holzhauer
 }
-

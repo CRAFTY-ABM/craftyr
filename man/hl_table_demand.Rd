@@ -26,4 +26,3 @@ Output aggregated demand as table with services as columns
 \author{
 Sascha Holzhauer
 }
-

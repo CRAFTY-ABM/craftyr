@@ -20,4 +20,3 @@ Checks whether an object with the given object name has been stored under the gi
 \author{
 Sascha Holzhauer
 }
-

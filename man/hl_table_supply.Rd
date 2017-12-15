@@ -28,4 +28,3 @@ Output aggregated supply as table with services as columns
 \author{
 Sascha Holzhauer
 }
-

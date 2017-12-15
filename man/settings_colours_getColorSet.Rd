@@ -20,4 +20,3 @@ Return requested colour palette
 \author{
 Sascha Holzhauer
 }
-

@@ -27,4 +27,3 @@ Tick/Runid/Region/Agent
 \author{
 Sascha Holzhauer
 }
-

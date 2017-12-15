@@ -34,4 +34,3 @@ Reads data from CSV file if not existing as rData object and visualises datacolu
 \author{
 Sascha Holzhauer
 }
-

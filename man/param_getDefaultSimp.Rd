@@ -15,4 +15,3 @@ Get the default SIMP parameter list
 \author{
 Sascha Holzhauer
 }
-

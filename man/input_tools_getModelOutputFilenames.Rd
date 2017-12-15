@@ -47,4 +47,3 @@ Attaches infos (region, runid, scenario).
 \author{
 Sascha Holzhauer
 }
-

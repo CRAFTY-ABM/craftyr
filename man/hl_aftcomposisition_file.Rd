@@ -27,4 +27,3 @@ Reads single CSV file with AFT composition and produces timeline figure
 \author{
 Sascha Holzhauer
 }
-

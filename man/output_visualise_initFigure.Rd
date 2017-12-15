@@ -25,4 +25,3 @@ Init figure output
 \author{
 Sascha Holzhauer
 }
-

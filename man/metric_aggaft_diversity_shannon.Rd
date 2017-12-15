@@ -23,4 +23,3 @@ TODO Consider \code{simp$sim$regions}
 \author{
 Sascha Holzhauer
 }
-

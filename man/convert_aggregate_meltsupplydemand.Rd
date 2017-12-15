@@ -20,4 +20,3 @@ Melts demand and supply data and splits service columns into type and service
 \author{
 Sascha Holzhauer
 }
-

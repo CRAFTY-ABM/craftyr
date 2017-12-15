@@ -22,4 +22,3 @@ Read a number of raster files of several years and combine them in a list of dat
 \author{
 Sascha Holzhauer
 }
-

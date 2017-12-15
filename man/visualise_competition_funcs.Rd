@@ -30,4 +30,3 @@ Plot competition functions for services
 \author{
 Sascha Holzhauer
 }
-

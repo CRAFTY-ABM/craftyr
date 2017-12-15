@@ -22,4 +22,3 @@ Determine the fraction of AFTs in the given rasters whose state corresonds with 
 \author{
 Sascha Holzhauer
 }
-

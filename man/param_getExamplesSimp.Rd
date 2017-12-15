@@ -15,4 +15,3 @@ Get the SIMP parameter list for working with example data
 \author{
 Sascha Holzhauer
 }
-

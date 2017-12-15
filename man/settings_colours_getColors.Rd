@@ -20,4 +20,3 @@ Applied if colours are not defined in \code{simp$fills} or \code{simp$colours}
 \author{
 Sascha Holzhauer
 }
-

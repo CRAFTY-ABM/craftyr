@@ -27,4 +27,3 @@ Collate runs and measure in data.frame
 \author{
 Sascha Holzhauer
 }
-

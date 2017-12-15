@@ -18,4 +18,3 @@ Aggregate demand and supply for all regions per tick and store as CSV file
 \author{
 Sascha Holzhauer
 }
-

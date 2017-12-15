@@ -30,4 +30,3 @@ Change column names of CSV files, e.g. capital files
 \author{
 Sascha Holzhauer
 }
-

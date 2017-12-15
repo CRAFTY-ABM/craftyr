@@ -22,4 +22,3 @@ Show colour palette
 \author{
 Sascha Holzhauer
 }
-

@@ -25,4 +25,3 @@ Regional land use diversity
 \author{
 Sascha Holzhauer
 }
-

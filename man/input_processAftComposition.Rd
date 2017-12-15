@@ -23,4 +23,3 @@ proportions.
 \author{
 Sascha Holzhauer
 }
-

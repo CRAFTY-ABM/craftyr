@@ -26,4 +26,3 @@ Print agent parameters
 \author{
 Sascha Holzhauer
 }
-

@@ -25,4 +25,3 @@ Plot land use map series
 \author{
 Sascha Holzhauer
 }
-

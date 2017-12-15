@@ -51,4 +51,3 @@ not given, the according parts of the filename is assumed not to exist (also the
 \author{
 Sascha Holzhauer
 }
-

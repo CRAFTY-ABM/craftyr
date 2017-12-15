@@ -23,4 +23,3 @@ TODO
 \author{
 Sascha Holzhauer
 }
-

@@ -45,4 +45,3 @@ Visualise pre-allocation competitiveness per AFT
 \author{
 Sascha Holzhauer
 }
-

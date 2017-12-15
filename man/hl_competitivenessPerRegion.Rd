@@ -21,4 +21,3 @@ If the number of regions is above \code{simp$fig$maxnumtypes} facets will be app
 \author{
 Sascha Holzhauer
 }
-

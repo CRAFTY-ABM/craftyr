@@ -83,4 +83,3 @@ Visualise the performance and effect of Actions
 \author{
 Sascha Holzhauer
 }
-

@@ -14,10 +14,9 @@ input_tools_save(simp, object)
 \description{
 Wrapper for save
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 Other storing data: \code{\link{input_tools_load}}
 }
-
+\author{
+Sascha Holzhauer
+}

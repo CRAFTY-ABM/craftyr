@@ -25,4 +25,3 @@ Read supply and demand and plot for given runid
 \author{
 Sascha Holzhauer
 }
-

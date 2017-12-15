@@ -25,4 +25,3 @@ Print AFT productivities
 \author{
 Sascha Holzhauer
 }
-

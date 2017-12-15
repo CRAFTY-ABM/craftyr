@@ -21,4 +21,3 @@ Regional demand and supply figure
 \author{
 Sascha Holzhauer
 }
-

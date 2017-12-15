@@ -19,10 +19,9 @@ Considers the \code{simp$sim$version} in column version and the
 the \code{simp$sim$runids[1]} in column '1st Run ID' or between '1st Run ID' and 'Last Run ID'. 
 Prints the last entry in case there are multiple matches.
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 hl_getRunInfo
 }
-
+\author{
+Sascha Holzhauer
+}

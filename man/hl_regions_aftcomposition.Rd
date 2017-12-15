@@ -25,4 +25,3 @@ Regional AFT composition
 \author{
 Sascha Holzhauer
 }
-

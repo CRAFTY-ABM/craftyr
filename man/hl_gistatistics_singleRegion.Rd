@@ -32,4 +32,3 @@ Various AFTs as facets.
 \author{
 Sascha Holzhauer
 }
-

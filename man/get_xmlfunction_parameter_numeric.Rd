@@ -24,4 +24,3 @@ Considers given default value in case the parameter is not defined in the XML fi
 \author{
 Sascha Holzhauer
 }
-

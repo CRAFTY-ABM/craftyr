@@ -20,4 +20,3 @@ Determines the model input folder for the given datadir
 \author{
 Sascha Holzhauer
 }
-

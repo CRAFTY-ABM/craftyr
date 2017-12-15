@@ -26,4 +26,3 @@ DEPRECATED!
 \author{
 Sascha Holzhauer
 }
-

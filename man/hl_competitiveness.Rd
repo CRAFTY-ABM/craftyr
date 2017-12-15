@@ -21,4 +21,3 @@ Load from csv data, aggregate, and plot AFT competitiveness over time (only for 
 \author{
 Sascha Holzhauer
 }
-

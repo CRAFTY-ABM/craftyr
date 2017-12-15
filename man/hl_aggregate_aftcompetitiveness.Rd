@@ -25,4 +25,3 @@ Yearly aggregated AFT competitiveness (from special competitiveness output)
 \author{
 Sascha Holzhauer
 }
-

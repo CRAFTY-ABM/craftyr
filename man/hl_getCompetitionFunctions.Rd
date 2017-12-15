@@ -28,4 +28,3 @@ Read competition functions
 \author{
 Sascha Holzhauer
 }
-

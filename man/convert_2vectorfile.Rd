@@ -20,4 +20,3 @@ Considers only CSV files in the indir. They must have a "x" and "y" column, but 
 \author{
 Sascha Holzhauer
 }
-

@@ -24,4 +24,3 @@ Yearly aggregated demand and supply
 \author{
 Sascha Holzhauer
 }
-

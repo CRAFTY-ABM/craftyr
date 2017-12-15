@@ -50,10 +50,9 @@ List (unless bindrows == TRUE) of data.frames (one list item per data folder) co
 Reads output data for the specified datatype and dataname from CSV data for potentially multiple runs, 
 regions, and multiple ticks.
 }
-\author{
-Sascha Holzhauer debug
-}
 \seealso{
 input_tools_getModelOutputFilenames
 }
-
+\author{
+Sascha Holzhauer debug
+}

@@ -42,4 +42,3 @@ agent param as dependent variable.
 \author{
 Sascha Holzhauer
 }
-

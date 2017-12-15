@@ -25,4 +25,3 @@ List required capital files for the given configuration
 \author{
 Sascha Holzhauer
 }
-

@@ -18,4 +18,3 @@ Compute AFt numbers
 \author{
 Sascha Holzhauer
 }
-

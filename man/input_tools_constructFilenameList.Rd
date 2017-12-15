@@ -32,4 +32,3 @@ Construct a list of filenames
 \author{
 Sascha Holzhauer
 }
-

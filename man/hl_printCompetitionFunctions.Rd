@@ -29,4 +29,3 @@ Read and plot competition functions
 \author{
 Sascha Holzhauer
 }
-

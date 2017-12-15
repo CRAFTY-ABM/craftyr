@@ -21,4 +21,3 @@ Loads stored object for given id or read raster objects accordingly if not store
 \author{
 Sascha Holzhauer
 }
-

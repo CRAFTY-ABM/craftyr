@@ -28,4 +28,3 @@ Read cell volatility data and visualise CellVolatility and NumVolatileCells as l
 \author{
 Sascha Holzhauer
 }
-

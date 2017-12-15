@@ -15,10 +15,9 @@ xtable plot
 \description{
 Considers the \code{simp$sim$version} in column run.
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 input_csv_param_runs
 }
-
+\author{
+Sascha Holzhauer
+}

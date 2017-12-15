@@ -15,4 +15,3 @@ Fills the matrix with "0", meaning no restriction
 \author{
 Sascha Holzhauer
 }
-

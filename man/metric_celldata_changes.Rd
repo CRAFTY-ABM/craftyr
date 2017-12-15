@@ -26,4 +26,3 @@ Determine number changes between ticks for a specific (combination of) land use(
 \author{
 Sascha Holzhauer
 }
-

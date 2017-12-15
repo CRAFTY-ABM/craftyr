@@ -136,9 +136,11 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 	counter = 0
 	outercounter = 0
 	for (rasters in rasterdata) {
+		# rasters = rasterdata[[1]]
 		outercounter = outercounter + 1
 		outerListName <- names(rasterdata)[outercounter]
 		for (l in rasters) {
+			# l = rasters[[1]]
 			rasterName <- names(l)
 			
 			simp$fig$init(simp, outdir = paste(simp$dirs$output$figures, "raster", outerListName, sep="/"), 
@@ -154,7 +156,7 @@ visualise_raster_printRawPlots <- function(simp, rasterdata, datanames = NULL, l
 			if (factorial) {
 				s$Values <- factor(s$Values)
 				scaleFillElem <- ggplot2::scale_fill_manual(name=legendtitle, 
-						values = simp$colours$GenericFun(simp, set = coloursetname),
+						values = simp$colours$GenericFun(simp, number=length(unique(s$Values)), set = coloursetname),
 						if (! is.null(legenditemnames)) labels = legenditemnames)
 			}
 	

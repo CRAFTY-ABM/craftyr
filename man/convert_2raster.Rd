@@ -22,4 +22,3 @@ Convert data.frame with coordinates into raster object
 \author{
 Sascha Holzhauer
 }
-

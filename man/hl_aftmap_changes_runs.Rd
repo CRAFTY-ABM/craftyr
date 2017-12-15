@@ -38,4 +38,3 @@ Plot changes between runs of a specific tick for a particular (combination of) l
 \author{
 Sascha Holzhauer
 }
-

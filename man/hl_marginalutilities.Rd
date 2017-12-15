@@ -24,4 +24,3 @@ Reads marginal utilties and prepares the data for plotting
 \author{
 Sascha Holzhauer
 }
-

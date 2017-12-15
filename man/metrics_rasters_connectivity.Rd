@@ -23,4 +23,3 @@ TODO test
 \author{
 Sascha Holzhauer
 }
-

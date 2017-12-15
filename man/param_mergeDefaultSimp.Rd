@@ -20,4 +20,3 @@ Applies \code{\link[utils]{mergeList}}.
 \author{
 Sascha Holzhauer
 }
-

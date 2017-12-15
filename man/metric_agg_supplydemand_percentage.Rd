@@ -25,4 +25,3 @@ Calculates the percental supply relative to demand (supply = demand > 100) for a
 \author{
 Sascha Holzhauer
 }
-

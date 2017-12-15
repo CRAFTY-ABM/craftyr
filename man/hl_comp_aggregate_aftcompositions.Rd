@@ -26,4 +26,3 @@ Compare Yearly aggregated AFT composition
 \author{
 Sascha Holzhauer
 }
-

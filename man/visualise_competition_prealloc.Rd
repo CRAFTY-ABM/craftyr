@@ -39,4 +39,3 @@ Histogram of competitiveness per AFT: stacked: below/above GU threshold
 \author{
 Sascha Holzhauer
 }
-

@@ -25,4 +25,3 @@ Add colour attribute to nodes in graphml file
 \author{
 Sascha Holzhauer
 }
-
