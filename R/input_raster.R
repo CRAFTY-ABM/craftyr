@@ -258,6 +258,7 @@ readingRasterData_collateRunsAndMeasures <- function(scenario = lix$scenario, wo
 #' @export
 input_raster_get <- function(simp, dataname="raster_landUseIndex", storerdata = FALSE) {
 	if (!input_tools_checkexists(simp, dataname)) {
+		
 		raster_landUseIndex <- input_raster_output(simp,
 				datatype = "Agent", 
 				dataname = "SerialID",

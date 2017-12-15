@@ -28,4 +28,3 @@ Format vector of characters into latex list
 \author{
 Sascha Holzhauer
 }
-

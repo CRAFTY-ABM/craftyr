@@ -22,4 +22,3 @@ Calculate optimal linear competition function parameters (according to document
 \author{
 Sascha Holzhauer
 }
-

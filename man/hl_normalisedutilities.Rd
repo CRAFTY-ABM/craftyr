@@ -34,4 +34,3 @@ Read and plot normalised per-cell residuals
 \author{
 Sascha HolzhauerVar1
 }
-

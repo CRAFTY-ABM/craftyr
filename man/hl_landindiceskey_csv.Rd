@@ -21,4 +21,3 @@ Generates AFT key as CSV with columns 'Index' and 'LandUse'
 \author{
 Sascha Holzhauer
 }
-

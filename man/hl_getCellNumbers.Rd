@@ -20,4 +20,3 @@ Retrieve information about the number of cells.
 \author{
 Sascha Holzhauer
 }
-

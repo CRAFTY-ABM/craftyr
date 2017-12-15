@@ -21,4 +21,3 @@ Reads marginal utilties and prepares the data for plotting. Stores data and retu
 \author{
 Sascha Holzhauer
 }
-

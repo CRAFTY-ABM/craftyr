@@ -18,4 +18,3 @@ Extracts BaseDirAdaptation from Scenario.xml (empty string if not defined)
 \author{
 Sascha Holzhauer
 }
-

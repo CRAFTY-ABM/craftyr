@@ -49,13 +49,12 @@ In case you want only take overs due to giving in, considers \code{\link{hl_take
 According CRAFTY outputter is \href{https://www.wiki.ed.ac.uk/display/CRAFTY/Output#Output-CellTable}{CellTable}.  Applies 
 \code{\link{convert_aggregate_takeovers}} to derive take overs from cell data if not yet present.
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 Other takeovers: \code{\link{convert_aggregate_takeovers}},
   \code{\link{hl_takeovers}},
   \code{\link{output_visualise_aftFluctuations}},
   \code{\link{output_visualise_takeovers}}
 }
-
+\author{
+Sascha Holzhauer
+}

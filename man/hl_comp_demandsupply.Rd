@@ -7,8 +7,8 @@
 hl_comp_demandsupply(simp, simps, dataname = "csv_cell_aggregated",
   filename = paste("TotalDemandAndSupply_", if (!is.null(simp$sim$rundesc))
   paste(simp$sim$rundesc, collapse = "-") else simp$sim$id, sep = ""),
-  title = paste("Demand & Supply (", paste(simp$sim$rundesc, collapse = "/"),
-  ")", sep = ""), visualise = TRUE)
+  services = NULL, title = paste("Demand & Supply (",
+  paste(simp$sim$rundesc, collapse = "/"), ")", sep = ""), visualise = TRUE)
 }
 \arguments{
 \item{simps}{list of simp that shall be compared. Relevant entries in
@@ -36,4 +36,3 @@ Change IDs to meaningful names by setting \code{simp$sim$shortid} for \code{simp
 \author{
 Sascha Holzhauer
 }
-

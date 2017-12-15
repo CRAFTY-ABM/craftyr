@@ -28,4 +28,3 @@ If rData not present at \code{sourcedataname} it uses param data.
 \author{
 Sascha Holzhauer
 }
-

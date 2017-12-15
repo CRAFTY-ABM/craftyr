@@ -24,4 +24,3 @@ deprecated? looks similar to input_raster_output but does not support SIMP
 \author{
 Sascha Holzhauer
 }
-

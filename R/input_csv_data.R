@@ -18,6 +18,7 @@
 #' @param bindrows, If TRUE, rbind all data into one data.frame
 #' @param aggregationFunction function applied to aggregate data
 #' @param do not return X and Y columns
+#' @param ... passed to \code{\link[utils]{read.csv}}
 #' @return List (unless bindrows == TRUE) of data.frames (one list item per data folder) containing requested data  
 #' 
 #' @seealso input_tools_getModelOutputFilenames
@@ -33,7 +34,8 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 		splitfileinfo = FALSE,
 		bindrows = FALSE,
 		aggregationFunction = NULL,
-		skipXY = FALSE) {	
+		skipXY = FALSE,
+		...) {	
 	fileinfos = input_tools_getModelOutputFilenames(simp, datatype = datatype, dataname = dataname, 
 			extension = extension, pertick = pertick,
 			starttick = starttick, endtick = endtick, tickinterval = tickinterval)
@@ -45,13 +47,13 @@ input_csv_data <- function(simp, datatype = NULL, dataname = "Cell", columns = N
 	data <- lapply(fileinfos, function(item) {
 				result <- plyr::ddply(item, "Filename", function(df) {
 							# df <- fileinfos[[1]][1,]
-							return <- tryCatch({
+							return <- tryCatch({data <- utils::read.csv(df[,"Filename"], na.strings = simp$csv$nastrings, ...)
 								futile.logger::flog.debug("Read file %s...", df[,"Filename"], name="craftyr.input.csv")
 								
 								if (!file.exists(df[,"Filename"])) {
 									R.oo::throw.default("The required filename ", df[,"Filename"], " does not exist!")
 								}
-								data <- utils::read.csv(df[,"Filename"], na.strings = simp$csv$nastrings)
+								data <- utils::read.csv(df[,"Filename"], na.strings = simp$csv$nastrings, ...)
 								if (length(data[,1]) == 0) {
 									warnings("CSV file ", df[,"Filename"] , " does not contain any rows!")
 									return(NULL)

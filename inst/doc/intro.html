@@ -1,146 +1,306 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="pandoc" />
+<title>Concept</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
 
-<meta name="author" content="Sascha Holzhauer" />
-
-<meta name="date" content="2016-12-09" />
-
-<title>Introduction to craftyr</title>
-
-
-
-<style type="text/css">code{white-space: pre;}</style>
+<!-- Styles for R syntax highlighter -->
 <style type="text/css">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
 </style>
 
 
 
-<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%7D%0Apre%20%7B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
-
 </head>
 
 <body>
-
-
-
-
-<h1 class="title toc-ignore">Introduction to craftyr</h1>
-<h4 class="author"><em>Sascha Holzhauer</em></h4>
-<h4 class="date"><em>2016-12-09</em></h4>
-
-
-<div id="TOC">
-<ul>
-<li><a href="#concept">Concept</a><ul>
-<li><a href="#directory-structure">Directory Structure</a></li>
-<li><a href="#parameters">Parameters</a><ul>
-<li><a href="#defining-colours">Defining Colours</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#debugginglogging">Debugging/Logging</a></li>
-<li><a href="#handling-data">Handling Data</a><ul>
-<li><a href="#run-ids">Run IDs</a></li>
-<li><a href="#storing-data">Storing Data</a></li>
-<li><a href="#using-craftyr-to-put-custom-plots-in-the-right-place">Using craftyr to Put Custom Plots in the Right Place</a></li>
-<li><a href="#comparing-data">Comparing Data</a></li>
-</ul></li>
-<li><a href="#troubleshooting">Troubleshooting</a><ul>
-<li><a href="#error-messages">Error Messages</a></li>
-</ul></li>
-</ul>
-</div>
-
-<div id="concept" class="section level1">
 <h1>Concept</h1>
-<p>The package provides various functions to load data from model output, convert, and finally visualise it. Therefore, in a chain of production these functions need to be combined. At the same time, there are a number of high level functions which integrate the more basic functions but leave less scope for customisation. These high level functions start with hl.</p>
-<div id="directory-structure" class="section level2">
+
+<p>The package provides various functions to load data from model output, convert, and finally visualise it.
+Therefore, in a chain of production these functions need to be combined. At the same time, there are a number
+of high level functions which integrate the more basic functions but leave less scope for customisation. These
+high level functions start with hl. </p>
+
 <h2>Directory Structure</h2>
-<p>The package assumes that you stick to the recommended directory structure for both input and output data. See <a href="https://www.wiki.ed.ac.uk/display/CRAFTY/Filename+Substitution+and+Recommended+Folder+Structure">here</a> for a definition. However, if you need to change that structure, craftyr provides some mean to adjust pre-defined values. For instance, you may implement a custom function and assign it to <code>simp$dirs$param$getparamdir</code>.</p>
-</div>
-<div id="parameters" class="section level2">
+
+<p>The package assumes that you stick to the recommended directory structure for both input and output data.
+See <a href="https://www.wiki.ed.ac.uk/display/CRAFTY/Filename+Substitution+and+Recommended+Folder+Structure">here</a> 
+for a definition. However, if you need to change that structure, craftyr provides some mean to adjust
+pre-defined values. For instance, you may implement a custom function and assign it to
+<code>simp$dirs$param$getparamdir</code>.</p>
+
 <h2>Parameters</h2>
-<p>There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, and parameters. The basic idea is to define a simp list for each project and execute the simp defining R code every time you start a script with the according project. Within the script, “local” properties (e.g. runID, image resolutions) can overwrite the project level settings (simpBasic.R) which in turn overwrite craftyr defaults. Often it is a good idea to store setting/scenario specific values in a separate file (simp.R) within the setting/scenario R folder.</p>
-<p>Since some paths vary according to the machine that executes the R code, the project-specific simp list is created from two parts: A machine-specific part (simp-maschine_XY.R) and a general, machine- independent part (simpBasic.R.)</p>
-<pre class="sourceCode r"><code class="sourceCode r">###############################################################################
-<span class="co"># Machine=specific SIMP definition</span>
-<span class="co"># NOTE: Changes in super-level parameters that are used to derive further</span>
-<span class="co"># parameters need to trigger a re-evaluation of the derived parameters!</span>
+
+<p>There is a simp (SIMulation Properties) list which contains all project-specific properties, directories, 
+and  parameters. The basic idea is to define a simp list for each project and execute the simp defining 
+R code every time you start a script with the according project. Within the script, &ldquo;local&rdquo; properties 
+(e.g. runID, image resolutions) can overwrite the project level settings (simpBasic.R) which in turn 
+overwrite craftyr defaults. Often it is a good idea to store setting/scenario specific values in a 
+separate file (simp.R) within the setting/scenario R folder. </p>
+
+<p>Since some paths vary according to the machine that executes the R code, the project-specific simp list
+is created from two parts: A machine-specific part (simp-maschine_XY.R) and a general, machine-
+independent part (simpBasic.R.)</p>
+
+<pre><code class="r">###############################################################################
+# Machine=specific SIMP definition
+# NOTE: Changes in super-level parameters that are used to derive further
+# parameters need to trigger a re-evaluation of the derived parameters!
 ### Environment ###############################################################
-<span class="co"># craftyr demo</span>
+# craftyr demo
 ### Remove existing definition ################################################
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span><span class="ot">TRUE</span>))
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>(<span class="dt">all=</span><span class="ot">TRUE</span>, <span class="dt">envir=</span><span class="kw">globalenv</span>()), <span class="dt">envir=</span><span class="kw">globalenv</span>())
-<span class="kw">library</span>(craftyr)
+rm(list=ls(all=TRUE))
+rm(list=ls(all=TRUE, envir=globalenv()), envir=globalenv())
+library(craftyr)
 #### Set path to itself #######################################################
-simp &lt;-<span class="st"> </span><span class="kw">list</span>()
-simp$simpDefinition &lt;-<span class="st"> &quot;../demo/simp-machine.R&quot;</span>
+simp &lt;- list()
+simp$simpDefinition &lt;- &quot;../demo/simp-machine.R&quot;
 #### Load project default SIMP ################################################
-<span class="kw">source</span>(<span class="st">&quot;../demo/simp.R&quot;</span>)
+source(&quot;../demo/simp.R&quot;)
 #### Merge crafty default SIMP ################################################
-simp &lt;-<span class="st"> </span><span class="kw">param_mergeDefaultSimp</span>(simp)
+simp &lt;- param_mergeDefaultSimp(simp)
 
 ### Directories ###############################################################
 
-simp$dirs &lt;-<span class="st"> </span><span class="kw">list</span>()
-simp$dirs$project           &lt;-<span class="st"> &quot;C:/Data/LURG/workspace/CRAFTY_ConsVis-ToyWorld/&quot;</span>
-simp$dirs$data              &lt;-<span class="st"> </span><span class="kw">paste</span>(simp$dirs$project, <span class="st">&quot;data/&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)
-simp$dirs$outputdir         &lt;-<span class="st"> &quot;C:/Data/LURG/Projects/Volante/Output/&quot;</span>
-simp$dirs$simp              &lt;-<span class="st"> </span><span class="kw">paste</span>(simp$dirs$project, <span class="st">&quot;./config/R/&quot;</span>, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)
-[...]</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">################################################################
-<span class="co"># General SIMulation Properties:</span>
+simp$dirs &lt;- list()
+simp$dirs$project           &lt;- &quot;C:/Data/LURG/workspace/CRAFTY_ConsVis-ToyWorld/&quot;
+simp$dirs$data              &lt;- paste(simp$dirs$project, &quot;data/&quot;, sep=&quot;&quot;)
+simp$dirs$outputdir         &lt;- &quot;C:/Data/LURG/Projects/Volante/Output/&quot;
+simp$dirs$simp              &lt;- paste(simp$dirs$project, &quot;./config/R/&quot;, sep=&quot;&quot;)
+[...]
+</code></pre>
+
+<pre><code class="r">################################################################
+# General SIMulation Properties:
 ################################################################
-if (!<span class="kw">exists</span>(<span class="st">&quot;simp&quot;</span>)) simp &lt;-<span class="st"> </span><span class="kw">list</span>()
-simp$sim &lt;-<span class="st"> </span><span class="kw">list</span>()
-simp$sim$worldname              &lt;-<span class="st"> &quot;ToyWorld&quot;</span>
-simp$sim$version                &lt;-<span class="st"> &quot;V001&quot;</span>
-simp$sim$allocversion           &lt;-<span class="st"> &quot;V001AllocGen&quot;</span>
-simp$sim$scenario               &lt;-<span class="st"> &quot;Scenario&quot;</span>
-[...]</code></pre>
-<p>The machine-specific simp part in an according script contains the (machine-specific) path to itself and to the machine-independent simp part script (simpBasic.R), loads that general part and may overwrite certain parameters. The basic simp file initially merges the defined parameters in the general crafyr default parameter list to apply craftyr defaults when no other specification is given.</p>
-<p>Using the parameter set during an initial execution of the machine-dependent scripts at startup, each script using craftyr should load the simp code anew. During that process, the entire simp list including all possible changes are removed from memory and loaded anew. Following above suggestions, a script first loading the setting/scenario specific simp.R would look like this:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Only contained when the particular script is only executed on a specific maschine!</span>
-<span class="co"># Otherwise. the maschine=specific file needs to be executed before.</span>
-<span class="kw">source</span>(<span class="st">&quot;/PATH-TO/simp-machine_cluster.R&quot;</span>)
+if (!exists(&quot;simp&quot;)) simp &lt;- list()
+simp$sim &lt;- list()
+simp$sim$worldname              &lt;- &quot;ToyWorld&quot;
+simp$sim$version                &lt;- &quot;V001&quot;
+simp$sim$allocversion           &lt;- &quot;V001AllocGen&quot;
+simp$sim$scenario               &lt;- &quot;Scenario&quot;
+[...]
+</code></pre>
 
-<span class="co"># Usually also in simp.R, but required here to find simp.R</span>
-simp$sim$folder     &lt;-<span class="st"> &quot; &quot;</span>parentFolder/_version<span class="st">&quot;&quot;</span>   
+<p>The machine-specific simp part in an according script contains the (machine-specific) path 
+to itself and to the machine-independent simp part script (simpBasic.R), loads that general part and 
+may overwrite certain parameters. The basic simp file initially merges the defined parameters in the 
+general crafyr default parameter list to apply craftyr defaults when no other specification is given.</p>
 
-simp$sim$runids     &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;0-0&quot;</span>)         <span class="co"># run to deal with</span>
-simp$sim$id         &lt;-<span class="st"> &quot;template-0-0&quot;</span>   <span class="co"># ID to identify specific data collections (e.g. regions)</span>
-simp$sim$task       &lt;-<span class="st"> &quot;task1&quot;</span>          <span class="co"># Name of surrounding folder, usually a description of task </span>
+<p>Using the parameter set during an initial execution of the machine-dependent scripts at startup, each 
+script using craftyr should load the simp code anew. During that process, the entire simp list 
+including all possible changes are removed from memory and loaded anew. Following above suggestions,
+a script first loading the setting/scenario specific simp.R would look like this:</p>
 
-<span class="co"># simp$dirs$simp is set by maschine-specific file:</span>
-<span class="kw">setwd</span>(<span class="kw">paste</span>(simp$dirs$simp, simp$sim$folder, <span class="st">&quot;cluster/&quot;</span>, simp$sim$task, <span class="dt">sep=</span><span class="st">&quot;/&quot;</span>))
-<span class="co"># usually, the setting/scenario specific simp.R is two levels above:</span>
-<span class="kw">source</span>(<span class="st">&quot;../../simp.R&quot;</span>)</code></pre>
+<pre><code class="r"># Only contained when the particular script is only executed on a specific maschine!
+# Otherwise. the maschine=specific file needs to be executed before.
+source(&quot;/PATH-TO/simp-machine_cluster.R&quot;)
+
+# Usually also in simp.R, but required here to find simp.R
+simp$sim$folder     &lt;- &quot; &quot;parentFolder/_version&quot;&quot;   
+
+simp$sim$runids     &lt;- c(&quot;0-0&quot;)         # run to deal with
+simp$sim$id         &lt;- &quot;template-0-0&quot;   # ID to identify specific data collections (e.g. regions)
+simp$sim$task       &lt;- &quot;task1&quot;          # Name of surrounding folder, usually a description of task 
+
+# simp$dirs$simp is set by maschine-specific file:
+setwd(paste(simp$dirs$simp, simp$sim$folder, &quot;cluster/&quot;, simp$sim$task, sep=&quot;/&quot;))
+# usually, the setting/scenario specific simp.R is two levels above:
+source(&quot;../../simp.R&quot;)
+</code></pre>
+
 <p>The simp list consists of a number of sublists:</p>
+
 <ul>
 <li><p>sim</p></li>
 <li><p>dirs</p></li>
@@ -149,54 +309,83 @@ simp$sim$task       &lt;-<span class="st"> &quot;task1&quot;</span>          <sp
 <li><p>fig</p></li>
 <li><p>debug</p></li>
 </ul>
-<div id="defining-colours" class="section level3">
+
 <h3>Defining Colours</h3>
-<p>Craftyr functions take colour set names which are passed to the generic colour setting function to obtain sets of colours (simp<span class="math">\(colours\)</span>GenericFun). The function is implemented in crafty and maps common colour sets (AFT, Capitals, Services, Regions, Runids, binary colour set for e.g. adoption) to colour sets defined via particular simp parameters (e.g. simp<span class="math">\(colours\)</span>AFT). Therefore, there are two ways to influence colour settings:</p>
+
+<p>Craftyr functions take colour set names which are passed to the generic colour setting function to obtain sets of colours
+(simp$colours$GenericFun). The function is implemented in crafty and maps common colour sets (AFT, Capitals, Services, Regions,
+Runids, binary colour set for e.g. adoption) to colour sets defined via particular simp parameters (e.g. simp$colours$AFT).
+Therefore, there are two ways to influence colour settings:</p>
+
 <ul>
-<li><p>change the assignment to specific colour sets (simp<span class="math">\(colours\)</span><Set>)</p></li>
-<li><p>change the assignment for the generic colour setting function, using your own implementation that may deal with defined colour set names in a specific, dynamic way.</p></li>
+<li><p>change the assignment to specific colour sets (simp\(colours\)<Set>)</p></li>
+<li><p>change the assignment for the generic colour setting function, using your own implementation that may deal with defined 
+colour set names in a specific, dynamic way.</p></li>
 </ul>
-</div>
-</div>
-</div>
-<div id="debugginglogging" class="section level1">
+
 <h1>Debugging/Logging</h1>
-<p>Craftyr uses the package ‘futile.logger’. Initially, it sets up a console outputter to log everything on INFO level. However, the logger can be configured in a detailed way.</p>
-<pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.threshold</span>(futile.logger::DEBUG, <span class="dt">name=</span><span class="st">'craftyr'</span>)
-futile.logger::<span class="kw">flog.threshold</span>(futile.logger::TRACE, <span class="dt">name=</span><span class="st">'craftyr.input'</span>)</code></pre>
-<p>It is also possible to add handlers for further sinks.</p>
-<pre class="sourceCode r"><code class="sourceCode r">futile.logger::<span class="kw">flog.appender</span>(<span class="kw">appender.file</span>(filename), <span class="dt">name=</span><span class="st">'test.logger'</span>)</code></pre>
-<p>Compare the documentation for package ‘futile.logger’ for more detailed information. A tutorial is also <a href="http://www.r-bloggers.com/better-logging-in-r-aka-futile-logger-1-3-0-released/">available</a>.</p>
-</div>
-<div id="handling-data" class="section level1">
+
+<p>Craftyr uses the package &#39;futile.logger&#39;. Initially, it sets up a console outputter 
+to log everything on INFO level. However, the logger can be configured in a detailed way.</p>
+
+<pre><code class="r">futile.logger::flog.threshold(futile.logger::DEBUG, name=&#39;craftyr&#39;)
+futile.logger::flog.threshold(futile.logger::TRACE, name=&#39;craftyr.input&#39;)
+</code></pre>
+
+<p>It is also possible to add handlers for further sinks.  </p>
+
+<pre><code class="r">futile.logger::flog.appender(appender.file(filename), name=&#39;test.logger&#39;)
+</code></pre>
+
+<p>Compare the documentation for package &#39;futile.logger&#39; for more detailed information.
+A tutorial is also <a href="http://www.r-bloggers.com/better-logging-in-r-aka-futile-logger-1-3-0-released/">available</a>.</p>
+
 <h1>Handling Data</h1>
-<div id="run-ids" class="section level2">
+
 <h2>Run IDs</h2>
-<p>Usually, run IDs consist of the parameter ID (which is in runs.csv) and the random number seed applied in the simulations. However, the user may also decide to omit the random number part and use only the param ID as run ID. Crafty is able to deal with both versions in principle. When the param ID is required (e.g. to retrieve parameter data from a table) the number before a potential ‘-’ is extracted automatically.</p>
-</div>
-<div id="storing-data" class="section level2">
+
+<p>Usually, run IDs consist of the parameter ID (which is in runs.csv) and the random number seed applied in
+the simulations. However, the user may also decide to omit the random number part and use only the param ID as
+run ID. Crafty is able to deal with both versions in principle. When the param ID is required (e.g. to retrieve
+parameter data from a table) the number before a potential &#39;-&#39; is extracted automatically.</p>
+
 <h2>Storing Data</h2>
-<p>Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store processed and aggregated data for further use. R provides the possibility of storing R objects into a file.</p>
-<p>To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data changes. Crucial is a consistent naming of R objects! To manage data it is possible to assign an ID during storage, which is added to the filename. This way it is possible to use the same script (which uses specific names for objects) with multiple data. Also make sure that IDs make clear what data is stored (e.g. regions, scenarios) since there is currently no mechanism to check whether loaded data corresponds to current SIMP settings.</p>
-<pre class="sourceCode r"><code class="sourceCode r">csv_LandUseIndex_rbinded &lt;-<span class="st"> </span>data
-<span class="kw">input_tools_save</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)
-<span class="kw">rm</span> (csv_LandUseIndex_rbinded)</code></pre>
+
+<p>Raster output data from the model could involve many files of considerable size. Therefore, it is a good idea to store
+processed and aggregated data for further use. R provides the possibility of storing R objects into a file.</p>
+
+<p>To make use of that feature, input routines should write the resulting R object to disk, and processing and visualisation
+routines shall load it from disk again. This way, the input routine only needs to performed once unless the raw data
+changes. Crucial is a consistent naming of R objects! To manage data it is possible to assign an ID during storage, which is added to the filename. This way it is possible to use the same script (which
+uses specific names for objects) with multiple data. Also make sure that IDs make clear what data is stored (e.g. regions, scenarios) since there is currently no mechanism to check whether loaded data
+corresponds to current SIMP settings.</p>
+
+<pre><code class="r">csv_LandUseIndex_rbinded &lt;- data
+input_tools_save(simp, &quot;csv_LandUseIndex_rbinded&quot;)
+rm (csv_LandUseIndex_rbinded)
+</code></pre>
+
 <p>To load an object to the global environment again, just execute</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">input_tools_load</span>(simp, <span class="st">&quot;csv_LandUseIndex_rbinded&quot;</span>)</code></pre>
-</div>
-<div id="using-craftyr-to-put-custom-plots-in-the-right-place" class="section level2">
+
+<pre><code class="r">input_tools_load(simp, &quot;csv_LandUseIndex_rbinded&quot;)
+</code></pre>
+
 <h2>Using craftyr to Put Custom Plots in the Right Place</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="dt">package=</span><span class="st">&quot;craftyr&quot;</span>)
-<span class="kw">source</span>(<span class="st">&quot;../demo/simp-machine.R&quot;</span>)
-simp$fig$<span class="kw">init</span>(simp, <span class="dt">filename =</span> <span class="st">&quot;example/hist_aft.png&quot;</span>)
-<span class="kw">hist</span>(cellData$LandUseIndex, <span class="dt">breaks=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>)
-<span class="kw">dev.off</span>()</code></pre>
-</div>
-<div id="comparing-data" class="section level2">
+
+<pre><code class="r">data(package=&quot;craftyr&quot;)
+source(&quot;../demo/simp-machine.R&quot;)
+simp$fig$init(simp, filename = &quot;example/hist_aft.png&quot;)
+hist(cellData$LandUseIndex, breaks=3, col=&quot;red&quot;)
+dev.off()
+</code></pre>
+
 <h2>Comparing Data</h2>
-<p>The generic way of comparing data of several sources, i.e. combining the data to visualise in one plot, is the following:</p>
-<ol style="list-style-type: decimal">
+
+<p>The generic way of comparing data of several sources, i.e. combining the data to visualise in one plot, is the following:</p>
+
+<ol>
 <li>For each data set to compare
+
 <ul>
 <li>Load data</li>
 <li>Edit Runid</li>
@@ -205,33 +394,25 @@ simp$fig$<span class="kw">init</span>(simp, <span class="dt">filename =</span> <
 <li>Save data with a new simp (new id/new output folder)</li>
 <li>Use the new dataname with the new simp (includes the new id and folder) to apply a function as normal</li>
 </ol>
+
 <p>However, there a few high level functions that take a list of simp configurations and do not require the storage of combined data:</p>
+
 <ul>
 <li>hl_comp_aggregate_aftcompositions</li>
 <li>hl_comp_cell_aftcomposition</li>
 </ul>
-</div>
-</div>
-<div id="troubleshooting" class="section level1">
+
 <h1>Troubleshooting</h1>
-<div id="error-messages" class="section level2">
+
 <h2>Error Messages</h2>
-<pre class="sourceCode r"><code class="sourceCode r">Error in if (simp$fig$plottitle &gt;<span class="st"> </span><span class="dv">0</span>) { :<span class="st"> </span>argument is of length zero</code></pre>
-<p>Such an error message indicates a missing component in SIMP. Usually, the custom configuration assigned new lists to a super-component, erasing the orignal (default) content of that super-compomnent. Therefore, make sure your custom configuration does not assign new lists unchecked (ie. without checking <code>if (is.null(simp$sim)) simp$sim &lt;- list()</code>.</p>
-</div>
-</div>
 
+<pre><code class="r">Error in if (simp$fig$plottitle &gt; 0) { : argument is of length zero
+</code></pre>
 
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
+<p>Such an error message indicates a missing component in SIMP. Usually, the custom configuration assigned new lists
+to a super-component, erasing the orignal (default) content of that super-compomnent. Therefore, make sure your
+custom configuration does not assign new lists unchecked (ie. without checking <code>if (is.null(simp$sim)) simp$sim &lt;- list()</code>. </p>
 
 </body>
+
 </html>

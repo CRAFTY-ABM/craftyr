@@ -54,13 +54,12 @@ transition plot
 \description{
 Transition plot of AFT take overs due to giving in.
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 Other takeovers: \code{\link{convert_aggregate_takeovers}},
   \code{\link{hl_takeovers_all}},
   \code{\link{output_visualise_aftFluctuations}},
   \code{\link{output_visualise_takeovers}}
 }
-
+\author{
+Sascha Holzhauer
+}

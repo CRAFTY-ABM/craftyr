@@ -25,4 +25,3 @@ Reads demand values from CSV data for potentially multiple regions
 \author{
 Sascha Holzhauer
 }
-

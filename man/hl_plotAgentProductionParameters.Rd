@@ -28,4 +28,3 @@ Plot AFT's production as bar plot
 \author{
 Sascha Holzhauer
 }
-

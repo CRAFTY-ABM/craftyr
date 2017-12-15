@@ -64,13 +64,12 @@ Farmer (2010) > Forester (2011) and Forester (2011) > Farmer (2012).
 There does not seem to be a straigh-forward way to convert a gTree object back to a ggplot2 object...
 (http://stackoverflow.com/questions/29583849/r-saving-a-plot-in-an-object)
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 Other takeovers: \code{\link{convert_aggregate_takeovers}},
   \code{\link{hl_takeovers_all}},
   \code{\link{hl_takeovers}},
   \code{\link{output_visualise_aftFluctuations}}
 }
-
+\author{
+Sascha Holzhauer
+}

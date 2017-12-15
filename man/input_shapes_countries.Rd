@@ -19,10 +19,9 @@ ggplot2 addon
 \description{
 Generates a ggplot2 addon to draw (country) shapes
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 http://spatial.ly/2013/12/introduction-spatial-data-ggplot2/
 }
-
+\author{
+Sascha Holzhauer
+}

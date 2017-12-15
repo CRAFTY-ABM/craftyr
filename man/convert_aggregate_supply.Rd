@@ -31,4 +31,3 @@ If rData not present at \code{sourcedataname} it uses cell data.
 \author{
 Sascha Holzhauer
 }
-

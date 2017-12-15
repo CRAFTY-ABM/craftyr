@@ -21,4 +21,3 @@ Load, aggregate and visualise production per service and AFT
 \author{
 Sascha Holzhauer
 }
-

@@ -20,4 +20,3 @@ Read Runs data (Runs.csv)
 \author{
 Sascha Holzhauer
 }
-

@@ -20,4 +20,3 @@ Aggregate raster data with the given aggregate function
 \author{
 Sascha Holzhauer
 }
-

@@ -32,4 +32,3 @@ Calculates the maximum percental demand supply gap for across services for all t
 \author{
 Sascha Holzhauer
 }
-

@@ -26,4 +26,3 @@ Visualise stored metric LandUseConnectivity as timelines. Stores RData from CSV 
 \author{
 Sascha Holzhauer
 }
-

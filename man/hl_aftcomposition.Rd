@@ -23,4 +23,3 @@ Usually, does not include the number of unmanaged cells.
 \author{
 Sascha Holzhauer
 }
-

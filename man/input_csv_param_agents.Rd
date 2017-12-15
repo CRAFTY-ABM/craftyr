@@ -25,4 +25,3 @@ Read agent specifc parameters
 \author{
 Sascha Holzhauer
 }
-

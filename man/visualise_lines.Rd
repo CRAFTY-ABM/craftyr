@@ -68,4 +68,3 @@ visualisation_lines(data, legendTitle = "Capitals Example", factorial= FALSE, om
 \author{
 Sascha Holzhauer
 }
-

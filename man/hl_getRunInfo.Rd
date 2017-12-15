@@ -22,4 +22,3 @@ Considers \code{}
 \author{
 Sascha Holzhauer
 }
-

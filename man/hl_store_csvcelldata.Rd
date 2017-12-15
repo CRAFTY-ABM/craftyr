@@ -20,4 +20,3 @@ Store CSV cell data (also in splitted form)
 \author{
 Sascha Holzhauer
 }
-

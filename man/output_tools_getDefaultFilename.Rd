@@ -22,4 +22,3 @@ Create a default output filename of the pattern
 \author{
 Sascha Holzhauer
 }
-

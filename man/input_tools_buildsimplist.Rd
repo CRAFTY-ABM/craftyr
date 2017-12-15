@@ -20,4 +20,3 @@ Construct a list of SimP for given runs
 \author{
 Sascha Holzhauer
 }
-

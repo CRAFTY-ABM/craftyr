@@ -21,4 +21,3 @@ Ggplot2 theme that plots legend and title only
 \author{
 Sascha Holzhauer
 }
-

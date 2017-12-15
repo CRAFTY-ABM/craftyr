@@ -28,4 +28,3 @@ Determine the number of patches of a single raster
 \author{
 Sascha Holzhauer
 }
-

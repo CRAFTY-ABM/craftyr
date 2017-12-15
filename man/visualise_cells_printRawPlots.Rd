@@ -34,10 +34,9 @@ elements must be named differently}
 There does not seem to be a straigh-forward way to convert a gTree object back to a ggplot2 object...
 (http://stackoverflow.com/questions/29583849/r-saving-a-plot-in-an-object)
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 input_shapes_countries
 }
-
+\author{
+Sascha Holzhauer
+}

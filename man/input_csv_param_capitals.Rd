@@ -20,4 +20,3 @@ Reads capital levels for the specified capitals from CSV data for potentially mu
 \author{
 Sascha Holzhauer
 }
-

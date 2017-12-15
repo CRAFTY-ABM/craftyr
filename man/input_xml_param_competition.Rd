@@ -24,4 +24,3 @@ Reads competition functions for each service.
 \author{
 Sascha Holzhauer
 }
-

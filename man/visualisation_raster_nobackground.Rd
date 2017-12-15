@@ -20,4 +20,3 @@ white background
 \author{
 Sascha Holzhauer
 }
-

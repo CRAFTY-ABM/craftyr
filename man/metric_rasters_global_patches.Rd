@@ -29,4 +29,3 @@ Determine the number of patches of a list of rasters
 \author{
 Sascha Holzhauer
 }
-

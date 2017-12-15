@@ -26,4 +26,3 @@ Plot changes between ticks for a specific (combination of) land use(s)
 \author{
 Sascha Holzhauer
 }
-

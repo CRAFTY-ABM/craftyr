@@ -23,4 +23,3 @@ Spatial autocorrelation score for given raster
 \author{
 Sascha Holzhauer
 }
-

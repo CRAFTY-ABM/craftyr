@@ -50,4 +50,3 @@ visualisation_raster_printRawPlots(raster, legendTitle = "Capitals Example",
 \author{
 Sascha Holzhauer
 }
-

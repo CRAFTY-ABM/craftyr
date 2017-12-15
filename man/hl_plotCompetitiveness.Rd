@@ -43,4 +43,3 @@ Calculate and plot competitiveness for every AFT on every cell
 \author{
 Sascha Holzhauer
 }
-

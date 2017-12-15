@@ -21,12 +21,12 @@ Date	   	\tab 	2014-06-27 \cr
 Changes	\tab	refactoring, comment \cr
 }
 }
+\references{
+TODO
+}
 \author{
 Sascha Holzhauer, CESR/UoE \email{Sascha.Holzhauer@ed.ac.uk},
 			Calum Brown, UoE, \email{Calum.Brown@ed.ac.uk}
-}
-\references{
-TODO
 }
 \keyword{ABM}
 \keyword{LUCC}
@@ -37,4 +37,3 @@ TODO
 \keyword{land}
 \keyword{post-processing}
 \keyword{use}
-

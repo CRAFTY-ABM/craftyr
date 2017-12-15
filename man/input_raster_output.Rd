@@ -31,4 +31,3 @@ Get list (scenarios/regions/runids) of lists (ticks) of raster data from files w
 \author{
 Sascha Holzhauer
 }
-

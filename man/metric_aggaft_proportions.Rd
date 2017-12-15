@@ -23,4 +23,3 @@ Return proportion of given set of AFTs of all agents (usually not unmanaged cell
 \author{
 Sascha Holzhauer
 }
-

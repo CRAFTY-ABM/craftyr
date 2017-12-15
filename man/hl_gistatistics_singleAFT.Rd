@@ -25,4 +25,3 @@ Various regions as facets.
 \author{
 Sascha Holzhauer
 }
-

@@ -29,4 +29,3 @@ or \eqn{simp$sim$regions} is a vector, a vector of directories is returned.
 \author{
 Sascha Holzhauer
 }
-

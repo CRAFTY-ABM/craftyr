@@ -30,4 +30,3 @@ Read CSV data of pre-allocation competitiveness and transfer to data.frame of fr
 \author{
 Sascha Holzhauer
 }
-

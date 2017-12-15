@@ -23,4 +23,3 @@ AFT map for 2010 and 2040 with differences (placed horicontally) for multiple Ru
 \author{
 Sascha Holzhauer
 }
-

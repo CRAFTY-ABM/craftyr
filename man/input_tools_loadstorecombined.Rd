@@ -25,4 +25,3 @@ Load, combine, and store data objects
 \author{
 Sascha Holzhauer
 }
-

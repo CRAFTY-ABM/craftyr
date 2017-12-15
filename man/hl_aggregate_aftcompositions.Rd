@@ -22,10 +22,9 @@ timelien plot
 \description{
 Yearly aggregated AFT composition
 }
-\author{
-Sascha Holzhauer
-}
 \seealso{
 hl_comp_cell_aftcomposition
 }
-
+\author{
+Sascha Holzhauer
+}

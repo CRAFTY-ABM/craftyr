@@ -40,4 +40,3 @@ Determines the model input filenames for the given simp and datatype, dataname, 
 \author{
 Sascha Holzhauer
 }
-

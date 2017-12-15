@@ -29,4 +29,3 @@ Service delivery efficiency
 \author{
 Sascha Holzhauer
 }
-

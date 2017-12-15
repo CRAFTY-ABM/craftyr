@@ -43,4 +43,3 @@ Considers \code{simp$sim$regions}.
 \author{
 Sascha Holzhauer
 }
-

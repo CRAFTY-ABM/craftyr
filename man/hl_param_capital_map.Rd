@@ -26,4 +26,3 @@ Create maps of initial capital levels
 \author{
 Sascha Holzhauer
 }
-

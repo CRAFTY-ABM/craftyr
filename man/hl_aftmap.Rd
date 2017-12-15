@@ -23,4 +23,3 @@ AFT map for 2010 and 2040 with differences from stored CSV data
 \author{
 Sascha Holzhauer
 }
-

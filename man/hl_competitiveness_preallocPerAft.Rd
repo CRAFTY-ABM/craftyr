@@ -45,4 +45,3 @@ Write one file per AFT.
 \author{
 Sascha Holzhauer
 }
-

@@ -18,4 +18,3 @@ Get parameters in Runs.csv for the defined Run ID (in simp)
 \author{
 Sascha Holzhauer
 }
-

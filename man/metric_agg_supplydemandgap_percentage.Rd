@@ -25,4 +25,3 @@ Calculates the percental demand supply gap for all ticks
 \author{
 Sascha Holzhauer
 }
-

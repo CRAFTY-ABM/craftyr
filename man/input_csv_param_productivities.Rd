@@ -21,4 +21,3 @@ Reads productivities for each capital and each service for the given aft
 \author{
 Sascha Holzhauer
 }
-

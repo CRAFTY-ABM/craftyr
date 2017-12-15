@@ -16,4 +16,3 @@ GGplot2 theme for visualisation_raster_printRawPlots
 \author{
 Sascha Holzhauer
 }
-

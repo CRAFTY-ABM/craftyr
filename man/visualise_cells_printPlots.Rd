@@ -58,4 +58,3 @@ visualisation_cells_printPlots(data,
 \author{
 Sascha Holzhauer
 }
-

@@ -46,4 +46,3 @@ NOTE: Needs the cell data to be stored as rData (see \link{input_csv_data}).
 \author{
 Sascha Holzhauer
 }
-

@@ -18,4 +18,3 @@ List required input files for the given configuration.
 \author{
 Sascha Holzhauer
 }
-

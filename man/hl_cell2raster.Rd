@@ -25,4 +25,3 @@ Extracts cell coordinates and land use from stored cell data and generates raste
 \author{
 Sascha Holzhauer
 }
-

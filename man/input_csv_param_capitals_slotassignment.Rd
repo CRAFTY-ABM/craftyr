@@ -25,4 +25,3 @@ Assign regions to slots for parallel computing
 \author{
 Sascha Holzhauer
 }
-
