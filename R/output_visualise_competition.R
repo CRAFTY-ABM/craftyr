@@ -11,7 +11,8 @@
 #' @export
 visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrange = c(-1,1), 
 		filename = "competitionFunctions",
-		returnplot = FALSE) {
+		returnplot = FALSE,
+		ggplotAddons = NULL) {
 	
 	futile.logger::flog.debug("Print competition functions for services...",
 			name="craftyr.visualise.competition")
@@ -28,11 +29,12 @@ visualise_competition_funcs <- function(simp, functions, xrange = c(-3,3), yrang
 										}, env = list(service=name)))
 					}, functions, names(functions)))
 	
-	f <- ggplot2::ggplot(data.frame(x = xrange, y = yrange), aes(x))
+	f <- ggplot2::ggplot(data.frame(x = xrange, y = yrange), ggplot2::aes(x))
 	f <- f + stat_functions +
 			ggplot2::xlab("Residual demand") +
 			ggplot2::ylab("Benefit") +
-			ggplot2::scale_colour_manual("Services", values = simp$colours$Service)
+			ggplot2::scale_colour_manual("Services", values = simp$colours$Service) +
+			ggplotAddons
 	print(f)
 	simp$fig$close()
 	if (returnplot) return(f)
